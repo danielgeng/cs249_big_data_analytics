@@ -31,15 +31,77 @@ This is a lose-lose situation for both businesses and consumers; businesses must
 Therefore, in this survey, we will discuss methods that can be used to differentiate between real users and non-human users.
 
 \quad At the general level, this is an anomaly detection problem.
-Historically, there have been many approaches to anomaly detection, such as Poisson, SFC, Pearson's $\chi^2$, and CNPP.
+Historically, there have been many approaches to anomaly detection, such as Poisson, SFP, Pearson's $\chi^2$, and CNPP.
 We will analyze the pros and cons of these existing methods.
-Next, we will introduce state-of-the-art models that attempt to address some of the shortcomings of these more mature models and highlight their relative improvements.
+Next, we will introduce state-of-the-art models that attempt to address some of the shortcomings of these more mature models and highlight their relative improvements. 
+These current methods fall under a few major categories, including temporal, Bayesian, and group.
 
 \section*{Background}
 
-aaa
+\textbf{NEEDS WORK FOR SURE}
 
-\section*{Methods}
+\quad Each type of anomaly detection method introduces its own set of definitions and fundamental ideas.
+Temporal-based approaches primarily use the \textbf{inter-arrival times} (IAT) between postings to identify patterns that could be used for detecting anomalies.
+The IAT distributions between humans and bots are compared to classify users.
+
+\quad To fully understand group-based approaches, a \textbf{group} must be defined.
+A group is a mixture model of a user behavior mixture model.
+The \textbf{role mixture rate} is an inference of group membership and role identity of each individual inside of a group.
+A \textbf{group anomaly} occurs when the role mixture rate is significantly different than a normal group role mixture rate.
+All individuals inside of a group will be classified as suspicious if there is a group anomaly.
+
+\section*{Models, Approaches, Algorithms}
+
+\quad Methods developed before 2014 will be introduced here as both a basis of improvement and reference for state-of-the-art methods. 
+
+\subsection*{Cascading Non-homogeneous Poisson Process (CNPP) -- 2009}
+
+\quad CNPP is a variation of the double chain hidden Markov model and is used for understanding the behavior of individuals and detecting outliers.
+Specifically, this model is used to detect variability among individuals by using data from email communication.
+First, an inference algorithm is used to estimate model parameters. 
+This model is then applied to the email data.
+From this experiment, the authors found that individuals can be classified into specific types and that users can be clustered together based on their model parameters which leads to easier ways to detect outliers.
+
+\subsection*{Power-Law -- 2005}
+
+\quad The power-law distribution is a non-Poisson distribution that models human behavior, which consisted of short bursts of activity separated by long periods of inactivity.
+The explanation for this type of distribution is the fact that humans execute tasks by their own set of priorities.
+Thus, tasks wait an uneven amount of time before execution.
+
+\subsection*{Self-Feeding Process (SFP) -- 2013}
+
+\quad The SFP model combines the benefits of the non-homogeneous Poisson process from CNPP and the power-law distribution.
+It attempts to accomplish four goals:
+\begin{enumerate}
+	\item Realism of marginals
+	\item Realism of the local Poisson distribution
+	\item Avoiding the independent and identical distribution (i.i.d.) fallacy
+	\item Requirement of only a few parameters
+\end{enumerate}
+
+To achieve the first goal and to better view the dataset without losing information, SFP computes the odds ratio (OR) as such:
+$$ OR(t) = \frac{CDF(t)}{1-CDF(t)} $$
+
+where the set of IATs are used to compute the OR for each percentile of the data.
+
+For the second goal, the Poisson distribution is built into the SFP model.
+The third goal is obtained by building a Markov process where each even of activity influences the next event.
+
+The Poisson process model is defined as the following:
+$$ \Delta_i \sim exp(1/ \lambda) \ for \ i = 1 \dots n \ events $$
+
+SFP's piecewise Poisson model updates it as:
+$$ \Delta_1 \sim \mu $$
+$$ \Delta_i \sim exp(\Delta_{i-1} + \mu / e) $$
+where e is the Euler constant.
+
+As seen from the model, the last goal is achieved, as only the mean of the data set is required as input.
+The model can be generalized for other applications that only need two parameters, $\mu$ and the OR slope $\rho$:
+$$ \delta_1 \sim \mu $$
+$$ \delta_1 \sim exp(\delta_{i-1} + \mu^{\rho} / e) $$
+$$ \Delta_k \sim \delta_i^{1/ \rho} $$
+
+\section*{Current State-of-the-art}
 
 aaa
 
