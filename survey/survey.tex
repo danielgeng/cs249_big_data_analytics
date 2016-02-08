@@ -140,6 +140,70 @@ In the future, the authors wanted to investigate the frequency of words and comp
 \quad In conclusion, Pearson's $\chi^2$ test can detect automated accounts which have distinct timing patterns, which found that 16\% of public accounts are automated. 
 The authors suggest to use this model to prevent spam and other use.
 
+\subsection*{Human, Bot, or Cyborg? LDA Approach -- 2010}
+
+\subsubsection*{Approach}
+
+\quad The paper is an attempt to tackle the problem of determining whether a given Twitter user is a human, bot, or cyborg, defined as follows.
+A human user is a Twitter account whose tweets are completely posted by a human.
+A bot is an account whose posts are completely automated.
+A cyborg is an account that may have both automated activity and human activity.
+The researchers trained their model using 1,000 accounts for each human, bot, and cyborg, amassing over 8 million tweets, and used a sample of 500,000 users, with upwards of 40 million tweets, to then estimate the composition of Twitter at the time.
+Ground truth for the training set was determined manually.
+
+\subsubsection*{Model}
+
+\quad The researchers take a tiered approach, splitting the problem into four steps:
+\begin{enumerate}
+	\item Use entropy to determine the complexity of user behavior
+	\item Apply a machine learning component to detect spam-like features
+	\item Use various account properties to detect outlying users
+	\item Combine features generated from the previous three steps to come up with a model for humans, a model for bots, and a model for cyborgs. 
+\end{enumerate}	
+By applying the data on each of these models, resulting in a human-score, bot-score, and cyborg-score, they can determine which category a user falls in.
+
+\quad The entropy rate of a Twitter user refers to the complexity of the distribution of a user's tweets over time.
+A low entropy rate indicates that the tweets are posted fairly regularly, whereas a higher entropy rate implies a more random process.
+The researchers approximate the entropy rate using empirically-derived probabilities.
+
+\quad Spam score is the classification of a user's tweets as containing overly "spammy" language.
+The researchers use a Bayesian classifier to classify the text, assuming the presence of words are conditionally independent of each other.
+This model empirically calculates the probability that a tweet is spam given the words in it using the package CRM114, which includes an OSB classifier, which is similar to a traditional naive Bayes classifier for text, but classifies based on pairs of words.
+
+\quad There are a number of other features examined and used in this model.
+The first is the URL ratio, i.e. the ratio of how often a user includes an external URL.
+The researchers also examine the percentage of tweets posted using manual devices, i.e. web and mobile devices instead of via the Twitter API.
+Another highly discriminatory features is the automated post percentage.
+Rather than taking into account what devices a user uses, this feature is the percentage of posts to a user's Twitter account that follow from the RSS feed of another site (e.g. the user's blog) via services like Twitterfeed or Twitter for Wordpress.
+The last feature they use is the followers to friends ratio.
+The intuition is that bots add many users as friends, but few users follow a bot back, so bots will often try to follow as many users as possible.
+However, Twitter has imposed limits on the ratio of followers over friends to suppress these bots, so often, a bot will unfollow users who do not follow them back, keeping their ratio suspiciously close to 1:1.
+They find that bots rarely have more followers than they have friends.
+
+\quad By feeding these features into a decision maker, the researchers come up with a model, based on linear discriminant analysis and forward stepwise analysis.
+It is stepwise, as the model is built step-by-step.
+At each step, all features are evaluated, and only the one that contributes the most to discrimination is added to the model.
+Linear discriminant analysis takes labeled data and assigns weights to each feature that discriminates a single class from the others.
+A linear combination of the features based on these weights yields a score determining how human-like, bot-like, or cyborg-like a user account is.
+By taking the highest of these scores, the model predicts a label for these features.
+
+\subsubsection*{Results}
+
+\quad The researchers report high accuracies, predicting true humans, bots, and cyborgs 94.9\%, 93.7\%, and 83.8\% of the time respectively.
+Their predictor can perfectly distinguish bots from humans, but performs worse in differentiating humans from cyborgs, or bots from cyborgs.
+Applying this model to their 500,000 users, they estimate the ratio of human, cyborg, and bot on Twitter to be 5:4:1.
+
+\quad The authors outline the pitfalls with their model that led to misclassifications.
+Spam score is a tricky feature to use, since even human users use ?spammy? words in advertising their own content.
+Additionally, bots and cyborgs can use very naturally scripted language, tricking their spam classifier.
+Additionally, the entropy rates of humans could be low if a user often posts at certain times.
+
+\quad Because the LDA approach uses features that require more effort to impersonate, it is not trivialized by simple workarounds such as adjusting the tweet times.
+However, it is a basic decision maker because it has a linear model of features.
+Also, any of the features could yield false positives or negatives; for example, a human user that only posts via a blog RSS feed could be classified as suspicious.
+On the other hand, some of the features were ineffective (i.e. low coefficients for Bayesian text, followers to friends ratio, URL ratio)
+Additionally, the relationship between humans, bots, and cyborgs is not considered, so the model only infers it from the LDA weights.
+
 \section*{Current State-of-the-art}
 
 \quad While state-of-the-art methods use the same basic ideas and principles of older models and fall under the same set of categories, they attempt to improve on them in some way.
