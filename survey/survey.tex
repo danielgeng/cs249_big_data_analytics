@@ -506,6 +506,57 @@ If the distance is above a certain threshold, then the user is classified as ano
 However, classification varies on the choice of threshold, which may be a difficult hyperparameter to tune based on the specific problem at hand.
 Also, if the user data is too variable, a bot could potentially hide in the noise.
 
+\subsection*{Detecting Lockstep Behavior -- 2014}
+
+\subsubsection*{Approach}
+
+\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern? (groups of followers typically following the same group of followees with little to no other activity).
+When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
+However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
+There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
+Instead, a subset of these followers show the non-overlap behavior for some followees while other subsets show the same non-overlap behavior for some other followees.
+
+\subsubsection*{Model}
+
+\quad A fundamental part of this approach is the use of spectral-subspace plots.
+Given an adjacency matrix that is $NxN$, spectral-subspace plots project these points from $N$ dimensions into 2 dimensions spanned by two singular vectors.
+For a non-lockstep behavior spectral-subspace, points cluster around the origin.
+However, for the non-overlap lockstep ``block" behavior has a spectral-subspace plot that shows a ``ray" pattern from two of its singular vectors.
+In addition, the overlap lockstep ``staircase" behavior is projected onto two singular vectors exhibits spherical micro-clusters (referred to as a ``pearl" pattern) in its spectral-subspace plot.
+These patterns are utilized for discovering other bot-followers using ``lockstep" propagation, which has linear complexity.
+
+\subsubsection*{Algorithm}
+
+\textbf{Input:} Who-knows-who adjacency matrix $A$\\
+\textbf{Output:} Set of ``lockstep" followers\\
+\textbf{Feature utilized:} Follower/followee relationships
+
+\begin{enumerate}
+	\item Identify ``seed" followers
+	\begin{enumerate}
+		\item Create a spectral subspace plot of the top $k$ left-singular vectors (left-singular vectors referring to the columns of the $U$ matrix of SVD decomposition).
+		\item Transform the points to polar coordinates ($r$ and $\theta$) using the Hough transformation.
+		\item Divide the $r$ and $\theta$ axes into bins, count the frequency, and create a histogram.
+		\item Categorize the subplot as non-lockstep, non-overlap lockstep, or lockstep.
+		If the $\theta$ bin plots show two apparent spikes at 0 and 90 degrees, then there is a non-overlap lockstep behavior (aka ``ray" pattern).
+		If the $r$-bin plot shows a single spike apart from $r = 0$, then there is an overlap lockstep behavior present (aka ``pearls" pattern).
+		Spikes can be detected using median filtering and identifying the related nodes as ``seeds".
+	\end{enumerate}
+	\item Lockstep propagate
+	\begin{enumerate}
+		\item For each ``seed" followee identified, count the number of followers in the seed set.
+		If there are more than a certain threshold, then the group is considered ``lockstep" followees.
+		\item For each follower, count the number of its followees that are considered ``lockstep".
+		If above a certain threshold, then determine the follower as part of the ``lockstep" behavior.
+		From this step, new ``lockstep" followers are determined while other followers are considered benign because they only have zero or one ``lockstep" followee.
+		\item Repeat (a) and (b) until convergence.
+	\end{enumerate}
+\end{enumerate}
+
+\subsubsection*{Results}
+
+\quad While the lockstep method was able to detect bots that try to camouflage themselves by following legitimate users different from its bot group, it relies on the assumption that bots use most of their activity to follow a followee as a mass.
+
 \section*{Discussion}
 
 aaa
