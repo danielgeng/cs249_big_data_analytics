@@ -427,6 +427,191 @@ The false positives detected by ND-Sync belonged to politicians and media accoun
 However, it was unable to differentiate between cyborgs from bots and fails with certain humans (i.e. politicians and people who advertise); it also assumed that synchronized data is always fraudulent, which is not always true.
 Also, the dataset used had a limited number of fraud-labeled users, which may have skewed the accuracy upward.
 
+\subsection*{DARPA Twitterbot Challenge Top 3 SVM Approach -- 2015}
+
+\subsubsection*{Purpose}
+
+\quad The problem of the DARPA Twitterbot Challenge was: given logs of users that posted in vaccination-related threads, determine which were ``influence bots"---bots that are designed to generate conversation about a given topic.
+The proposed problem was not constrained to be completely automated and assumed there were bots present (although the exact number was not made known).
+
+\subsubsection*{Features}
+
+\quad In order to gain insight into which approaches would potentially work, the teams propose a variety of different features to examine and compare.
+
+Syntax features: similarity to known NLP generators, number of hashtags, user mentions, links, or special characters, number of retweets by user, geo-enabled, whether tweet ends with punctuation, hashtag, or link
+
+Semantic features: number of user posts related to vaccination, user?s average sentiment score on tweets with the word ``vaccination?, contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
+
+Temporal behaviors: flipping sentiment over time, entropy of inter-arrival times, duration of longest session by a user, number of dropped followers over time
+
+User profile features: number of posts, number of followers and followings, similarity to known bots (Jaccard similarity, cosine similarity)
+
+Network features: deviation of sentiment from followers, number of bots followed by user
+
+\subsubsection*{Algorithm}
+
+\quad In order to detect bots, the top two teams first narrowed down the data to detect a handful of bots.
+For this, they applied various data visualizations to determine outlying data, leading them to select fairly obvious bots.
+
+\quad The teams make the assumption that the bots all have similar behaviors and use various clustering algorithms to find similar accounts to known bots.
+USC uses KNN search to create a graph of similar users based on a number of features; it then applies modularity maximization to identify groups of accounts that has many connections within the same cluster.
+The Sentimetrix team uses DBSCAN to cluster around the manually selected bots.
+Once a certain number of humans and bots are found using the previous algorithms, all teams employed the use of a support vector machine to determine whether there were any additional bots.
+
+\quad Indiana?s team attempted to use a multi-armed bandit approach, assigning a ?bot score? to each test point, and adjusting the weights such that the accurate arms gained weight and inaccurate ones lost weight.
+This approach is an online approach, so it could dynamically learn based on each additional input.
+
+\subsubsection*{Results}
+
+\quad All of the participating teams were able to correctly identify the bots.
+However, the one challenge that many teams faced was to determine when to stop guessing, as they were not informed beforehand how many bots there are.
+Only one team was able to detect the bots exactly.
+
+\quad While the algorithms presented were able to achieve up to 100\% accuracy and they took almost all types of features into account, there were some major downsides as well.
+Most importantly, they assumed that bots were present and because the problem was very specific, many of the approaches would only achieve high performance for this exact problem.
+Furthermore, some components of the algorithms used human judgment to augment the bot identification process; a semi-automated pipeline would be less efficient for real-world use cases.
+
+\subsection*{PCA -- 2014}
+
+\subsubsection*{Approach}
+
+\quad The paper ``Toward Detecting Anomalous User Behavior in Online Social Networks" uses an unsupervised learning algorithm called Principal Component Analysis (PCA).
+The purpose of PCA is to find the best projections of a dataset that show the most variation given a set of features.
+For anomaly detection, PCA is utilized by projecting where bot-data differs from normal-user behavior.
+
+\subsubsection*{Features}
+
+\quad Features for this model can consist any of the following: temporal features consist of a histogram of a per-time-unit (e.g. per-day) basis, spatial features consisting of a histogram of a non-temporal feature such as categorizes of Facebook pages that were liked by a user, and spatio-temporal features which is the observation of a spatial feature over time.
+
+\quad For temporal features, each time-bucket is a different dimension, allowing PCA to model IATs, weekday patterns, weekend patterns, rate of change of activity, etc. as a linear combination.
+Spatial features are histogram buckets of observing an attribute where each bucket is a different dimension.
+Spatio-temporal features is a histogram where each bucket is a spatial distribution at that time.
+To summarize the distribution within a bucket, entropy can be used where the probability of bucket $i$ is represented as $p_i (- \sum_i (p_i) * log_2 p_i)$.
+
+\subsubsection*{Model}
+
+\quad PCA is an unsupervised learning algorithm which finds the most varied projects of a given data set.
+This model is represented as a linear combination of the most uncorrelated features (aka principal components or singular values) where the first principal component has the maximum variation.
+Human behavior can be described in a small amount of dimensions (k-dimensions) which this study shows because five principal components were enough to describe 85\% of the data?s variance.
+
+\quad Anomalies are determined based on the distance from the normal subspace.
+The normal subspace is the projection of the first five principal components (more generally k-components).
+The residual subspace is thus the projection of the last principal components (more generally k+1 through n-1 components).
+Therefore, the residual subspace detection is determined by the distance between a given point and the normal subspace.
+If the distance is above a certain threshold, then the user is classified as anomalous.
+
+\subsubsection*{Results}
+
+\quad PCA was able to detect bot-users with a high accuracy and compromised legitimate users with greater than 50\% accuracy without a labeled data set because it was able to detect the most weighted features.
+However, classification varies on the choice of threshold, which may be a difficult hyperparameter to tune based on the specific problem at hand.
+Also, if the user data is too variable, a bot could potentially hide in the noise.
+
+\subsection*{Detecting Lockstep Behavior -- 2014}
+
+\subsubsection*{Approach}
+
+\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern? (groups of followers typically following the same group of followees with little to no other activity).
+When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
+However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
+There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
+Instead, a subset of these followers show the non-overlap behavior for some followees while other subsets show the same non-overlap behavior for some other followees.
+
+\subsubsection*{Model}
+
+\quad A fundamental part of this approach is the use of spectral-subspace plots.
+Given an adjacency matrix that is $NxN$, spectral-subspace plots project these points from $N$ dimensions into 2 dimensions spanned by two singular vectors.
+For a non-lockstep behavior spectral-subspace, points cluster around the origin.
+However, for the non-overlap lockstep ``block" behavior has a spectral-subspace plot that shows a ``ray" pattern from two of its singular vectors.
+In addition, the overlap lockstep ``staircase" behavior is projected onto two singular vectors exhibits spherical micro-clusters (referred to as a ``pearl" pattern) in its spectral-subspace plot.
+These patterns are utilized for discovering other bot-followers using ``lockstep" propagation, which has linear complexity.
+
+\subsubsection*{Algorithm}
+
+\textbf{Input:} Who-knows-who adjacency matrix $A$\\
+\textbf{Output:} Set of ``lockstep" followers\\
+\textbf{Feature utilized:} Follower/followee relationships
+
+\begin{enumerate}
+	\item Identify ``seed" followers
+	\begin{enumerate}
+		\item Create a spectral subspace plot of the top $k$ left-singular vectors (left-singular vectors referring to the columns of the $U$ matrix of SVD decomposition).
+		\item Transform the points to polar coordinates ($r$ and $\theta$) using the Hough transformation.
+		\item Divide the $r$ and $\theta$ axes into bins, count the frequency, and create a histogram.
+		\item Categorize the subplot as non-lockstep, non-overlap lockstep, or lockstep.
+		If the $\theta$ bin plots show two apparent spikes at 0 and 90 degrees, then there is a non-overlap lockstep behavior (aka ``ray" pattern).
+		If the $r$-bin plot shows a single spike apart from $r = 0$, then there is an overlap lockstep behavior present (aka ``pearls" pattern).
+		Spikes can be detected using median filtering and identifying the related nodes as ``seeds".
+	\end{enumerate}
+	\item Lockstep propagate
+	\begin{enumerate}
+		\item For each ``seed" followee identified, count the number of followers in the seed set.
+		If there are more than a certain threshold, then the group is considered ``lockstep" followees.
+		\item For each follower, count the number of its followees that are considered ``lockstep".
+		If above a certain threshold, then determine the follower as part of the ``lockstep" behavior.
+		From this step, new ``lockstep" followers are determined while other followers are considered benign because they only have zero or one ``lockstep" followee.
+		\item Repeat (a) and (b) until convergence.
+	\end{enumerate}
+\end{enumerate}
+
+\subsubsection*{Results}
+
+\quad While the lockstep method was able to detect bots that try to camouflage themselves by following legitimate users different from its bot group, it relies on the assumption that bots use most of their activity to follow a followee as a mass.
+
+\subsection*{Modified COMPA -- 2015}
+
+\subsubsection*{Approach}
+
+\quad The authors suggest a modified version of the COMPA algorithm in order to detect compromised social media accounts.
+Often, online social networks contain automated bot accounts for malicious reasons.
+Currently, there are many algorithms for detecting anomalies but not many for detecting hijacked accounts.
+Hijacking accounts is becoming more popular for malicious users because a new bot account does not have to be created.
+Instead, the spammer will take control of a pre-existing account with a good reputation.
+The original COMPA system detects these types of accounts by clustering similar messages together.
+Although the original COMPA system can accurately detect large-scale spam campaigns, it is hard for it to detect individual hijacked accounts.
+The authors suggest that they can modify COMPA to detect individual hijacked accounts by removing the clustering part of the algorithm.
+
+\subsubsection*{Model}
+
+\quad Previous models that were used before COMPA included the semi-supervised learning framework SybilBelief, the unsupervised approach of principal component analysis, and the support vector machine.
+However, these algorithms cannot pinpoint exactly when a particular account was hijacked.
+COMPA is a supervised learning classifier that classified based on each user account.
+If a new tweet is anomalous, then the account is considered to be hijacked.
+
+\quad For this modified version of COMPA, the features are a list of tuples containing the attribute value and the number of times the attribute occurs.
+To smooth out these features, the algorithm looks at the previous and next hour as well.
+From this information, the model is trained and anomaly scores are calculated from the new messages.
+The overall anomaly score is calculated from the weighted sum of the individual anomaly scores.
+To evaluate this model, the data is collected from a number of social media accounts where a subset of the messages are swapped with anomalous messages.
+This way, the authors have full control over when the hijackings of the account took place.
+
+\subsubsection*{Results}
+
+\quad While the modified COMPA model is able to detect individual hijacked accounts, it has some limitations.
+There is a tradeoff between precision and recall.
+If the precision is too low, it cannot be used in real world situations.
+However, if the anomaly threshold is not set to a high value, there could be too many false positives.
+The model can also be unstable in that the detection behavior is dependent on the threshold.
+In the future, the authors suggest that the model could be improved by adding more features to the training data.
+
+\subsection*{EdgeCentric: Anomaly Detection in Edge-Attributed Networks -- 2015}
+
+\subsubsection*{Approach}
+
+\quad Many social media interactions can be represented using networks with attributed-edges.
+The attributed edges in graphs capture information about how the adjacent nodes interact with other entities in the graph.
+For example, in e-commerce networks, edges indicate how and when users rated products; edges in unipartite social networks contain information about when friendships were formed and when users communicated with each other.
+EdgeCentric uses the information on edges for identifying suspicious nodes.
+
+\subsubsection*{Model}
+
+\quad The authors assume that the multiple attributes on edges, the multiple relations between the nodes, and the multiple distributions of typical human behavior are independent of each other.
+Under this simplifying assumption, they define $\delta(.)$ as the anomaly function for scoring each node.
+For a certain node $v$ in the underlying graph, $\delta(v)$ is defined as:
+$$\delta(v) = \sum ... $$ % didn't understand what was written here on google doc!
+
+%% tbc %%
+$\ldots$
+
 \section*{Discussion}
 
 aaa
