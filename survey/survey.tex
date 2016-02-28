@@ -440,7 +440,7 @@ The proposed problem was not constrained to be completely automated and assumed 
 
 Syntax features: similarity to known NLP generators, number of hashtags, user mentions, links, or special characters, number of retweets by user, geo-enabled, whether tweet ends with punctuation, hashtag, or link
 
-Semantic features: number of user posts related to vaccination, user?s average sentiment score on tweets with the word ``vaccination?, contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
+Semantic features: number of user posts related to vaccination, user?s average sentiment score on tweets with the word ``vaccination", contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
 
 Temporal behaviors: flipping sentiment over time, entropy of inter-arrival times, duration of longest session by a user, number of dropped followers over time
 
@@ -510,7 +510,7 @@ Also, if the user data is too variable, a bot could potentially hide in the nois
 
 \subsubsection*{Approach}
 
-\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern? (groups of followers typically following the same group of followees with little to no other activity).
+\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern" (groups of followers typically following the same group of followees with little to no other activity).
 When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
 However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
 There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
@@ -597,20 +597,36 @@ In the future, the authors suggest that the model could be improved by adding mo
 
 \subsubsection*{Approach}
 
-\quad Many social media interactions can be represented using networks with attributed-edges.
-The attributed edges in graphs capture information about how the adjacent nodes interact with other entities in the graph.
-For example, in e-commerce networks, edges indicate how and when users rated products; edges in unipartite social networks contain information about when friendships were formed and when users communicated with each other.
-EdgeCentric uses the information on edges for identifying suspicious nodes.
+\quad Many real-world online interactions can be represented using graphs with attributed-edges. The attributed edges in graphs capture information about how the adjacent nodes interact with other entities in the graph. For example, edges in e-commerce networks indicate how and when users rated products; edges in unipartite social networks contain information about when friendships were formed and when users communicated with each other. EdgeCentric uses the information on edges to identify suspicious nodes. 
+
+This is an information theoretic approach for node anomaly detection in edge-attributed graphs. It leverages minimum description length (MDL) to identify nodes with atypical behavior on adjacent edges in an unsupervised fashion. 
 
 \subsubsection*{Model}
 
-\quad The authors assume that the multiple attributes on edges, the multiple relations between the nodes, and the multiple distributions of typical human behavior are independent of each other.
-Under this simplifying assumption, they define $\delta(.)$ as the anomaly function for scoring each node.
-For a certain node $v$ in the underlying graph, $\delta(v)$ is defined as:
-$$\delta(v) = \sum ... $$ % didn't understand what was written here on google doc!
+\quad It must be noted that there can be multiple types of nodes, relations and attributes. For example, in the e-commerce networks: nodes can be of type products, buyers or sellers; relations can be of type ``users rated products" or ``users rated sellers"; attributes can be the time-stamps or the actual value of ratings. Also, there can be multiple model distributions and hence clusters of typical node behavior.
 
-%% tbc %%
-$\ldots$
+The main idea of the paper is to devise an abnormality function, $\delta(v)$, corresponding to each node $v$ in the edge-attrbuted multi-graph. The higher the value of $\delta(v)$ the more the likelihood of the node being suspicious. $\delta(v)$ is formulated as:
+
+\begin{equation}
+\delta(v) = \sum_{r\in R} \left( \sum_{w \in \Omega(r)} \left(|f_{v,r}|\sum_{g=1}^{h_w} \left( \rho_{b,r,w,g}. KL(\hat{v}_w || C_{b,r,w,g})\right) \right)\right)
+\end{equation}
+
+where $|f_{v,r}|$ is the cardinality of the edge-attribute value vector $f_{v,r}$ generated from $v$'s neighbouring edges of type $r$, $\hat{v}_w$ is the discrete probability distribution corresponding to $v$ over attribute $w$, $C_{b,r,w,g}$ and $\rho_{b,r,w,g}$ give the $g^{th}$ model distribution and proportion of the $g^{th}$ cluster on the $r^{th}$ relation type, respectively. $KL(\dot || \dot)$ is the KL divergence in bits defined on two data models. Intuitively, $\delta(v)$ gives the expected number of extra bits required to encode the node $v$’s edge-attribute vectors with respect to a joint model over multiple relations, attributes and clusters.
+
+\subsubsection*{Algorithm}
+
+\quad The algorithm consist of five steps
+\begin{itemize}
+\item Aggregation: For each node-type, aggregate attribute values over the outgoing edges from each node, for each associated relation-type. Hence for each node, there will be a vector of attribute values for each relation-type.
+\item Discretization: Based on attribute type and range of values, discretize the space linearly or logarithmically for numerical attributes. Categorical attributes are already discetized. Normalize to construct probability mass functions.
+\item Clustering: For each node-type and attribute, cluster the vectors describing the per-attribute probability mass functions associated with each relation
+\item Scoring: For each node-type, compute the abnormality function $\delta$ for all nodes over associated relations and attribute clusters
+\item Ranking: For each node-type, sort in descending order the resulting abnormality scores and return with node with scores.
+\end{itemize}
+
+\subsubsection*{Result}
+
+\quad The merits of EdgeCentric include leveraging multiple relationships between the entities, practical scalability and having numerous applications being a graph based approach. The downside is that it makes a lot of independency assumptions. For example, multiple attributes are assumed to be independent while formulating the closed form expression of $\delta$. 
 
 \section*{Discussion}
 
