@@ -194,7 +194,7 @@ Their predictor can perfectly distinguish bots from humans, but performs worse i
 Applying this model to their 500,000 users, they estimate the ratio of human, cyborg, and bot on Twitter to be 5:4:1.
 
 \quad The authors outline the pitfalls with their model that led to misclassifications.
-Spam score is a tricky feature to use, since even human users use ?spammy? words in advertising their own content.
+Spam score is a tricky feature to use, since even human users use ``spammy" words in advertising their own content.
 Additionally, bots and cyborgs can use very naturally scripted language, tricking their spam classifier.
 Additionally, the entropy rates of humans could be low if a user often posts at certain times.
 
@@ -283,13 +283,13 @@ BIRDNEST expands on the pure temporal-based approach by using both IAT and ratin
 \quad When determining the suspiciousness of a user, one may first ask what the rating distribution or IAT distribution is for a given user.
 For example, a user that rates all ones or all fives would have a single peaked rating distribution and a user that rates all fives for its own company's products and all ones for its competitors' products would have a bimodal rating distribution.
 BIRDNEST approaches user rating-fraud detection by solving these questions with Bayesian inference.
-The user?s rating distribution is the prior distribution and the belief of the user?s true long-term behavior trends is the posterior distribution.
-The goal is to detect a typical bot?s behavior of a narrow posterior distribution towards one extreme of the rating range or the other since this behavior is vastly different from a typical normal distribution or even a newbie legitimate user.
+The user's rating distribution is the prior distribution and the belief of the user's true long-term behavior trends is the posterior distribution.
+The goal is to detect a typical bot's behavior of a narrow posterior distribution towards one extreme of the rating range or the other since this behavior is vastly different from a typical normal distribution or even a newbie legitimate user.
 
 \subsubsection*{Model}
 
 \quad The BIRDNEST model has two phases: fitting the Bayesian model (BIRD) to a given data set and creating the metric of suspiciousness called the Normalized Expected Surprise Total (NEST).
-It expects as input data the following: a matrix of users? ratings (rating from 1 to n) where the user is indexed from 1 to m and the corresponding matrix of timestamp of the rating.
+It expects as input data the following: a matrix of users' ratings (rating from 1 to n) where the user is indexed from 1 to m and the corresponding matrix of timestamp of the rating.
 The timestamp data is pre-processed to calculate the IATs of each user.
 
 \quad The BIRD generative model is a mixture model where there are $K$ clusters.
@@ -318,7 +318,7 @@ Then, the NEST metric is calculated to quantitatively determine how certain the 
 
 \subsubsection*{Approach}
 
-\quad In this paper, the authors? goal is to determine group anomalies by proposing the GLAD (Group Latent Anomaly Detection) model, which uses a hierarchical Bayes model.
+\quad In this paper, the authors' goal is to determine group anomalies by proposing the GLAD (Group Latent Anomaly Detection) model, which uses a hierarchical Bayes model.
 Unlike previous models, GLAD takes in pair-wise and point-wise data as input and determines the groups and group anomalies simultaneously.
 Until now, people were only trying to detect individual anomalies; however, detecting group anomalies early and efficiently is also important in order for preventing group attacks.
 There are three main observations made towards group anomaly:
@@ -383,7 +383,7 @@ According to the SyncFraud problem, suspicious groups are those that exhibit hig
 	\item Number of retweets
 	\item Response time of first retweet
 	\item Lifespan, constrained to three weeks
-	\item RT-Q3, the time to garner the first ? of the retweets
+	\item RT-Q3, the time to garner the first three quarters of the retweets
 	\item RT-Q2, the time to garner the first half of the retweets
 	\item Arr-MAD, mean absolute deviation of IATs
 	\item Arr-IQR, inter-quartile range of IATs
@@ -440,7 +440,7 @@ The proposed problem was not constrained to be completely automated and assumed 
 
 Syntax features: similarity to known NLP generators, number of hashtags, user mentions, links, or special characters, number of retweets by user, geo-enabled, whether tweet ends with punctuation, hashtag, or link
 
-Semantic features: number of user posts related to vaccination, user?s average sentiment score on tweets with the word ``vaccination?, contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
+Semantic features: number of user posts related to vaccination, user's average sentiment score on tweets with the word ``vaccination", contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
 
 Temporal behaviors: flipping sentiment over time, entropy of inter-arrival times, duration of longest session by a user, number of dropped followers over time
 
@@ -458,7 +458,7 @@ USC uses KNN search to create a graph of similar users based on a number of feat
 The Sentimetrix team uses DBSCAN to cluster around the manually selected bots.
 Once a certain number of humans and bots are found using the previous algorithms, all teams employed the use of a support vector machine to determine whether there were any additional bots.
 
-\quad Indiana?s team attempted to use a multi-armed bandit approach, assigning a ?bot score? to each test point, and adjusting the weights such that the accurate arms gained weight and inaccurate ones lost weight.
+\quad Indiana's team attempted to use a multi-armed bandit approach, assigning a ``bot score" to each test point, and adjusting the weights such that the accurate arms gained weight and inaccurate ones lost weight.
 This approach is an online approach, so it could dynamically learn based on each additional input.
 
 \subsubsection*{Results}
@@ -492,7 +492,7 @@ To summarize the distribution within a bucket, entropy can be used where the pro
 
 \quad PCA is an unsupervised learning algorithm which finds the most varied projects of a given data set.
 This model is represented as a linear combination of the most uncorrelated features (aka principal components or singular values) where the first principal component has the maximum variation.
-Human behavior can be described in a small amount of dimensions (k-dimensions) which this study shows because five principal components were enough to describe 85\% of the data?s variance.
+Human behavior can be described in a small amount of dimensions (k-dimensions) which this study shows because five principal components were enough to describe 85\% of the data's variance.
 
 \quad Anomalies are determined based on the distance from the normal subspace.
 The normal subspace is the projection of the first five principal components (more generally k-components).
@@ -510,7 +510,7 @@ Also, if the user data is too variable, a bot could potentially hide in the nois
 
 \subsubsection*{Approach}
 
-\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern? (groups of followers typically following the same group of followees with little to no other activity).
+\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern" (groups of followers typically following the same group of followees with little to no other activity).
 When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
 However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
 There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
@@ -597,20 +597,50 @@ In the future, the authors suggest that the model could be improved by adding mo
 
 \subsubsection*{Approach}
 
-\quad Many social media interactions can be represented using networks with attributed-edges.
+\quad Many real-world online interactions can be represented using graphs with attributed-edges.
 The attributed edges in graphs capture information about how the adjacent nodes interact with other entities in the graph.
-For example, in e-commerce networks, edges indicate how and when users rated products; edges in unipartite social networks contain information about when friendships were formed and when users communicated with each other.
-EdgeCentric uses the information on edges for identifying suspicious nodes.
+For example, edges in e-commerce networks indicate how and when users rated products; edges in unipartite social networks contain information about when friendships were formed and when users communicated with each other.
+
+\quad EdgeCentric is an information theoretic approach for node anomaly detection in edge-attributed graphs because it uses the information on edges to identify suspicious nodes.
+It leverages minimum description length (MDL) to identify nodes with atypical behavior on adjacent edges in an unsupervised fashion. 
 
 \subsubsection*{Model}
 
-\quad The authors assume that the multiple attributes on edges, the multiple relations between the nodes, and the multiple distributions of typical human behavior are independent of each other.
-Under this simplifying assumption, they define $\delta(.)$ as the anomaly function for scoring each node.
-For a certain node $v$ in the underlying graph, $\delta(v)$ is defined as:
-$$\delta(v) = \sum ... $$ % didn't understand what was written here on google doc!
+\quad There are multiple types of nodes, relations, and attributes.
+For example, in the e-commerce networks: nodes can be of type products, buyers or sellers; relations can be of type ``users rated products" or ``users rated sellers"; attributes can be the time-stamps or the actual value of ratings.
+Also, there can be multiple model distributions, forming clusters of typical node behavior.
 
-%% tbc %%
-$\ldots$
+\quad The main idea of the paper is to devise an abnormality function, $\delta(v)$, corresponding to each node $v$ in the edge-attrbuted multi-graph.
+The higher the value of $\delta(v)$, the more likely the node is suspicious.
+$\delta(v)$ is formulated as:
+
+\begin{equation*}
+\delta(v) = \sum_{r\in R} \left( \sum_{w \in \Omega(r)} \left(|f_{v,r}|\sum_{g=1}^{h_w} \left( \rho_{b,r,w,g}. KL(\hat{v}_w || C_{b,r,w,g})\right) \right)\right)
+\end{equation*}
+
+where $|f_{v,r}|$ is the cardinality of the edge-attribute value vector $f_{v,r}$ generated from $v$'s neighboring edges of type $r$, $\hat{v}_w$ is the discrete probability distribution corresponding to $v$ over attribute $w$, $C_{b,r,w,g}$ and $\rho_{b,r,w,g}$ give the $g^{th}$ model distribution and proportion of the $g^{th}$ cluster on the $r^{th}$ relation type, respectively.
+$KL(\dot || \dot)$ is the KL divergence in bits defined on two data models.
+Intuitively, $\delta(v)$ gives the expected number of extra bits required to encode the node $v$’s edge-attribute vectors with respect to a joint model over multiple relations, attributes and clusters.
+
+\subsubsection*{Algorithm}
+
+\quad The algorithm is split into five steps:
+\begin{enumerate}
+\item Aggregation: For each node-type, aggregate attribute values over the outgoing edges from each node for each associated relation-type.
+For each node, there will be a vector of attribute values for each relation-type.
+\item Discretization: Based on attribute type and range of values, discretize the space linearly or logarithmically for numerical attributes.
+Categorical attributes are already discretized.
+Normalize to construct probability mass functions.
+\item Clustering: For each node-type and attribute, cluster the vectors describing the per-attribute probability mass functions associated with each relation.
+\item Scoring: For each node-type, compute the abnormality function $\delta$ for all nodes over associated relations and attribute clusters.
+\item Ranking: For each node-type, sort in descending order the resulting abnormality scores and return with node with scores.
+\end{enumerate}
+
+\subsubsection*{Results}
+
+\quad EdgeCentric is able to account for multiple relationships between entities, has practical scalability, and has numerous real-world applications because it is a graph based approach.
+However, it makes a lot of independency assumptions.
+For example, multiple attributes are assumed to be independent while formulating the closed form expression of $\delta$. 
 
 \section*{Discussion}
 
