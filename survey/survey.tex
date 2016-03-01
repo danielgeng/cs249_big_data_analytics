@@ -648,13 +648,12 @@ However, it makes a lot of independency assumptions.
 For example, multiple attributes are assumed to be independent while formulating the closed form expression of $\delta$. 
 
 
-\subsection*{FocusCo: Focussed Clustering and Outlier Detection in Large Attributed Graphs--2014}
-
-\quad Unlike EdgeCentric, FocusCo is based on node-attributed graphs, rather than edge-attributed graphs.
+\subsection*{FocusCo: Focused Clustering and Outlier Detection in Large Attributed Graphs--2014}
 
 \subsubsection*{Approach}
 
-\quad The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
+\quad Unlike EdgeCentric, FocusCo is based on node-attributed graphs, rather than edge-attributed graphs.
+The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
 They either use all attributes or perform unsupervised feature selection.
 Users cannot control the relevance of the attributes and hence the results of graph mining. % 'hence the results of graph mining...'??
 In attributed graphs, focused clustering is often of particular interest, where users might be concerned with a few attributes. 
@@ -677,7 +676,7 @@ The other objective is to detect outliers $O$, which are defined to be the nodes
 \quad The three main components of FocusCo are:
 \begin{enumerate}
 \item \emph{Inferring attribute weights}: 
-The user initiates the focussed clustering by providing $C_{ex}$.
+The user initiates the focused clustering by providing $C_{ex}$.
 The goal is to identify the relevance weights that make nodes in $C_{ex}$ similar to each other (i.e. they have small Mahalanobis distance to each other).
 Mahanalobis distance between two feature vectors $f_i$ and $f_j$ is defined as $(f_i - f_j)^T\beta_u(f_i-f_j)$. For this, the following optimization problem is solved:
 
@@ -685,7 +684,7 @@ Mahanalobis distance between two feature vectors $f_i$ and $f_j$ is defined as $
 \min_{A} \sum_{(i,j) \in P_S}(f_i - f_j)^T\beta_u(f_i-f_j) - \gamma \left( \sum_{(i,j) \in P_D} \sqrt{((f_i - f_j)^T\beta_u(f_i-f_j))} \right)
 \end{equation*}  
 
-\item \emph{Focussed Cluster Extraction}: 
+\item \emph{Focused Cluster Extraction}: 
 The primary idea to create focused clusters is to first find good candidate nodes and then expand around those nodes to find the clusters.
 First, the edges $E$ are re-weighted by weighted similarity of their end nodes, and the graph $G$ is induced on the edges having large weights.
 The nodes in the resulting connected components are considered as the candidate nodes. Such components are called core sets.
