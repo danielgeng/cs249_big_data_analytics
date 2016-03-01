@@ -50,6 +50,11 @@ The \textbf{role mixture rate} is an inference of group membership and role iden
 A \textbf{group anomaly} occurs when the role mixture rate is significantly different than a normal group role mixture rate.
 All individuals inside of a group will be classified as suspicious if there is a group anomaly.
 
+\quad The evaluation of each anomaly detection method will be similar.
+The most important performance metric is anomaly detection accuracy; if a method is unable to correctly differentiate between humans and bots, then it is not very useful.
+Because real-world datasets have millions of data points that must be accounted for and processed, scalability in terms of both space and time is very important.
+Additionally, methods should be robust, as noise and outliers are quite common in real-world data.
+
 \section*{Models, Approaches, Algorithms}
 
 \quad Methods developed before 2014 will be introduced here as both a basis of improvement and reference for state-of-the-art methods. 
@@ -666,7 +671,6 @@ Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few at
 The clusters are $(1)$ dense in graph structure and separated from rest of the graph $(2)$ coherent on focused attributes with large weights.
 The focused clusters can be overlapping, sharing several of their nodes.
 The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes.
-
 
 \subsubsection*{Algorithm}
 
