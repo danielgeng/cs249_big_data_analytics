@@ -50,6 +50,11 @@ The \textbf{role mixture rate} is an inference of group membership and role iden
 A \textbf{group anomaly} occurs when the role mixture rate is significantly different than a normal group role mixture rate.
 All individuals inside of a group will be classified as suspicious if there is a group anomaly.
 
+\quad The evaluation of each anomaly detection method will be similar.
+The most important performance metric is anomaly detection accuracy; if a method is unable to correctly differentiate between humans and bots, then it is not very useful.
+Because real-world datasets have millions of data points that must be accounted for and processed, scalability in terms of both space and time is very important.
+Additionally, methods should be robust, as noise and outliers are quite common in real-world data.
+
 \section*{Models, Approaches, Algorithms}
 
 \quad Methods developed before 2014 will be introduced here as both a basis of improvement and reference for state-of-the-art methods. 
@@ -643,60 +648,67 @@ However, it makes a lot of independency assumptions.
 For example, multiple attributes are assumed to be independent while formulating the closed form expression of $\delta$. 
 
 
-\subsection*{FocusCo: Focussed Clustering and Outlier Detection in Large Attributed Graphs--2014}
-\quad Unlike EdgeCentric, FocusCo is based on the node-attribted graphs.
+\subsection*{FocusCo: Focused Clustering and Outlier Detection in Large Attributed Graphs--2014}
 
 \subsubsection*{Approach}
-\quad The exisiting techniques of clustering and outlier detection in node-attributed graphs do not incorporate the user preference. 
-They either use all the attributes or perform unsupervised feature selection.
-The users cannot control the relevance of the attributes and hence the results of graph mining.
-In attributed graphs, focussed clustering is often of particular interest where users might be concerned with a few attributes. 
-As different subsets of attributes yield different clusters, the users should be able to steer the clusters acordingly.
+
+\quad Unlike EdgeCentric, FocusCo is based on node-attributed graphs, rather than edge-attributed graphs.
+The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
+They either use all attributes or perform unsupervised feature selection.
+Users cannot control the relevance of the attributes and hence the results of graph mining. % 'hence the results of graph mining...'??
+In attributed graphs, focused clustering is often of particular interest, where users might be concerned with a few attributes. 
+As different subsets of attributes yield different clusters, the users should be able to steer the clusters accordingly.
 
 \subsubsection*{Model}
-\quad Given a node-attributed graph $G(V,E,F)$ with $|V|=n$ nodes and $|E|=m$ edges, where each node has $|F| = d$ attributes, the the user $u$ wants to extract only the clusters of his interest. 
-To do so, he provides a small set $C_{ex}$ of exemplar nodes that he considers to be similar to the type of nodes the clusters of his interest should contain. 
-The main idea of the paper is to infer the implicit weights $\beta_{u}$ (i.e., relevance) of attributes that define the nodes in $C_{ex}$. 
-Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few attributes called the focus attributes. 
 
-\quad Once the $\beta_u$ is inferred, the focussed clusters $C$ are extracted. 
-The clusters are $(1)$  dense in graph structure and separated from rest of the graph $(2)$ coherent on focussed attributes with large weights. 
-The focussed clusters can be overlapping, sharing several of their nodes. 
-The other objective is to detect outliers. 
-Outliers $O$ are defined to be the nodes that structurally belong to a focussed cluster , but deviate from its members in some focus attributes.
+\quad Given a node-attributed graph $G(V,E,F)$ with $|V|=n$ nodes and $|E|=m$ edges, where each node has $|F| = d$ attributes, the user $u$ wants to extract only the clusters of interest.
+To do so, a small set $C_{ex}$ of exemplar nodes that is considered to be similar to the type of nodes the clusters of interest should contain is provided.
+The main idea of the paper is to infer the implicit weights $\beta_{u}$ (i.e., relevance) of attributes that define the nodes in $C_{ex}$.
+Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few attributes, which are called the ``focus attributes".
 
+\quad Once the $\beta_u$ is inferred, the focused clusters $C$ are extracted. 
+The clusters are $(1)$ dense in graph structure and separated from rest of the graph $(2)$ coherent on focused attributes with large weights.
+The focused clusters can be overlapping, sharing several of their nodes.
+The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes.
 
 \subsubsection*{Algorithm}
+
 \quad The three main components of FocusCo are:
 \begin{enumerate}
 \item \emph{Inferring attribute weights}: 
-The user initates the focussed clustering by providing $C_{ex}$. 
-The goal is to identify the relevance weights that make nodes in $C_{ex}$ similar to each other i.e. they have small Mahalanobis distance to each other. 
-Mahanalobis distance between two feature vectors $f_i$ and $f_j$ is defined as $(f_i - f_j)^T\beta_u(f_i-f_j)$. For this the following optimization problem is solved.
+The user initiates the focused clustering by providing $C_{ex}$.
+The goal is to identify the relevance weights that make nodes in $C_{ex}$ similar to each other (i.e. they have small Mahalanobis distance to each other).
+Mahanalobis distance between two feature vectors $f_i$ and $f_j$ is defined as $(f_i - f_j)^T\beta_u(f_i-f_j)$. For this, the following optimization problem is solved:
 
 \begin{equation*}
 \min_{A} \sum_{(i,j) \in P_S}(f_i - f_j)^T\beta_u(f_i-f_j) - \gamma \left( \sum_{(i,j) \in P_D} \sqrt{((f_i - f_j)^T\beta_u(f_i-f_j))} \right)
 \end{equation*}  
 
-\item \emph{Focussed Cluster Extraction}: 
-The idea in forming focussed clusters is to first find good candidate nodes and then expand around those nodes to find the clusters. 
-First, the edges $E$ are re-weighted by weighted similarity of their end nodes, and the graph $G$ is induced on the edges having large weights. 
+\item \emph{Focused Cluster Extraction}: 
+The primary idea to create focused clusters is to first find good candidate nodes and then expand around those nodes to find the clusters.
+First, the edges $E$ are re-weighted by weighted similarity of their end nodes, and the graph $G$ is induced on the edges having large weights.
 The nodes in the resulting connected components are considered as the candidate nodes. Such components are called core sets.
-Next, new nodes that increase the quality of clusters are chosen to be included in the clusters until there exist no such nodes. The quality of the a cluster $C \subset V$ is measured as its weighted conductance defined as
+Next, new nodes that increase the quality of clusters are chosen to be included in the clusters until there exist no such nodes.
+The quality of the a cluster $C \subset V$ is measured as its weighted conductance defined as:
 
 \begin{equation*}
 \phi^{(w)}_{C, G} = \frac{W_{cut}(C)}{W_{Vol}(C)} = \frac {\sum\limits_{(i,j)\in E, i\in C, j\in V\setminus C}w(i,j)} 
 														  {\sum\limits_{i\in C} \sum\limits_{j:(i,j)\in E}w(i,j)}
 \end{equation*}
 
-The lower the conductance of a cluster, the better is its quality.
+The lower the conductance of a cluster, the better its quality.
 
-\item \emph{Focussed Outlier Detection}:
-A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes. The idea is to identify during the expandion of clusters the structural nodes that are best in terms of unweighted conductance. The best nodes which were not included in the resulting focused cluster are taken as the outliers.
+\item \emph{Focused Outlier Detection}:
+A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
+The idea is to identify the structural nodes that are best in terms of unweighted conductance during the expansion of clusters.
+The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
 \end{enumerate}
 
 \subsubsection*{Results}
-FocusCo is a scalable algorithm which runs in time linear with the size of input graph. With appropriate initializations, it can very well run in sub-linear time in practice. This helps the users in obtaining clusters and identifying outliers according to the attributes of his choice.
+
+\quad FocusCo is a scalable algorithm which runs in time linear with the size of input graph.
+With appropriate initializations, it can very well run in sub-linear time in practice.
+This helps the users to obtain clusters and identify outliers according to the attributes of choice.
 
 \section*{Discussion}
 
