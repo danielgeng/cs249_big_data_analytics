@@ -655,7 +655,7 @@ For example, multiple attributes are assumed to be independent while formulating
 \quad Unlike EdgeCentric, FocusCo is based on node-attributed graphs, rather than edge-attributed graphs.
 The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
 They either use all attributes or perform unsupervised feature selection.
-Users cannot control the relevance of the attributes and hence the results of graph mining. % 'hence the results of graph mining...'??
+Users cannot control the relevance of the attributes and therefore have no control on the resultant clusters. % 'hence the results of graph mining...'??
 In attributed graphs, focused clustering is often of particular interest, where users might be concerned with a few attributes. 
 As different subsets of attributes yield different clusters, the users should be able to steer the clusters accordingly.
 
@@ -709,6 +709,31 @@ The best nodes which were not included in the resulting focused cluster are then
 \quad FocusCo is a scalable algorithm which runs in time linear with the size of input graph.
 With appropriate initializations, it can very well run in sub-linear time in practice.
 This helps the users to obtain clusters and identify outliers according to the attributes of choice.
+
+\subsection*{Discovering Opinion Spammer Groups by Network Footprints}
+
+\subsubsection*{Approach}
+\quad This work proposes an unsupervised and scalable approach for detecting opinion spammer groups solely based on the network footprints. 
+The idea is to quantify the statistical distortions caused by spamming activities in well-understood network characteristics. 
+This graph based measure is known as Network Footprint Score (NFS). 
+Then the group spammers are identified using a hierarchial clustering on the induced subnetwork of highly suspiscious products and reviews. 
+This outputs a set of spammers with their nested hierarchy.
+
+\subsubsection*{Model}
+To design the NFS measure, the work leverages two observations associated with real-world networks: 
+\begin{enumerate}
+\item \emph{Neighbour diversity}: The neighbours of a node should consist of nodes with diverse behavior or importance. The importance of a node is expressed in terms of its degree centrality and pagerank centrality. Both the centrality measures are binned logarithmically into buckets, and their discrete probability distributions and shannon entropies are found. The lower the entropies the more likely the product is a target of a spam campaign.
+\item \emph{Self-similarity}: This implies that the centrality distribution of reviewers for a particular product should be similar to the overall centrality distribution of the reviewers. For each centrality measure, the self similarity is measured in terms of the KL divergence between distributions of the reviewers of the product with the global distributions. The larger these scores are, the more likely the product is the target of a spam campaign.
+\end{enumerate}
+
+\quad From the above two observations, we get four suspiciousness scores. The NFS score unifies all these to produce a single measure of suspiciousness. The product with high NFS value is more likely to be the target of a spam campaign.
+
+Once the NFS values are computed for the products, the next goal is to detect the spammer groups. First, a subnetwork is constructed. It consists of products with high NFS values, the reviewers of these products and all the products that these reviewers reviewed. This subnetwork is represented as an adjacency matrix where each column represents a reviewer. The objective is to chip off groups where columns in a group have strong similarity.
+
+An agglomerative clustering approach is adopted where columns are iteratively merged to form larger groups. To make the clustering more efficient, the authors leverage Locality-Sensitive Hashing (LSH) for finding similar set of clusters. LSH ensures that similar points are highly likely to get hashed to the same bucket and dissimilar ponts are rarely hashed to the same bucket. Therefore it speedens the similarity search.
+
+\subsubsection*{Results}
+The language and behavior patterns are easier to be mimiced by the spammers as compared to the network-wide patterns. The work utilizes these patterns to detect the spam groups. Since the proposed algorithm extensively uses various probability distributions, this are not very effective when there are only a few reviewers; few data points cannot constitute reliable distributions.
 
 \section*{Discussion}
 
