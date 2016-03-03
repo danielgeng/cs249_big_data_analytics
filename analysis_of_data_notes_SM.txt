@@ -1,0 +1,457 @@
+IAT Facebook bidder data
+-1,984 Unique users with labels
+-1,682 Unique users with labels and more than one bid (needed enough for IAT feature)
+-103 total bots in data set
+
+Log-base was initialized at 5 for 20 buckets
+K was initialized at 20
+Results:
+Only 2 iterations and 3 clusters
+
+Changed K = 2
+Results:
+Still only 2 iterations and now 2 clusters
+OUTPUT RESULT:
+ae6758a627a111f6d6b530b0154c429566o4k is a true bot but only in 11th place
+-------------------------------------------
+[231570    0     0     0     0     0     0     0     0     0     0 265721  17631   109     0     0     0     0     0     1]
+[ 69784    0     0     0     0     0     0     0     0     0     0 111987  10709    84     0     0     0     0     0     0]
+[ 56171    0     0     0     0     0     0     0     0     0     0 150400  29459   376     5     0     0     0     0     1]
+[24955     0     0     0     0     0     0     0     0     0     0  98740  37855   383     0     0     0     0     0     1]
+[15347     0     0     0     0     0     0     0     0     0     0  50642  18002   327     0     0     0     0     0     0]
+[ 5901     0     0     0     0     0     0     0     0     0     0  26161  18412   946     0     0     0     0     0     0]
+[ 8862     0     0     0     0     0     0     0     0     0     0  31826  28464  4192    10     1     0     0     0     1]
+[ 5349     0     0     0     0     0     0     0     0     0     0  24162  17202  1304     0     0     0     0     0     0]
+[ 3990     0     0     0     0     0     0     0     0     0     0  21874  27584  4734    11     0     0     0     0     1]
+[ 8759     0     0     0     0     0     0     0     0     0     0  31850  19737  5581    98     0     0     0     0     1]
+[ 6243     0     0     0     0     0     0     0     0     0     0  21923  21416  5225   178     0     0     0     0     1]
+Where the last one is the true bot's IAT and the IAT histograms before it are labeled real people.
+
+Here are the rankings by IDs:
+1910 f5edfebe95b4f637d1bcceb892b73dc7rhn7l
+1297 a5fb60c136b7e0a6d0d6e27cadb2a797225r6
+194 19815d9bcdc74c3ddfb9ff210c1739f3tup3i
+1180 9685887173cc2e1e5ee3993832a4b153bfl9m
+856 6ca1de75674e78f9d3d63fd96fbe6e172t86c
+1619 d0231e5200b870c055db7e3daae24bc8lt7at
+801 671fb1e314a1f480ba9ad9b5a1cf6a91w1k2f
+1720 dd1675bf26316cd4630087fb47d0ff8fsug8e
+1665 d65c538ae39fc1a7e0677583bba5fdc6ax1et
+1347 ac494ae5acf003f84ba46f5741618a8dn19qi
+1360 ae6758a627a111f6d6b530b0154c429566o4k <----BOT
+
+Here are the rankings by score:
+1910 7.655806
+1297 6.982478
+194 6.898122
+1180 6.717550
+856 6.292306
+1619 5.885977
+801 5.846407
+1720 5.822703
+1665 5.736039
+1347 5.692188
+1360 5.532489 <----BOT
+
+********What to change? How about making the histogram more granular by making it base 20 instead of 5?
+Have K = 5 (TODO: Figure how to best determine a K)
+Logbase = 20 which means the number of buckets is 11
+Result:
+Still have only 3 clusters in 2 iterations
+OUTPUT RESULT:
+The same bot was now in 9th place but the rest of the scoring is preserved from the last run.
+
+Here are the rankings now:
+1910 7.118066
+1297 6.562037
+194 6.491093
+1180 6.263066
+856 5.911977
+1619 5.520606
+1720 5.447078
+1665 5.420985
+1360 5.349389 <--BOT
+
+Histograms:
+[231570    0     0     0     0 185170  98196    95     0     0     1]
+[69784     0     0     0     0  67918  54789    73     0     0     0]
+[ 56171    0     0     0     0  73571 106347   322     0     0     1]
+[24955     0     0     0     0  39210  97463   305     0     0     1]
+[15347     0     0     0     0  22315  46370   286     0     0     0]
+[ 5901     0     0     0     0   9481  35202   836     0     0     0]
+[ 5349     0     0     0     0   8664  32804  1200     0     0     0]
+[ 3990     0     0     0     0   6959  42853  4391     0     0     1]
+[ 6243     0     0     0     0   8392  35301  5049     0     0     1]
+
+Scoring:
+1910 7.118066
+1297 6.562037
+194 6.491093
+1180 6.263066
+856 5.911977
+1619 5.520606
+1720 5.447078
+1665 5.420985
+1360 5.349389 <--Bot
+
+**NOW going to make the log-base 2
+K will still be 5
+Since LOG-BASE is now 2 then the number of buckets is now 47
+Result:
+Once again only 3 clusters and ends after 2 iterations
+OUTPUT RESULTS:
+Once again the true bot is in 11th place.
+Scoring:
+1910 8.449365
+1297 7.652933
+194 7.610754
+1180 7.358627
+856 6.846031
+801 6.322964
+1619 6.312537
+1665 6.228909
+1720 6.187310
+1347 6.132538
+1360 6.011999 <--BOT
+
+Histogram of IAT only:
+[231570    0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 185170 50528 35828  9708  2029   189     9     0     0     0     0     0     0     0     0     0     0     0     0     0     1     0]
+[69784     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 67918  25529 22465  5733  1005   121     9     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+[56171     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 73571  39888 45680 15901  4560   602    31     7     0     0     0     0     0     0     0     0     0     0     0     0     1     0]
+[24955     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 39210  26896 42369 21170  6633   684    16     0     0     0     0     0     0     0     0     0     0     0     0     0     1     0]
+[15347     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 22315  13560 19154  9834  3547   537    24     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+[ 8862     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 12051   8268 15769 13037  9794  4553   946    71     1     2     0     1     0     0     0     0     0     0     0     0     1     0]
+[ 5901     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0  9481   6830 13290  9303  5198  1292   121     4     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+[ 3990     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0  6959   5834 12733 12316 10193  4927  1147    94     0     0     0     0     0     0     0     0     0     0     0     0     1     0]
+[ 5349     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0  8664   6559 12068  8935  4657  1474   286    25     0     0     0     0     0     0     0     0     0     0     0     0     0     0]
+[ 8759     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0 13131   8557 13410  8896  6466  4492  1942   346    23     3     0     0     0     0     0     0     0     0     0     0     1     0]
+[ 6243     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0     0  8392   5577 10903  9658  7615  4439  1693   410    55     0     0     0     0     0     0     0     0     0     0     0     1     0]
+
+Ranking by ID:
+1910 f5edfebe95b4f637d1bcceb892b73dc7rhn7l
+1297 a5fb60c136b7e0a6d0d6e27cadb2a797225r6
+194 19815d9bcdc74c3ddfb9ff210c1739f3tup3i
+1180 9685887173cc2e1e5ee3993832a4b153bfl9m
+856 6ca1de75674e78f9d3d63fd96fbe6e172t86c
+801 671fb1e314a1f480ba9ad9b5a1cf6a91w1k2f
+1619 d0231e5200b870c055db7e3daae24bc8lt7at
+1665 d65c538ae39fc1a7e0677583bba5fdc6ax1et
+1720 dd1675bf26316cd4630087fb47d0ff8fsug8e
+1347 ac494ae5acf003f84ba46f5741618a8dn19qi
+1360 ae6758a627a111f6d6b530b0154c429566o4k <--BOT
+
+(Accuracy shown in png as K varies which doesn't change at all) - Accuracy = 89%
+
+**1**Thought, maybe the feature of IAT is not the best for this situation. (See Y2Clusters png to see why we keep getting only 3 clusters)
+**2**Maybe there is a bug in how I am creating the IAT distributions?
+**3**Do I need cross validation k-fold (no test data in algorithm)
+**4**How to determine accuracy? If bot is within the first 103 rankings?
+**5**Add a line of all zeros for every user without enough data?
+--------------------------------
+**2** There was a bug with correlating the iat array and usermap. iat_arr[ids[i]-1] correlates to usermap[ids[i]-1] which correlates to iat[ids[i]] since usermap and iat_arr starts at 0 and iat starts at 1
+This changes the accuracy, but there are still weird anomalies of human users giving 192,565 while another human is bidding 515,033 very quickly.
+**5** In addition, added line with all zeros for people who did not have enough data to have an IAT distribution
+
+Fixing this bug led to these results:
+Results in list of most suspect to least:
+1910 f5b2bbad20d1d7ded3ed960393bec0f40u6hn 0.00
+1297 a58ace8b671a7531c88814bc86b2a34cf0crb 0.00
+194 197e90906939267ace2422e78e8e83889znqp 0.00
+1180 9655ccc7c0c193f1549475f02c54dce45kjw7 1.00 <--BOT
+
+Scores:
+1910 8.905342
+1297 8.066476
+194 8.021300
+1180 7.756502 <--BOT
+856 7.216670
+
+Histograms are the same, just
+
+But accuracy is now 91.532% which is an improvement. The F1 score is 0.184.
+
+****Changed the assignments of the data (z) to the initial estimate from k-means.
+Still finished after a 2 iterations of alpha-fit.
+Accuracy of K=10: 91.532% (no change)
+F1 = .184 (no change)
+However, accuracy goes down every K that is a multiple of 3. (see figure saved with *KMEANS_init.png)
+
+*****Going to take out the all zeroes distribution in the calculations by changing the ids to not append if not enough data. This means
+**that we are going to have complete_iat_arr to keep the zeros and then iat_arr will only keep the users with enough info and logged in ids.
+***These three variables are pickled but only iat_arr is used for alpha-fitting, posteriors, and NEST metric calculations.
+The accuracy went down to 89%. Therefore, staying with complete_iat_arr which has all of the user's distributions even if it is zero.
+
+
+**1** Adding "response time" from Small Yellow Duck exert before median is taken. Created csv and sorted it outside of the source code.
+Then created an extra function to search the usermap for the bidder_id to grab the correct id.
+
+BIDDER_ID                                AUCTION     Time             CountOfTime
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     zjram   9700789631578947        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     zjram   9700798157894736        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     zjram   9700827684210526        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     zs67d   9632873315789473        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     zs67d   9633721105263157        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     zsxd1   9636238210526315        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     ztr30   9699813368421052        2
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn     ztr30   9707901947368421        2
+---------------
+f75a0f726d764514f612ee8cd8f65adegt02s     436hc   9635041947368421        2
+f75a0f726d764514f612ee8cd8f65adegt02s     436hc   9702378000000000        2
+f75a0f726d764514f612ee8cd8f65adegt02s     62d9x   9634917368421052        2
+f75a0f726d764514f612ee8cd8f65adegt02s     62d9x   9641485157894736        2
+f75a0f726d764514f612ee8cd8f65adegt02s     edggv   9641492210526315        2
+f75a0f726d764514f612ee8cd8f65adegt02s     edggv   9695602473684210        2
+f75a0f726d764514f612ee8cd8f65adegt02s     gz40m   9700739157894736        2
+
+
+Finding duplicate bidder_id, auction, and timestamp....why? Someone used two devices with two IP addresses to bid on the same item at the exact same time with the same username.
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn,a3d2de7675556553a5f08e4c88d2c228sezhf,a3d2de7675556553a5f08e4c88d2c228nfhse,0.00,6212616,zjram,sporting goods,phone101,9700789631578947,204.115.221.191,26cfnecirmqrbo3
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn,a3d2de7675556553a5f08e4c88d2c228sezhf,a3d2de7675556553a5f08e4c88d2c228nfhse,0.00,6212617,zjram,sporting goods,phone45,9700789631578947,170.3.162.200,vasstdc27m7nks3
+
+Another  duplicate:
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn,a3d2de7675556553a5f08e4c88d2c228sezhf,a3d2de7675556553a5f08e4c88d2c228nfhse,0.00,6214664,zjram,sporting goods,phone916,9700798157894736,5.200.190.28,gi0afim3lgzkp40
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn,a3d2de7675556553a5f08e4c88d2c228sezhf,a3d2de7675556553a5f08e4c88d2c228nfhse,0.00,6214661,zjram,sporting goods,phone45,9700798157894736,101.172.68.99,vasstdc27m7nks3
+f5b2bbad20d1d7ded3ed960393bec0f40u6hn,a3d2de7675556553a5f08e4c88d2c228sezhf,a3d2de7675556553a5f08e4c88d2c228nfhse,0.00,6214663,nqqon,sporting goods,phone4,9700798157894736,37.95.134.218,vasstdc27m7nks3
+
+********************Therefore, making assumption that can throw away duplicates and keep the ones with smaller bid_ids********************
+
+Now left outer joined with Response_Time_table with dt as response time. This table started at 977 mysteriously and had more rows than training data set.
+Supposing the author joined both the train and testing data set to do the preprocessing and then broke the data out again.
+
+Problem, there are times where ",," are located where ",NaN,NaN" should be. Trying to do a Find-Replace on text editor to convert ",," to "0,0".
+
+**Running with Response Time**
+With K = 1 Accuracy 91.532 Percent and F1-Score 0.184 <---Starts out with the best accuracy and F1-score as the case with only IAT feature
+Then with K = 9 Accuracy 91.835 Percent and F1-Score 0.214
+Then when K = 10 Accuracy 91.331 Percent and F1-Score 0.165
+where as K increases, accuracy will somewhat increase. Even though the Accuracy is not much better with this run, at least the F1-score
+increased.
+
+When K = 5, there are still not that many bots (not even the majority) that make it to the top 100.
+1123 8ebc5b544d62622e45e1ee22a56265e0xwwsb 0.0
+1910 f5b2bbad20d1d7ded3ed960393bec0f40u6hn 0.0
+765 631f923b7bcf91f61a2e9f96520bd8c8vtl14 0.0
+1297 a58ace8b671a7531c88814bc86b2a34cf0crb 0.0
+1180 9655ccc7c0c193f1549475f02c54dce45kjw7 1.0 <--BOT
+
+Now running this with the NULL values as ignored values. Assuming NULLs occur because the bidder started the bidding on the auction
+(12,740 unique auctions) or the bidder bid on their own bid (which happens 40,965 times)
+
+37 047558bebab9292a5d4c85d6ee768784j2hdd 0.0
+1140 916d2d806b772c9f227a9b3640e31469ljrxo 0.0
+1180 9655ccc7c0c193f1549475f02c54dce45kjw7 1.0<---BOT
+902 7264bde42ef4fe3fa19cc7c6d64696cf7pqtd 0.0
+1910 f5b2bbad20d1d7ded3ed960393bec0f40u6hn 0.0 <---Was #1 last time (IAT only)
+467 3a5420301c0dacbc5675f6f09aac0143tuodl 0.0
+194 197e90906939267ace2422e78e8e83889znqp 0.0 <---Was top 4 last time (IAT only)
+1615 cf33d05860b7f7d9af73c6091190b81ektz1j 0.0
+867 6e178db6d17d21aa88aaca5bf15c2761lc500 0.0
+1209 99ca795998fb781a42d85f1abeb50482yzffz 0.0
+175 179a23cad40c51dd7804069bf769d11e1ftk9 0.0
+1370 af5d33f9724b0e8c1f875406c0556d1e6eotm 0.0
+1340 aaa8650a6e0997e90e4b6a9fc2ddf555m5c1g 0.0
+1166 9434778d2268f1fa2a8ede48c0cd05c097zey 1.0
+1178 964028ac24d4ca16c4b63f64b06df1c8ltrrl 0.0
+400 3272e16da807a75a987e26b09bb2147by1mxe 1.0 <---BOT
+1297 a58ace8b671a7531c88814bc86b2a34cf0crb 0.0 <---Was #2 last time (IAT only)
+
+#########################################################
+Bidder is bidding on an auction which consists of an ad space
+K-nearest neighbor <---Supervised classification
+Logistic Regression <--Supervised classification
+Class is not balanced =>accuracy curve (ROC)
+Take out F1 score, would work if balanced
+Instead of accuracy use the area under the ROC curve.
+
+-Created ROC for individual K values
+For Final AUC - Taking average over all AUCs for varying K from 1 to 11
+
+More clusters, the anomaly behaviors is not as unlikely therefore the AUC goes down.
+-Change parameters and give analysis of what you find about accuracy*******
+
+-K = 1:20
+For each K, look at the labeled list and see how the scoring changes, why is there a dramatic increase in AUC?
+
+**********************TODO - DONE ********************************
+Ensemble Approach - Another mixture
+For each K=1:20 have a prediction for each case
+average their scores over K=1:20 then re-rank and then do FPR TPR analysis
+[Image at ROC_iat_rsp_tm_avg.png]
+Average AUC = 0.845573775569
+
+Average most suspicious users (1180 is a Robot)
+[1910, 37, 1180,  194,  902, 1297, 1140,  856, 1619,  467,  801, 1347, 1720,  867, 1665,  175, 1615, 1370,  930, 1498, 1209, 1588,  573, 1360, 1166, ...]
+[ 0.,  0.,  1.,    0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   1.,   0.,   1., ...]
+
+IAT as only feature [Image at ROC_iat_avg.png]
+For K=1:20
+average auc score: 0.84153750071
+[1910,  194, 1297, 1180,  856,  801, 1619, 1665, 1347, 1720, 1360, 1588, 1498,  930, 1805,  573, 1163,  924,  902, 1501,  798, 1327,  759,   37, 1813, ...]
+[   0.,  0.,   0.,   1.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   1.,   0.,   0.,   0.,   1.,   0.,   0.,   0.,   0.,   0., ...]
+
+Tracking Tables:
+train_seq_bidder_id_time.csv <---sorted by bidder_id and time
+qry_seq_auction_time.csv <--organized train_join by auction and time.
+testing_panda_func_seq_bidder_id.csv<---response time first try sorted by bidder_id
+train_ora.csv <--join of train.csv and bids.csv
+response_time_ora.csv <--response_time_table.csv (came out of The Small Yellow Duck code before she takes the median)
+train_ora_dedup.csv <--deleted out the duplicates
+train_iat_rsp.csv <--left outer join of table_ora_dedup and response_time_ora (NULLS as blanks)
+train_iat_rsp6.csv <--left outer join of table_ora_dedup and response_time_ora (NULLS as 'NULLVALUE')
+
+The train_iat_rsp6 has nulls in the DT field…  total rows 1,038,188
+----------------------
+CREATE TABLE "TRAIN_ORA"
+          ("BIDDER_ID"       VARCHAR2(255),
+           "PAYMENT_ACCOUNT" VARCHAR2(255),
+           "ADDRESS"         VARCHAR2(255),
+           "OUTCOME"         NUMBER(25,0),
+           "BID_ID"          NUMBER(25,0),
+           "AUCTION"         VARCHAR2(255),
+           "MERCHANDISE"     VARCHAR2(255),
+           "DEVICE"          VARCHAR2(255),
+           "TIME"            VARCHAR2(255),
+           "IP"              VARCHAR2(255),
+           "URL"             VARCHAR2(255))
+SQL> select count(*) from TRAIN_ORA;
+
+   COUNT(*)
+  ----------
+  3,071,224
+
+There is not a unique bidder_id, auction, time
+    335,965 has bidder_id and time equal with at least 2 rows
+    40,965 has bidder_id, auction and time equal with at least 2 rows
+
+
+SQL> select count(distinct(BIDDER_ID)) from TRAIN_ORA;
+
+    COUNT(DISTINCT(BIDDER_ID))
+    --------------------------
+                          1984
+
+    SQL> select count(distinct(OUTCOME)) from TRAIN_ORA;
+
+    COUNT(DISTINCT(OUTCOME))
+    ------------------------
+                           2
+
+    SQL> select count(distinct(BID_ID)) from TRAIN_ORA;
+
+    COUNT(DISTINCT(BID_ID))
+    -----------------------
+                 3,071,224
+
+    SQL> select count(distinct(AUCTION)) from TRAIN_ORA;
+
+    COUNT(DISTINCT(AUCTION))
+    ------------------------
+                      12,740
+
+    SQL> select count(distinct(TIME)) from TRAIN_ORA;
+
+    COUNT(DISTINCT(TIME))
+    ---------------------
+                  742,669
+
+  ------------------------
+SQL> CREATE TABLE "RESPONSE_TIME_ORA"
+          ("GRP"          NUMBER(25,0),
+           "BIDDER_ID"    VARCHAR2(255),
+           "TIME"         VARCHAR2(255),
+           "AUCTION"      VARCHAR2(255),
+           "DT"           Binary_Double)
+
+SQL> select count(*) from "SAPSR3"."RESPONSE_TIME_ORA";
+
+  COUNT(*)
+----------
+5,563,854
+
+There is not a unique bidder_id, auction, time
+ 208,823 has bidder_id and time equal with at least 2 rows
+ 7,992 has bidder_id, auction and time equal with at least 2 rows
+
+SQL> select count(distinct(GRP)) from RESPONSE_TIME_ORA;
+
+COUNT(DISTINCT(GRP))
+--------------------
+           5563854
+
+SQL> select count(distinct(BIDDER_ID)) from RESPONSE_TIME_ORA;
+
+COUNT(DISTINCT(BIDDER_ID))
+--------------------------
+                    6608
+
+SQL> select count(distinct(TIME)) from RESPONSE_TIME_ORA;
+
+COUNT(DISTINCT(TIME))
+---------------------
+             773689
+
+SQL> select count(distinct(AUCTION)) from RESPONSE_TIME_ORA;
+
+COUNT(DISTINCT(AUCTION))
+------------------------
+                 12959
+
+SQL> select count(distinct(DT)) from RESPONSE_TIME_ORA;
+
+COUNT(DISTINCT(DT))
+-------------------
+            46229
+
+SQL> select count(DT) from RESPONSE_TIME_ORA where DT is null;
+
+COUNT(DT)
+----------
+       0
+
+ ---------------------------
+ SQL> CREATE TABLE "TRAIN_ORA_DEDUP"
+  2  as
+  3  SELECT bidder_id, auction, time, outcome
+  4  FROM "JOIN_TRAIN"
+  5  GROUP BY bidder_id, auction, time, outcome;
+
+SQL> select count(*) from "TRAIN_ORA_DEDUP";
+
+  COUNT(*)
+----------
+3,027,489
+
+SQL> select count(distinct(BIDDER_ID)) from TRAIN_ORA_DEDUP;
+
+COUNT(DISTINCT(BIDDER_ID))
+--------------------------
+                      1984
+
+SQL> select count(distinct(AUCTION)) from TRAIN_ORA_DEDUP;
+
+COUNT(DISTINCT(AUCTION))
+------------------------
+                   12740
+
+SQL> select count(distinct(TIME)) from TRAIN_ORA_DEDUP;
+
+COUNT(DISTINCT(TIME))
+---------------------
+               742669
+
+SQL> select count(distinct(OUTCOME)) from TRAIN_ORA_DEDUP;
+
+COUNT(DISTINCT(OUTCOME))
+------------------------
+                       2
+
+*************************************************************************************************************************
+Lastly, to get runtime with AUC score, ran the timing_sara.py to see how long it takes on average to run 1-20 clusters where for
+each cluster size given, there are several subfractions of the data used. It starts with all the data (1984) and then decreases from there.
+Each time there is a subsection of data ran to create "suspects" from most suspicious to least, the AUC code is run.
+Each AUC is then added for each iteration of that subfraction of the data and it will be divided by the (number of clusters*
+number of subsets*number of iterations). The code had the iterations as 1 starting out, so I'm keeping that default for now.
+
+The result I want to create is:
+  -a graph of the average run time as K increases
+  -table of average AUC and average run time per K
