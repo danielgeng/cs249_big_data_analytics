@@ -452,6 +452,20 @@ Each time there is a subsection of data ran to create "suspects" from most suspi
 Each AUC is then added for each iteration of that subfraction of the data and it will be divided by the (number of clusters*
 number of subsets*number of iterations). The code had the iterations as 1 starting out, so I'm keeping that default for now.
 
+Only did timing analysis for Response Time and IAT feature BIRDNEST.
+
 The result I want to create is:
-  -a graph of the average run time as K increases
-  -table of average AUC and average run time per K
+  -a graph of the average run time as K increases [Runtime_K_vary...]
+  -table of average AUC and average run time per K (do not suggest)
+
+-For K=1:20 with fraction of data ranging from all to 0.113989% of the data
+Average AUC = .840887154633 <---do not fully believed how I divided since a subset of users for many iterations.....
+
+
+-------------
+Attempted log base 1.001 to see if I can get a finer bucketing to see bots making bids quickly with faster responses
+This means:
+>>> S
+Out[1]: 31980
+>>> R
+Out[2]: 30243
