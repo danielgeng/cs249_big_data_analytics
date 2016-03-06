@@ -781,6 +781,29 @@ LSH ensures that similar points are highly likely to get hashed to the same buck
 Thus, the method utilizes these patterns for detecting spam groups.
 Since the proposed algorithm extensively uses various probability distributions, it is not very effective when there are only a few reviewers because a small sample of data points cannot constitute a reliable distribution.
 
+\begin{table}[h]
+\caption{Summary of anomaly detection methods}
+\begin{center}
+{\small
+\begin{tabular}{c c | c c c c c c | c c c c | c c c c }
+\multicolumn{2}{c}{} & \multicolumn{6}{c}{Input features} & \multicolumn{4}{c}{Anomalies detected} & \multicolumn{3}{c}{Others}\\
+\hline
+Algorithm & Year & CON & CAT & SE & SP & GR & IID & PA & CXA & COA & GA & SU & BC & SC\\
+\hline
+BIRDNEST & 2015 & \checkmark & - & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & - & - & \checkmark \\
+Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \checkmark & \checkmark & - & \checkmark & \checkmark \\
+PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
+SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark
+\end{tabular}
+}
+\end{center}
+\end{table}
+{\scriptsize
+\textbf{Input features:} CON, continuous; CAT, categorical; SE, optimal for sequential features; SP, optimal for spatial features; GR, optimal for graph features; IID, assumes i.i.d. variables\\
+\textbf{Anomalies detected:} PA, point anomalies; CXA, context anomalies; COA, collective anomalies; GA, graph anomalies\\
+\textbf{Others:} SU, supervised (else assume unsupervised); BC, binary classification (else assume scores); SC, scalable
+}
+
 \section*{Conclusion}
 
 aaa
