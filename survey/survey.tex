@@ -38,8 +38,6 @@ These current methods fall under a few major categories, including temporal, Bay
 
 \section*{Background}
 
-\textbf{NEEDS WORK FOR SURE}
-
 \quad Each type of anomaly detection method introduces its own set of definitions and fundamental ideas.
 Temporal-based approaches primarily use the \textbf{inter-arrival times} (IAT) between postings to identify patterns that could be used for detecting anomalies.
 The IAT distributions between humans and bots are compared to classify users.
@@ -48,12 +46,41 @@ The IAT distributions between humans and bots are compared to classify users.
 A group is a mixture model of a user behavior mixture model.
 The \textbf{role mixture rate} is an inference of group membership and role identity of each individual inside of a group.
 A \textbf{group anomaly} occurs when the role mixture rate is significantly different than a normal group role mixture rate.
-All individuals inside of a group will be classified as suspicious if there is a group anomaly.
+Rather than identifying individual anomalies, a group-based method classifies all individuals belonging to a group as suspicious if an anomaly is detected.
+
+\quad There are a few other different types of anomalies that a user can be classified as.
+An individual is considered to be a \textbf{point anomaly} if it is anomalous with respect to the rest of the data.
+If an individual is anomalous in a specific context, but not otherwise, it is defined as a \textbf{contextual anomaly} or \textbf{conditional anomaly}.
+A \textbf{collective anomaly} are a group of individuals that may not be considered to be anomalies independently, but the occurrence of them together is considered to be an anomaly.
+
+\quad The optimal type of anomaly detection algorithm to use is dependent on the input features that are available.
+For example, if given continuous or sequential time-series data, a temporal approach may have the best performance.
+On the other hand, if only given categorical data, machine learning techniques such as KNN or logistic regression might be better.
+A combination of different types of input features could be solved using a Bayesian approach.
+Entities that have quantifiable relationships between them are probably best solved by a graph-based approach that uses either node-attributed or edge-attributed values to detect anomalies.
+Lastly, if classification labels are unavailable, an unsupervised method may yield better performance.
+
+\quad While anomaly detection seems to be intuitively simple from a high-level perspective, there are many factors that make it quite difficult.
+To classify something as an anomaly, there needs to be concrete definitions of what is considered ``normal" and what is considered an ``outlier"; these definitions can vary significantly depending on the underlying context of the problem.
+In the context of social media, a ``normal" user is defined to be a human and an ``outlier" is a bot.
+Although these are clearly defined contrasts, there are many bots that attempt to behave as humans, camouflaging them from many anomaly detection techniques.
+
+\quad Furthermore, the behavior of human users potentially varies on different social media platforms.
+For example, posting times of the same user on Facebook and Reddit could be very different because a user's Facebook audience is generally people that he/she knows in real life, while Reddit has an increased sense of anonymity.
+Because the features of a ``normal" user varies platform-to-platform, an anomaly detector will likely have to be retrained and/or reconfigured for each individual case.
+
+\quad Another difficulty is that human users are likely to have distinctive posting patterns.
+The noise caused by natural variation of human personality may make it difficult for an anomaly detector to draw the line between a ``normal" user and an ``outlier".
+For example, one legitimate user could constantly be posting on social media, while another may only post something once every few weeks.
+While the typical bot behaves more like the first type of user, a bot creator could easily manufacture the behavior of a user that posts infrequently by creating multiple bots.
+An anomaly detector would probably be able to detect the first bot (and might even trigger a false positive for the first type of user), but would unable to detect the ``array" of bots--although they end up having a similar aggregate post frequency.
 
 \quad The evaluation of each anomaly detection method will be similar.
 The most important performance metric is anomaly detection accuracy; if a method is unable to correctly differentiate between humans and bots, then it is not very useful.
+The predictions from each method must be considered as well; because there is potentially a fine line between the features a human and a bot, a simple binary classification (human, bot) may not be as informative as a ``score" for how anomalous a user/group is.
 Because real-world datasets have millions of data points that must be accounted for and processed, scalability in terms of both space and time is very important.
-Additionally, methods should be robust, as noise and outliers are quite common in real-world data.
+Methods should be robust, as noise is quite common in real-world data, among both ``normal" users and ``outliers".
+Furthermore, some methods have the assumption that observations are i.i.d., which will be considered a weakness.
 
 \section*{Models, Approaches, Algorithms}
 
@@ -753,7 +780,7 @@ LSH ensures that similar points are highly likely to get hashed to the same buck
 Thus, the method utilizes these patterns for detecting spam groups.
 Since the proposed algorithm extensively uses various probability distributions, it is not very effective when there are only a few reviewers because a small sample of data points cannot constitute a reliable distribution.
 
-\section*{Discussion}
+\section*{Conclusion}
 
 aaa
 
