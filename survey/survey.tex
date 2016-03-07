@@ -85,7 +85,7 @@ Furthermore, some methods have the assumption that observations are i.i.d., whic
 
 \section*{Models, Approaches, Algorithms}
 
-\quad Methods developed before 2014 will be introduced here as both a basis of improvement and reference for state-of-the-art methods. 
+\quad Models of human dynamics and anomaly detection methods  developed before 2014 will be introduced here as both a foundation for this area of research and will be reference by state-of-the-art methods. 
 
 \subsection*{Cascading Non-homogeneous Poisson Process (CNPP) -- 2009}
 
@@ -97,15 +97,17 @@ From this experiment, the authors found that individuals can be classified into 
 
 \subsection*{Power-Law -- 2005}
 
-\quad The power-law distribution is a non-Poisson distribution that models human behavior, which consisted of short bursts of activity separated by long periods of inactivity.
+\quad The power-law distribution \cite{powerlaw} is a non-Poisson distribution that models human behavior, which consisted of short bursts of activity separated by long periods of inactivity.
 The explanation for this type of distribution is the fact that humans execute tasks by their own set of priorities.
-Thus, tasks wait an uneven amount of time before execution.
+Thus, tasks wait an uneven amount of time before execution. 
+
+\quad This model of human behavior can be utilized to create an anomaly detection algorithm for social media bots, but it is not an anomaly detection algorithm on its own. It's a model that has been used in further development of modeling human online behavior.
 
 \subsection*{Self-Feeding Process (SFP) -- 2013}
 
 \subsubsection*{Approach}
 
-\quad The SFP model combines the benefits of the non-homogeneous Poisson Process (PP) from CNPP and the power-law distribution.
+\quad The SFP model \cite{sfp} combines the benefits of the non-homogeneous Poisson Process (PP) from CNPP and the power-law distribution.
 This is because the non-homogeneous PP works well to model user communication where short-term communication is PP, but there are long periods of inactivity where the PP rate should change.
 The power-law distribution captures a user's long periods of inactivity which are seen as a heavy tail in the IAT probability density function.
 
@@ -119,10 +121,7 @@ It attempts to accomplish four goals:
 	\item Requirement of only a few parameters
 \end{enumerate}
 
-To achieve the first goal and to better view the dataset without losing information, SFP computes the odds ratio (OR) as such:
-$$ OR(t) = \frac{CDF(t)}{1-CDF(t)} $$
-
-where the set of IATs are used to compute the OR for each percentile of the data.
+To achieve the first goal and to better view the dataset without losing information, SFP computes the odds ratio where the set of IATs are used to compute the OR for each percentile of the data.
 
 For the second goal, the Poisson distribution is built into the SFP model.
 The third goal is obtained by building a Markov process where each even of activity influences the next event.
@@ -136,10 +135,9 @@ $$ \Delta_i \sim exp(\Delta_{i-1} + \mu / e) $$
 where e is the Euler constant.
 
 As seen from the model, the last goal is achieved, as only the mean of the data set is required as input.
-The model can be generalized for other applications that only need two parameters, $\mu$ and the OR slope $\rho$:
-$$ \delta_1 \sim \mu $$
-$$ \delta_1 \sim exp(\delta_{i-1} + \mu^{\rho} / e) $$
-$$ \Delta_k \sim \delta_i^{1/ \rho} $$
+The model can be generalized for other applications that only need two parameters, $\mu$ and the OR slope $\rho$.
+
+\quad Like the power law, this method is used to model human online behavior and not perform anomaly detection on its own. However, it can be used by an algorithm like RSC \cite{rsc} to generate synthetic data for their anomaly detection algorithm. RSC is explained later on in this paper.
 
 \subsection*{Pearson's $\chi^2$ -- 2011}
 
@@ -312,7 +310,7 @@ With only temporal activity, RSC was able to detect non-human users with 96.5\% 
 
 \subsubsection*{Approach}
 
-\quad Because IATs do not completely account for bot behavior, the authors proposed BIRDNEST as a Bayesian-based method to approach the anomaly detection problem. 
+\quad Because IATs do not completely account for bot behavior, the authors proposed BIRDNEST \cite{birdnest} as a Bayesian-based method to approach the anomaly detection problem. 
 BIRDNEST expands on the pure temporal-based approach by using both IAT and rating distributions.
 
 \quad When determining the suspiciousness of a user, one may first ask what the rating distribution or IAT distribution is for a given user.
@@ -510,7 +508,7 @@ Furthermore, some components of the algorithms used human judgment to augment th
 
 \subsubsection*{Approach}
 
-\quad The paper ``Toward Detecting Anomalous User Behavior in Online Social Networks" uses an unsupervised learning algorithm called Principal Component Analysis (PCA).
+\quad \cite{pca} uses an unsupervised learning algorithm called Principal Component Analysis (PCA).
 The purpose of PCA is to find the best projections of a dataset that show the most variation given a set of features.
 For anomaly detection, PCA is utilized by projecting where bot-data differs from normal-user behavior.
 
@@ -545,7 +543,7 @@ Also, if the user data is too variable, a bot could potentially hide in the nois
 
 \subsubsection*{Approach}
 
-\quad The main idea of the approach is to leverage social graph data to identify the ``lockstep behavior pattern" (groups of followers typically following the same group of followees with little to no other activity).
+\quad The main idea \cite{lockstep} is to leverage social graph data to identify the ``lockstep behavior pattern" (groups of followers typically following the same group of followees with little to no other activity).
 When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
 However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
 There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
@@ -825,9 +823,22 @@ aaa
 
 \begin{thebibliography}{123}
 
-\bibitem{rsc} Costa, Alceu Ferraz, Yuto Yamaguchi, Agma Juci Machado Traina, Caetano Traina, Jr., and Christos Faloutsos. "RSC: Mining and Modeling Temporal Activity in Social Media." ACM. KDD 2015, 10 Aug. 2015. Web. 12 Feb. 2016.
+\bibitem{rsc} Costa, Alceu Ferraz, Y. Yamaguchi, A. J. M. Traina, C. Traina, Jr., and C. Faloutsos. "RSC: Mining and Modeling Temporal Activity in Social Media." ACM. KDD 2015, 10 Aug. 2015. Web. 12 Feb. 2016.
+
+\bibitem{powerlaw} Barabasi, Albert-Laszlo. "The origin of bursts and heavy tails in human dynamics." Nature, 435(7039):207–211, 2005. 
+
+\bibitem{sfp} Vaz de Melo, Pedro O. S., C. Faloutsos, R. Assuncao, A. A. F. Loureiro. "The Self-Feeding Process: A Unifying Model for Communication Dynamics in the Web." In WWW, pages 1319–1330, 2013. 
+\bibitem{pca} Viswanath, Bimal, K. Gummadi, M. A. Bishir, B. Krishmamurthy, M. Crovella, S. Guha, and A. Mislove. "Toward Detecting Anomalous User Behavior in Online Social Networks." Proceedings of the 23rd Usenix Security Symposium (USENIX Security), San Diego, CA, August 2014.
+
+\bibitem{lockstep} Jiang, Meng. P. Cui, A. Beutel, C. Faloutsos, and S. Yang. "Inferring Strange Behavior from Connectivity Pattern in Social Networks." PAKDD 2014, Part I, LNAI 8443, pp. 126–138, 2014. 
+
+\bibitem{birdnest} Hooi, Bryan, N. Shah, A. Beutel, S. Gunneman, L. Akoglu, M. Kumar, D. Makhija, and C. Faloutsos. "BIRDNEST: Bayesian Inference for Ratings-Fraud Detection." CoRR, vol abs/1511.06030, 2015. arXiv:1511.06030.
+
 
 \end{thebibliography}
 
 
-\end{document}  
+
+
+
+\end{document}
