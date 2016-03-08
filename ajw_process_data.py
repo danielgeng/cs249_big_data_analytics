@@ -46,6 +46,23 @@ def generate_mean_rts(bidTuples, userList, force=False):
     rts, auctionList, maxVal = generate_rts(bidTuples, userList, force=force)
     return mean_by_user(rts)
 
+def generate_binned_rts(bidTuples, userList, force=False):
+    if (not force) and os.path.isfile(DATAHOME+'rts_buckets.p'):
+        print "rts_buckets file located. Loading..."
+        rts_buckets = pickle.load(open(DATAHOME+'rts_buckets.p',"rb"))
+    else:
+        rts, auctionList, maxResponseTime = generate_rts(bidTuples, userList)
+        rts_buckets = bucketize(rts, 5, outfile="../Data/rt_buckets.txt", maxVal=maxResponseTime)
+    return rts_buckets
+
+def generate_binned_iats(bidTuples, userList, force=False):
+    if (not force) and os.path.isfile(DATAHOME+'iats_buckets.p'):
+        print "iats_buckets file located. Loading..."
+    else:
+        iats, maxIat = generate_iats(bidTuples, userList)
+        iats_buckets = bucketize(iats, 5, outfile="../Data/iat_buckets.txt", maxVal=maxIat)
+    return iats_buckets
+
 
 def generate_iats(bidTuples, userList, force=False):
     if (not force) and os.path.isfile(DATAHOME+'userData.p'):
@@ -220,9 +237,9 @@ def load_users(force=False):
     :return:
     """
     if (not force) and os.path.isfile(DATAHOME+'userList.p') and os.path.isfile(DATAHOME+'botList.p'):
-        print "userList file located. Loading..."
+        # print "userList file located. Loading..."
         userList = pickle.load(open(DATAHOME+'userList.p', "rb"))
-        print "botList file located. Locating..."
+        # print "botList file located. Locating..."
         botList = pickle.load(open(DATAHOME+'botList.p',"rb"))
     else:
         print "bidTuples file not found. Generating."
@@ -334,7 +351,7 @@ def bucketize(data, log_base, outfile=None, maxVal=None):
 
     :param data: 2-d list of data. Each row is the list of iats,rts,etc. for a given user
     :param log_base: log base for bucketization
-    :return:
+    :return: [[b_user1,b_user1,b_user1],[b_user2,b_user2,b_user2],[b_user3,b_user3,b_user3]]
     """
     if maxVal is None:
         # If maxVal is not specified, search for it
@@ -368,6 +385,7 @@ def mean_by_user(data):
     :return:
     """
     # TODO (ajw): what to do about empty lists? e.g. no IATs
+    # right now, they're np.NaN, but I use an Imputer to replace them with the mean
     return [np.mean(user) if len(user) > 0 else 0 for user in data]
 
 
@@ -406,10 +424,10 @@ def stack_features(featureList, nameList=None, outfile=None):
     return data
 
 
-def six_features():
+def six_features(force=False):
     userList, botList = load_users(force=False)
     # bitTuples, userList, botList = load_data(force=False)
-    if os.path.isfile(DATAHOME+"six_features.p"):
+    if (not force) and os.path.isfile(DATAHOME+"six_features.p"):
         six_features = pickle.load(open(DATAHOME+"six_features.p", "rb"))
         return six_features, sparse_botlist(botList, userList)
     else:
@@ -423,6 +441,29 @@ def six_features():
         pickle.dump(six_features, open(DATAHOME+"six_features.p","wb"))
         return six_features, sparse_botlist(botList, userList)
 
+def binned_time_features(force=False):
+    if (not force) and os.path.isfile(DATAHOME+"binned_time_features.p"):
+        binned_time_features = pickle.load(open(DATAHOME+"binned_time_features.p", "rb"))
+    else:
+        bidTuples, userList, botList = load_data(force=False)
+        iats = generate_binned_iats(bidTuples, userList,force=False)
+        rts = generate_binned_rts(bidTuples, userList, force=False)
+        binned_time_features = np.concatenate((np.matrix(iats), np.matrix(rts)), axis=1)
+        pickle.dump(binned_time_features, open(DATAHOME+"binned_time_features.p","wb"))
+    return binned_time_features
+
+
+def six_and_time_features(force=False):
+    userList, botList = load_users(force=False)
+    if (not force) and os.path.isfile(DATAHOME+"six_and_time_features.p"):
+        six_and_time_feat = pickle.load(open(DATAHOME+"six_and_time_features.p",'rb'))
+    else:
+        six_feat = six_features(force=False)[0]
+        binned_time_feat = binned_time_features(force=False)
+        six_and_time_feat = np.concatenate((six_feat, binned_time_feat), axis=1)
+        pickle.dump(six_and_time_feat, open(DATAHOME+"six_and_time_features.p", "wb"))
+    # six_feats[1] is the sparse botList
+    return six_and_time_feat, sparse_botlist(botList, userList)
 
 
 def main():
