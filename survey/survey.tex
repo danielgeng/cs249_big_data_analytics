@@ -143,65 +143,34 @@ Another drawback of this test is that an automated account can pass this test if
 
 \subsubsection*{Approach}
 
-\quad The paper is an attempt to tackle the problem of determining whether a given Twitter user is a human, bot, or cyborg, defined as follows.
-A human user is a Twitter account whose tweets are completely posted by a human.
-A bot is an account whose posts are completely automated.
-A cyborg is an account that may have both automated activity and human activity.
-The researchers trained their model using 1,000 accounts for each human, bot, and cyborg, amassing over 8 million tweets, and used a sample of 500,000 users, with upwards of 40 million tweets, to then estimate the composition of Twitter at the time.
-Ground truth for the training set was determined manually.
+\quad The paper is an attempt to tackle the problem of determining whether a
+given Twitter user is a human, bot, or cyborg, defined as follows.  A human user
+is a Twitter account whose tweets are completely posted by a human.  A bot is an
+account whose posts are completely automated.  A cyborg is an account that may
+have both automated activity and human activity.  The researchers first used
+entopy to determine the temporal complexity of user complexity. They also
+language-processing to detect spam-like tweets. They also detected outliers on
+various account properties that are more difficult to feign, like the
+number of followers and the type of device posted from. 
 
-\subsubsection*{Model}
+\quad By feeding these features into a decision maker, the researchers come up
+with a model, based on linear discriminant analysis and forward stepwise
+analysis.  It is stepwise, as the model is built step-by-step.  At each step,
+all features are evaluated, and only the one that contributes the most to
+discrimination is added to the model.  Linear discriminant analysis takes
+labeled data and assigns weights to each feature that discriminates a single
+class from the others.  A linear combination of the features based on these
+weights yields a score determining how human-like, bot-like, or cyborg-like a
+user account is.  By taking the highest of these scores, the model predicts a
+label for these features.
 
-\quad The researchers take a tiered approach, splitting the problem into four steps:
-\begin{enumerate}
-	\item Use entropy to determine the complexity of user behavior
-	\item Apply a machine learning component to detect spam-like features
-	\item Use various account properties to detect outlying users
-	\item Combine features generated from the previous three steps to come up with a model for humans, a model for bots, and a model for cyborgs. 
-\end{enumerate}	
-By applying the data on each of these models, resulting in a human-score, bot-score, and cyborg-score, they can determine which category a user falls in.
-
-\quad The entropy rate of a Twitter user refers to the complexity of the distribution of a user's tweets over time.
-A low entropy rate indicates that the tweets are posted fairly regularly, whereas a higher entropy rate implies a more random process.
-The researchers approximate the entropy rate using empirically-derived probabilities.
-
-\quad Spam score is the classification of a user's tweets as containing overly "spammy" language.
-The researchers use a Bayesian classifier to classify the text, assuming the presence of words are conditionally independent of each other.
-This model empirically calculates the probability that a tweet is spam given the words in it using the package CRM114, which includes an OSB classifier, which is similar to a traditional naive Bayes classifier for text, but classifies based on pairs of words.
-
-\quad There are a number of other features examined and used in this model.
-The first is the URL ratio, i.e. the ratio of how often a user includes an external URL.
-The researchers also examine the percentage of tweets posted using manual devices, i.e. web and mobile devices instead of via the Twitter API.
-Another highly discriminatory features is the automated post percentage.
-Rather than taking into account what devices a user uses, this feature is the percentage of posts to a user's Twitter account that follow from the RSS feed of another site (e.g. the user's blog) via services like Twitterfeed or Twitter for Wordpress.
-The last feature they use is the followers to friends ratio.
-The intuition is that bots add many users as friends, but few users follow a bot back, so bots will often try to follow as many users as possible.
-However, Twitter has imposed limits on the ratio of followers over friends to suppress these bots, so often, a bot will unfollow users who do not follow them back, keeping their ratio suspiciously close to 1:1.
-They find that bots rarely have more followers than they have friends.
-
-\quad By feeding these features into a decision maker, the researchers come up with a model, based on linear discriminant analysis and forward stepwise analysis.
-It is stepwise, as the model is built step-by-step.
-At each step, all features are evaluated, and only the one that contributes the most to discrimination is added to the model.
-Linear discriminant analysis takes labeled data and assigns weights to each feature that discriminates a single class from the others.
-A linear combination of the features based on these weights yields a score determining how human-like, bot-like, or cyborg-like a user account is.
-By taking the highest of these scores, the model predicts a label for these features.
-
-\subsubsection*{Results}
-
-\quad The researchers report high accuracies, predicting true humans, bots, and cyborgs 94.9\%, 93.7\%, and 83.8\% of the time respectively.
-Their predictor can perfectly distinguish bots from humans, but performs worse in differentiating humans from cyborgs, or bots from cyborgs.
-Applying this model to their 500,000 users, they estimate the ratio of human, cyborg, and bot on Twitter to be 5:4:1.
-
-\quad The authors outline the pitfalls with their model that led to misclassifications.
-Spam score is a tricky feature to use, since even human users use ``spammy" words in advertising their own content.
-Additionally, bots and cyborgs can use very naturally scripted language, tricking their spam classifier.
-Additionally, the entropy rates of humans could be low if a user often posts at certain times.
-
-\quad Because the LDA approach uses features that require more effort to impersonate, it is not trivialized by simple workarounds such as adjusting the tweet times.
-However, it is a basic decision maker because it has a linear model of features.
-Also, any of the features could yield false positives or negatives; for example, a human user that only posts via a blog RSS feed could be classified as suspicious.
-On the other hand, some of the features were ineffective (i.e. low coefficients for Bayesian text, followers to friends ratio, URL ratio)
-Additionally, the relationship between humans, bots, and cyborgs is not considered, so the model only infers it from the LDA weights.
+\quad The researchers report high accuracies, predicting true humans, bots, and
+cyborgs 94.9\%, 93.7\%, and 83.8\% of the time respectively.  Their predictor
+can perfectly distinguish bots from humans, but performs worse in
+differentiating humans from cyborgs, or bots from cyborgs. The algorithm is not
+perfect, as some features (namely, spam score and entropy) are often cause for
+misclassification. Those aside, the generated features were difficult to fake,
+and yielded positive results.
 
 \section{Current State-of-the-art}  \label{cur_models}
 
@@ -346,41 +315,53 @@ However, there are certain limitations such as group anomaly is difficult to det
 \paragraph{Approach}
 \quad
 
-\quad The authors first survey different forms of fraud-detection on Twitter, citing two common tactics that are explored in several other papers: simple feature-based detection and collective anomaly detection.
-ND-SYNC is the first to be textual content-agnostic, graph structure-agnostic, user attributes-agnostic, parameter-free, unsupervised, specifically designed for RTFraud problem, and a well-performing detector for synchronicity fraud.
+\quad The authors first survey different forms of fraud-detection on Twitter,
+citing two common tactics that are explored in several other papers: simple
+feature-based detection and collective anomaly detection.  ND-SYNC is the first
+to be textual content-agnostic, graph structure-agnostic, user
+attributes-agnostic, parameter-free, unsupervised, specifically designed for
+RTFraud problem, and a well-performing detector for synchronicity fraud.  
 
 \paragraph{Model}
 \quad
 
-\quad This paper investigates and proposes a method for detecting Twitter fraud as it pertains to fraudulent retweet activity (RTFraud).
-By analyzing numerous features captured over large retweet threads, they define and measure of the concept of synchronicity across multiple features.
-The authors tackle this by formulating RTFraud as a special case of the synchronicity fraud problem (SyncFraud).
-They extract features for each retweet thread and assign a suspiciousness score based on the similarities to other threads, assuming that organic behavior is the norm.
+\quad This paper investigates and proposes a method for detecting Twitter fraud
+as it pertains to fraudulent retweet activity (RTFraud).  By analyzing numerous
+features captured over large retweet threads, they define and measure of the
+concept of synchronicity across multiple features.  The authors tackle this by
+formulating RTFraud as a special case of the synchronicity fraud problem
+(SyncFraud).  They extract features for each retweet thread and assign a
+suspiciousness score based on the similarities to other threads, assuming that
+organic behavior is the norm.
 
-\quad The \textit{synchronicity} of a group is a measure of closeness between all of its members.
-The \textit{normality} of a group with respect to a superset is a measure of closeness between members of the group and members of the superset.
-Finally, they define the residual score as the difference between the synchronicity and mathematically-defined lower bound on synchronicity.
-According to the SyncFraud problem, suspicious groups are those that exhibit highly synchronized characteristics.
+\quad The \textit{synchronicity} of a group (the group of retweet threads posted
+by a user) is a measure of closeness between all of its members (the retweets).
+The \textit{normality} of a group with respect to a superset is a measure of
+closeness between members of the group and members of the superset.  Finally,
+they define the residual score as the difference between the synchronicity and
+mathematically-defined lower bound on synchronicity.  According to the SyncFraud
+problem, suspicious groups are those that exhibit highly synchronized
+characteristics.
 
-\quad To tackle the RTFraud problem specifically, the authors experimented with a large number of features and determined the seven most significant features to be:
-\begin{itemize}
-	\item Number of retweets
-	\item Response time of first retweet
-	\item Lifespan, constrained to three weeks
-	\item RT-Q3, the time to garner the first three quarters of the retweets
-	\item RT-Q2, the time to garner the first half of the retweets
-	\item Arr-MAD, mean absolute deviation of IATs
-	\item Arr-IQR, inter-quartile range of IATs
-\end{itemize}
-
-\quad By projecting their data onto two of these seven features, the authors came up with visualizations of their data that helped them find intuitive patterns in the data, namely lifespan vs. Arr-MAD and retweets vs. response time.
+\quad For each user's list of threads, they calculate their suspiciousness in
+every feature subspace and store it in a vector. They then detect outlying users
+based on each vector's distance from a lower-dimensional projection. The
+dimensionality reduction is similar to PCA, but the principle components are
+selected such that the data's variance is maintained in the projection, up to
+some confidence. This effectively isolates outliers in the suspiciousness
+vector. This algorithm is non-deterministic, so this is done repeatedly and the
+final set of outlying users is selected based on majority votes.
 
 \paragraph{Results}
 \quad
 
-\quad ND-SYNC is able to detect fraud with high accuracy and was able to yield intuitive explanations by plotting features against each other.
-However, it was unable to differentiate between cyborgs from bots and fails with certain humans (i.e. politicians and people who advertise); it also assumed that synchronized data is always fraudulent, which is not always true.
-Also, the dataset used had a limited number of fraud-labeled users, which may have skewed the accuracy upward.
+\quad ND-SYNC is able to detect fraud with high accuracy and was able to yield
+intuitive explanations by plotting features against each other.  However, it was
+unable to differentiate between cyborgs from bots and fails with certain humans
+(i.e. politicians and people who advertise); it also assumed that synchronized
+data is always fraudulent, which is not always true.  Also, the dataset used had
+a limited number of fraud-labeled users, which may have skewed the accuracy
+upward.
 
 \subsection{Supervised Learning Approach}
 \subsubsection{DARPA Twitterbot Challenge Top 3 Support Vector Machine Approach -- 2015}
