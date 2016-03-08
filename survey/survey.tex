@@ -14,14 +14,30 @@
 \titlespacing{\subsection}{0pt}{1.5\parskip}{-0.4\parskip}
 \titlespacing{\subsubsection}{0pt}{\parskip}{-0.3\parskip}
 
-\title{TITLE}
-\author{AUTHOR}
-\date{DATE}							% Activate to display a given date or no date
+\title{Pattern Detection to Identify Anomalous Users: A Survey}
+\author{
+  Daniel Geng (504588536)\\
+  \and
+  Meghana Ginjpalli (804588573)\\
+  \and
+  Sara Melvin (004590481)\\
+  \and
+  Sonu Mishra (604590548)\\
+  \and
+  Andrew Wong (104036702)
+}
+\date{Winter 2016}							% Activate to display a given date or no date
 
 \begin{document}
 \maketitle
 
-\section*{Introduction}
+\section*{Abstract}
+The ubiquity of social media makes it easy for people to communicate with each other and stay informed about global events.
+Many platforms rely on crowdsourced information for promoting a business' services and/or products.
+However, this provides a vulnerability that commercial entities can easily exploit for their own interests. This is a lose-lose situation for both businesses and consumers; businesses must constantly defend themselves from the onslaught of negative feedback while consumers will lose trust in information from social media.
+Therefore, in this survey, we will discuss various methods that can be used to differentiate between real users and non-human users.
+
+\section{Introduction} \label{background}
 
 \quad The ubiquity of social media makes it easy for people to communicate with each other and stay informed about global events.
 Many platforms rely on crowdsourced information for promoting a business' services and/or products.
@@ -30,29 +46,21 @@ For example, a company could use a social media bot to promote its own products 
 This is a lose-lose situation for both businesses and consumers; businesses must constantly defend themselves from the onslaught of negative feedback while consumers will lose trust in information from social media.
 Therefore, in this survey, we will discuss methods that can be used to differentiate between real users and non-human users.
 
-\quad At the general level, this is a problem of \textit{anomaly detection}---finding users that are unlike the rest.
-Historically, there have been many approaches to anomaly detection, such as Poisson, SFP, Pearson's $\chi^2$, and CNPP.
-We will analyze the pros and cons of these existing methods.
-Next, we will introduce state-of-the-art models that attempt to address some of the shortcomings of these more mature models and highlight their relative improvements. 
-These current methods fall under a few major categories, including temporal, Bayesian, and group.
+\quad At the general level, this is a problem of \textit{anomaly detection}---finding unexpected user behavior.
+Historically, there have been many approaches to anomaly detection, such as CNPP, SFP, and Pearson's $\chi^2$.
+In Section \ref{found_models}, we will analyze the advantages and disadvantages of these existing methods.
+In Section \ref{cur_models}, we will introduce state-of-the-art models that attempt to address some of the shortcomings of these more mature models and highlight their relative improvements. 
 
-\section*{Background}
+\section{Background} \label{background}
+In this section, we will provide an overview of the types of anomalies, types of features to identify the anomalies, the types of challenges in anomaly detection, and types of approaches. 
 
-\quad Each type of anomaly detection method introduces its own set of definitions and fundamental ideas.
-Temporal-based approaches primarily use the \textbf{inter-arrival times} (IAT) between postings to identify patterns that could be used for detecting anomalies.
-The IAT distributions between humans and bots are compared to classify users.
-
-\quad To fully understand group-based approaches, a \textbf{group} must be defined.
-A group is a mixture model of a user behavior mixture model.
-The \textbf{role mixture rate} is an inference of group membership and role identity of each individual inside of a group.
-A \textbf{group anomaly} occurs when the role mixture rate is significantly different than a normal group role mixture rate.
-Rather than identifying individual anomalies, a group-based method classifies all individuals belonging to a group as suspicious if an anomaly is detected.
-
-\quad There are a few other different types of anomalies that a user can be classified as.
+\subsection{Types of Anomalies}
+\quad There are a different types of user behavior anomalies that can be classified as the following.
 An individual is considered to be a \textbf{point anomaly} if it is anomalous with respect to the rest of the data.
 If an individual is anomalous in a specific context, but not otherwise, it is defined as a \textbf{contextual anomaly} or \textbf{conditional anomaly}.
-A \textbf{collective anomaly} are a group of individuals that may not be considered to be anomalies independently, but the occurrence of them together is considered to be an anomaly.
+A \textbf{collective anomaly} or \textbf{group anomaly} is an anomalous collection of individuals that may not be considered to be anomalies independently, but the occurrence of them together is considered to be an anomaly [ref]. A \textbf{graph anomaly} is ******************[ref].
 
+\subsection{Types of Features}
 \quad The optimal type of anomaly detection algorithm to use is dependent on the input features that are available.
 For example, if given continuous or sequential time-series data, a temporal approach may have the best performance.
 On the other hand, if only given categorical data, machine learning techniques such as KNN or logistic regression might be better.
@@ -61,6 +69,7 @@ A combination of different types of input features could be solved using a Bayes
 Entities that have quantifiable relationships between them are probably best solved by a graph-based approach that uses either node-attributed or edge-attributed values to detect anomalies.
 Lastly, if classification labels are unavailable, an unsupervised method may yield better performance.
 
+\subsection{Types of Challenges}
 \quad While anomaly detection seems to be intuitively simple from a high-level perspective, there are many factors that make it quite difficult.
 To classify something as an anomaly, there needs to be concrete definitions of what is considered ``normal" and what is considered an ``outlier"; these definitions can vary significantly depending on the underlying context of the problem.
 In the context of social media, a ``normal" user is defined to be a human and an ``outlier" is a bot.
@@ -76,26 +85,14 @@ For example, one legitimate user could constantly be posting on social media, wh
 While the typical bot behaves more like the first type of user, a bot creator could easily manufacture the behavior of a user that posts infrequently by creating multiple bots.
 An anomaly detector would probably be able to detect the first bot (and might even trigger a false positive for the first type of user), but would unable to detect the ``array" of bots--although they end up having a similar aggregate post frequency.
 
-\quad The evaluation of each anomaly detection method will be similar.
-The most important performance metric is anomaly detection accuracy; if a method is unable to correctly differentiate between humans and bots, then it is not very useful.
-The predictions from each method must be considered as well; because there is potentially a fine line between the features a human and a bot, a simple binary classification (human, bot) may not be as informative as a ``score" for how anomalous a user/group is.
-Because real-world datasets have millions of data points that must be accounted for and processed, scalability in terms of both space and time is very important.
-Methods should be robust, as noise is quite common in real-world data, among both ``normal" users and ``outliers".
-Furthermore, some methods have the assumption that observations are i.i.d., which will be considered a weakness.
+\subsection{Types of Approaches}
+There are several approaches such as temporal-based, Bayesian-based, group-based, graph-based, and Machine Learning (supervised, unsupervised, and semi-supervised) approach. \textbf{Temporal-based} utilizes temporal features such as inter-arrival time (IAT), which is the time between user activity events, to predict user behavior. If some user is not behaving as predicted, then that user is considered anomalous.  \textbf{Bayesian-based} approach utilizes a user's posterior distributions to represent the total knowledge of the feature model parameters after data has been observed. This can then be used to compare how anomalous a user is as opposed to other users, instead of simply classifying anomalous or not. \textbf{Group-based} approach utilizes the collective many users to determine a set of users as anomalous that might have not been considered anomalous if evaluated on its own. The non-conventional \textbf{graph-based} approaches look at topological patterns of relations between entities (i.e. users, products, etc) and leverages the edge-attributes between these entities. Lastly, various \textbf{supervised classification}, \textbf{unsupervised clustering}, and \textbf{semi-supervised learning} algorithms are used to classify a user as an outlier.
 
-\section*{Models, Approaches, Algorithms}
+\section{Models, Approaches, Algorithms} \label{found_models}
 
 \quad Models of human dynamics and anomaly detection methods  developed before 2014 will be introduced here as both a foundation for this area of research and will be reference by state-of-the-art methods. 
 
-\subsection*{Cascading Non-homogeneous Poisson Process (CNPP) -- 2009}
-
-\quad CNPP is a variation of the double chain hidden Markov model and is used for understanding the behavior of individuals and detecting outliers.
-Specifically, this model is used to detect variability among individuals by using data from email communication.
-First, an inference algorithm is used to estimate model parameters. 
-This model is then applied to the email data.
-From this experiment, the authors found that individuals can be classified into specific types and that users can be clustered together based on their model parameters which leads to easier ways to detect outliers.
-
-\subsection*{Power-Law -- 2005}
+\subsection*{Power-Law }
 
 \quad The power-law distribution \cite{powerlaw} is a non-Poisson distribution that models human behavior, which consisted of short bursts of activity separated by long periods of inactivity.
 The explanation for this type of distribution is the fact that humans execute tasks by their own set of priorities.
@@ -103,45 +100,30 @@ Thus, tasks wait an uneven amount of time before execution.
 
 \quad This model of human behavior can be utilized to create an anomaly detection algorithm for social media bots, but it is not an anomaly detection algorithm on its own. It's a model that has been used in further development of modeling human online behavior.
 
-\subsection*{Self-Feeding Process (SFP) -- 2013}
+\subsection*{Cascading Non-homogeneous Poisson Process (CNPP) }
 
-\subsubsection*{Approach}
+\quad Another model of human behavior is the Cascading Non-homogeneous Poisson Process (CNPP). CNPP is a variation of the double chain hidden Markov model and is used for understanding the behavior of individuals and detecting outliers.
+Specifically, this model is used to detect variability among individuals by using data from email communication.
+First, an inference algorithm is used to estimate model parameters. 
+This model is then applied to the email data.
+From this experiment, the authors found that individuals can be classified into specific types and that users can be clustered together based on their model parameters which leads to easier ways to detect outliers.
 
-\quad The SFP model \cite{sfp} combines the benefits of the non-homogeneous Poisson Process (PP) from CNPP and the power-law distribution.
+\quad This model, however, does not conform to the heavy-tail distribution shown in the power law model nor does it model user's daily activity behavior.
+
+\subsection*{Self-Feeding Process (SFP) }
+
+\quad The SFP model \cite{sfp} combines the benefits of the non-homogeneous Poisson Process (PP) from CNPP and the power law distribution.
 This is because the non-homogeneous PP works well to model user communication where short-term communication is PP, but there are long periods of inactivity where the PP rate should change.
-The power-law distribution captures a user's long periods of inactivity which are seen as a heavy tail in the IAT probability density function.
+The power law distribution captures a user's long periods of inactivity which are seen as a heavy tail in the IAT probability density function.
 
-\subsubsection*{Model}
-
-It attempts to accomplish four goals:
-\begin{enumerate}
-	\item Realism of marginals
-	\item Realism of the local Poisson distribution
-	\item Avoiding the independent and identical distribution (i.i.d.) fallacy
-	\item Requirement of only a few parameters
-\end{enumerate}
-
-To achieve the first goal and to better view the dataset without losing information, SFP computes the odds ratio where the set of IATs are used to compute the OR for each percentile of the data.
-
-For the second goal, the Poisson distribution is built into the SFP model.
-The third goal is obtained by building a Markov process where each even of activity influences the next event.
-
-The Poisson process model is defined as the following:
-$$ \Delta_i \sim exp(1/ \lambda) \ for \ i = 1 \dots n \ events $$
-
-SFP's piecewise Poisson model updates it as:
+\quad Both types of distributions are exhibited in their SFP's piecewise Poisson model updates:
 $$ \Delta_1 \sim \mu $$
 $$ \Delta_i \sim exp(\Delta_{i-1} + \mu / e) $$
 where e is the Euler constant.
 
-As seen from the model, the last goal is achieved, as only the mean of the data set is required as input.
-The model can be generalized for other applications that only need two parameters, $\mu$ and the OR slope $\rho$.
-
-\quad Like the power law, this method is used to model human online behavior and not perform anomaly detection on its own. However, it can be used by an algorithm like RSC \cite{rsc} to generate synthetic data for their anomaly detection algorithm. RSC is explained later on in this paper.
+\quad This algorithm models the heavy tail of human behavior and does not assume independent and identically distributed (i.i.d.) however it does not model human's daily activity behavior. It is also good to note here that like the power law and CNPP, this method is used to model human online behavior and not perform anomaly detection on its own. However, it can be used by an algorithm like RSC \cite{rsc} to generate synthetic data for anomaly detection. RSC is explained later on in this paper.
 
 \subsection*{Pearson's $\chi^2$ -- 2011}
-
-\subsubsection*{Approach}
 
 \quad This paper creates a model to determine whether a Twitter account uses automation to publish tweets for spamming purposes. 
 The authors come to the result that 16\% of active accounts show automated behavior.
@@ -150,28 +132,14 @@ They believe that automated accounts have a specific timing pattern that differs
 For example, real users might tend to post uniformly throughout whereas automated accounts might post at the beginning or specific interval of the hour.
 Automated accounts tend to have non-uniform timing or excessive uniformity.
 
-\subsubsection*{Model}
-
 \quad The model used to detect whether the posted times match with those of real user is Pearson's $\chi^2$ test.
 The test returns a p-value; if this value is below a certain threshold, the account belongs to a real user and if this value is higher than this threshold, then this account is most likely automated.
 For this test, the threshold was chosen to be 0.1\% specifically to avoid false positives and detect accounts that post with excessive uniformity.
-A false positive occurs when the test says an account is automated when it is actually organic.
-However, keeping the threshold at 0.1\% has its drawbacks as it will be difficult to classify hybrid accounts which contain both manual and automated postings.
-A false negative tends to be higher because of these hybrid accounts being classified as organic accounts instead of automated accounts.
-Another drawback of this test is that an automated account can pass this test if they post uniformly throughout the hour and second.
- 
-\quad All accounts can display some form of automation depending on temporal factors such as time of day.
-In order to accurately determine automated accounts, one will need to examine tweets spanning over a couple of weeks or months, but the authors have left this to do in the future.
-A previous study had a model where accounts that published more that 150 tweets per day were automated.
-After Twitter started using this model, the number of automated accounts dropped down to 14\%.
-When looking at only Verified accounts, only 6.9\% were determined to be automated, typically due to tweeting news or reminders throughout the day.
-For those in Trending Topics, only 4.7\% of the accounts were automated, which could be attributed to the fact that Twitter prevents automated tweets from appearing in trending topics.
-In the future, the authors wanted to investigate the frequency of words and compare them between automated accounts and organic accounts.
- 
-\quad In conclusion, Pearson's $\chi^2$ test can detect automated accounts which have distinct timing patterns, which found that 16\% of public accounts are automated. 
-The authors suggest to use this model to prevent spam and other use.
 
-\subsection*{Human, Bot, or Cyborg? LDA Approach -- 2010}
+\quad In conclusion, Pearson's $\chi^2$ test can detect automated accounts which have distinct timing patterns, which found that 16\% of public accounts are automated. However, keeping the threshold at 0.1\% has its drawbacks as it will be difficult to classify hybrid accounts which contain both manual and automated postings.
+Another drawback of this test is that an automated account can pass this test if they post uniformly throughout the hour and second.
+
+\subsection*{Human, Bot, or Cyborg? LDA Approach}
 
 \subsubsection*{Approach}
 
@@ -235,16 +203,18 @@ Also, any of the features could yield false positives or negatives; for example,
 On the other hand, some of the features were ineffective (i.e. low coefficients for Bayesian text, followers to friends ratio, URL ratio)
 Additionally, the relationship between humans, bots, and cyborgs is not considered, so the model only infers it from the LDA weights.
 
-\section*{Current State-of-the-art}
+\section{Current State-of-the-art}  \label{cur_models}
 
-\quad While state-of-the-art methods use the same basic ideas and principles of older models and fall under the same set of categories, they attempt to improve on them in some way.
+\quad We will discuss the following state-of-the-art methods that improve upon the previously discussed foundational models.
 
-\subsection*{Rest-Sleep-and-Comment (RSC) -- 2015}
+\subsection{Temporal-based Approach}
+\subsubsection{Rest-Sleep-and-Comment (RSC) }
 
-\subsubsection*{Approach}
+\paragraph{Approach}
+\quad
 
-\quad This paper investigates the differences between humans and bots based exclusively on the timing of posts from two specific social media services: Reddit and Twitter. \cite{rsc}
-IATs are used for measuring temporal data.
+\quad This paper investigates the differences between humans and bots based exclusively on the timing of posts from two specific social media services: Reddit and Twitter. In this approach,\cite{rsc}
+IATs are used for measuring temporal data. As mentioned previously, an IAT is the time between a user's activity event.
 Using the distribution of IATs, four patterns were identified:
 \begin{enumerate}
 	\item Positive correlation between consecutive IATs
@@ -256,7 +226,8 @@ Using the distribution of IATs, four patterns were identified:
 A model was then designed to generate synthetic timestamps whose IAT fits the data distribution and matches all patterns of actual human users.
 Non-human users could then be detected using this model.
 
-\subsubsection*{Model}
+\paragraph*{Model}
+\quad
 
 \quad RSC is a generative model that matches these patterns to classify anomalies based only on temporal activities.
 
@@ -277,9 +248,419 @@ Using this parameter, $t_{sleep}=f_{sleep}*24h$ when $t_{wake}=0$.
 When a user is active, there is a probability $p_r$ that it will transition into the rest state and $1-p_r$ probability for it to remain active.
 While in the rest state, there is a $p_a$ probability to transition into the active state and $1-p_a$ probability to remain in the rest state.
 However, a user will always transition from rest to sleep when $t_{wake} > t_{clock}$ and $t_{sleep} < t_{clock}$, meaning that the current clock time falls within the sleep time.
-After the sleep state ends, the user will always transition into the rest state.
+After the sleep state ends, the user will always transition into the rest state. (Algorithm in Appendix)
 
-\subsubsection*{Algorithm}
+\paragraph*{Results}
+\quad
+
+\quad In conclusion, RSC showed improvement in differentiating between humans and bots compared with SFP and CNPP models.
+With only temporal activity, RSC was able to detect non-human users with 96.5\% precision on Reddit and 94.7\% precision on Twitter.
+\subsection{Bayesian-based Approach}
+\subsubsection*{BIRDNEST }
+
+\paragraph*{Approach}
+\quad
+
+\quad Because IATs do not completely account for bot behavior, the authors proposed BIRDNEST \cite{birdnest} as a Bayesian-based method to approach the anomaly detection problem. 
+BIRDNEST expands on the pure temporal-based approach by using both IAT and rating distributions.
+
+\quad When determining the suspiciousness of a user, one may first ask what the rating distribution or IAT distribution is for a given user.
+For example, a user that rates all ones or all fives would have a single peaked rating distribution and a user that rates all fives for its own company's products and all ones for its competitors' products would have a bimodal rating distribution.
+BIRDNEST approaches user rating-fraud detection by solving these questions with Bayesian inference.
+The user's rating distribution is the prior distribution and the belief of the user's true long-term behavior trends is the posterior distribution.
+The goal is to detect a typical bot's behavior of a narrow posterior distribution towards one extreme of the rating range or the other since this behavior is vastly different from a typical normal distribution or even a newbie legitimate user.
+
+\paragraph*{Model}
+\quad
+
+\quad The BIRDNEST model has two phases: fitting the Bayesian model (BIRD) to a given data set and creating the metric of suspiciousness called the Normalized Expected Surprise Total (NEST).
+It expects as input data the following: a matrix of users' ratings (rating from 1 to n) where the user is indexed from 1 to m and the corresponding matrix of timestamp of the rating.
+The timestamp data is pre-processed to calculate the IATs of each user.
+
+\quad The BIRD generative model is a mixture model where there are $K$ clusters.
+Each of these clusters are trained by the user training data to represent various normal user prior distributions using the Dirichlet prior distribution.
+Once the mixture model converges, the posteriors are calculated based on the Dirichlet distribution property.
+
+\quad The NEST part of the algorithm uses the BIRD mixture model posterior distributions to calculate the suspiciousness of a user.
+The metric surprise is defined as the negative log likelihood the user's distribution would be generated by the global mixture model distribution.
+Because rating and time have different ranges, the surprise metric of rating and time are normalized and summed for the final NEST value.
+The smaller the NEST value, the less suspicious the user is and it is less likely that the user is a bot.
+
+\paragraph{Results}
+\quad
+
+\quad BIRDNEST is able to compute the degree of suspiciousness of a user rather than simply classifying it as a human or a bot with 100\% precision for the first 50 ranked users. However, it assumes that a user's rating events are independent of each other (i.i.d. fallacy).
+
+\subsection{Group-based Approach}
+
+\subsubsection{Group Latent Anomaly Detection (GLAD) -- 2014}
+
+\paragraph{Approach}
+\quad
+
+\quad In this paper, the authors' goal is to determine group anomalies by proposing the GLAD (Group Latent Anomaly Detection) model, which uses a hierarchical Bayes model.
+Unlike previous models, GLAD takes in pair-wise and point-wise data as input and determines the groups and group anomalies simultaneously.
+Until now, people were only trying to detect individual anomalies; however, detecting group anomalies early and efficiently is also important in order for preventing group attacks.
+There are three main observations made towards group anomaly:
+\begin{enumerate}
+	\item Both point-wise data and pairwise data exist in social media
+	\item Group anomaly is harder to detect than individual anomaly
+	\item Individuals are dynamic which makes detecting group anomaly harder to find
+\end{enumerate}
+
+\quad The authors first look at previous models that were used to detect group anomaly such as Multinomial Genre Model (MGM), Latent Dirichlet Allocation (LDA), Flexible Genre Model (FGM), and support measure machine (SMM).
+Both MGM and LDA define a group as a mixture of Gaussian distributed topics and gives each group a certain mixture rate.
+In order to determine the role mixture rate for each individual, we infer their role identity and group membership.
+If this mixture rate is significantly different than a mixture rate of normal groups, then we can classify this group as an anomaly.
+All of these models first determine the groups and then discover anomalies in a two-step process, but GLAD attempts to do this process simultaneously.
+However, all of these models, including GLAD, are only able to handle static data, which means that there needs to be another model which can handle both dynamic and temporal data.
+
+\paragraph{Model}
+\quad
+
+\quad In general, the GLAD model first identifies the normal mixture rates and then observes the likelihood of the observations given these normal mixture rates.
+A particular group is an anomaly if this likelihood value is low.
+
+\quad Each person can belong to a group given a membership distribution which is defined by the Dirichlet prior.
+The multinomial distribution calculates the likelihood of that individual belonging to a specific group.
+Two people can be linked based on their group identities.
+Each group has a role mixture rate and each person can have multiple roles and multiple memberships.
+A limitation of GLAD is that it can only determine group anomaly if the groups stay static.
+
+\quad A modified version of the GLAD model, d-GLAD, can handle both dynamic data and detect mixture rates with respect to time with these groups.
+This model uses a variational Bayesian method and a Monte Carlo sampling technique.
+Essentially, at a certain time, a GLAD model is applied and the mixture rates are stored.
+This is done with the multivariate Gaussian distributions.
+Each mixture rate at a certain time is determined from the Gaussian distribution of the previous time mixture rate.
+When there is a significant change to the mixture rates, then there is an anomaly.
+
+\paragraph{Results}
+\quad
+
+\quad Both GLAD and d-GLAD were tested on synthetic and real data.
+In a dataset of scientific publications, GLAD was able to detect anomalous papers; in a dataset containing US Senate Voting, d-GLAD was able to detect changes in party affiliation over time.
+However, there are certain limitations such as group anomaly is difficult to detect without labeled data and the d-GLAD model is computationally expensive and is not scalable to a large dataset.
+
+\subsubsection{ND-SYNC}
+
+\paragraph{Approach}
+\quad
+
+\quad The authors first survey different forms of fraud-detection on Twitter, citing two common tactics that are explored in several other papers: simple feature-based detection and collective anomaly detection.
+ND-SYNC is the first to be textual content-agnostic, graph structure-agnostic, user attributes-agnostic, parameter-free, unsupervised, specifically designed for RTFraud problem, and a well-performing detector for synchronicity fraud.
+
+\paragraph{Model}
+\quad
+
+\quad This paper investigates and proposes a method for detecting Twitter fraud as it pertains to fraudulent retweet activity (RTFraud).
+By analyzing numerous features captured over large retweet threads, they define and measure of the concept of synchronicity across multiple features.
+The authors tackle this by formulating RTFraud as a special case of the synchronicity fraud problem (SyncFraud).
+They extract features for each retweet thread and assign a suspiciousness score based on the similarities to other threads, assuming that organic behavior is the norm.
+
+\quad The \textit{synchronicity} of a group is a measure of closeness between all of its members.
+The \textit{normality} of a group with respect to a superset is a measure of closeness between members of the group and members of the superset.
+Finally, they define the residual score as the difference between the synchronicity and mathematically-defined lower bound on synchronicity.
+According to the SyncFraud problem, suspicious groups are those that exhibit highly synchronized characteristics.
+
+\quad To tackle the RTFraud problem specifically, the authors experimented with a large number of features and determined the seven most significant features to be:
+\begin{itemize}
+	\item Number of retweets
+	\item Response time of first retweet
+	\item Lifespan, constrained to three weeks
+	\item RT-Q3, the time to garner the first three quarters of the retweets
+	\item RT-Q2, the time to garner the first half of the retweets
+	\item Arr-MAD, mean absolute deviation of IATs
+	\item Arr-IQR, inter-quartile range of IATs
+\end{itemize}
+
+\quad By projecting their data onto two of these seven features, the authors came up with visualizations of their data that helped them find intuitive patterns in the data, namely lifespan vs. Arr-MAD and retweets vs. response time.
+
+\paragraph{Results}
+\quad
+
+\quad ND-SYNC is able to detect fraud with high accuracy and was able to yield intuitive explanations by plotting features against each other.
+However, it was unable to differentiate between cyborgs from bots and fails with certain humans (i.e. politicians and people who advertise); it also assumed that synchronized data is always fraudulent, which is not always true.
+Also, the dataset used had a limited number of fraud-labeled users, which may have skewed the accuracy upward.
+
+\subsection{Supervised Learning Approach}
+\subsubsection{DARPA Twitterbot Challenge Top 3 Support Vector Machine Approach -- 2015}
+
+\paragraph{Approach}
+\quad
+
+\quad The problem of the DARPA Twitterbot Challenge was: given logs of users that posted in vaccination-related threads, determine which were ``influence bots"---bots that are designed to generate conversation about a given topic.
+The proposed problem was not constrained to be completely automated and assumed there were bots present (although the exact number was not made known).
+
+\paragraph{Model}
+\quad
+
+\quad In order to gain insight into which approaches would potentially work, the teams propose a variety of different features to examine and compare.
+
+Syntax features: similarity to known NLP generators, number of hashtags, user mentions, links, or special characters, number of retweets by user, geo-enabled, whether tweet ends with punctuation, hashtag, or link
+
+Semantic features: number of user posts related to vaccination, user's average sentiment score on tweets with the word ``vaccination", contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
+
+Temporal behaviors: flipping sentiment over time, entropy of inter-arrival times, duration of longest session by a user, number of dropped followers over time
+
+User profile features: number of posts, number of followers and followings, similarity to known bots (Jaccard similarity, cosine similarity)
+
+Network features: deviation of sentiment from followers, number of bots followed by user
+
+\paragraph{Results}
+\quad
+
+\quad All of the participating teams were able to correctly identify the bots.
+However, the one challenge that many teams faced was to determine when to stop guessing, as they were not informed beforehand how many bots there are.
+Only one team was able to detect the bots exactly.
+
+\quad While the algorithms presented were able to achieve up to 100\% accuracy and they took almost all types of features into account, there were some major downsides as well.
+Most importantly, they assumed that bots were present and because the problem was very specific, many of the approaches would only achieve high performance for this exact problem.
+Furthermore, some components of the algorithms used human judgment to augment the bot identification process; a semi-automated pipeline would be less efficient for real-world use cases.
+
+\subsection{Unsupervised Learning Approach}
+\subsubsection{PCA }
+
+\paragraph{Approach}
+\quad
+
+\quad The \cite{pca} approach uses an unsupervised learning algorithm called Principal Component Analysis (PCA).
+The purpose of PCA is to find the best projections of a dataset that show the most variation given a set of features.
+For anomaly detection, PCA is utilized by projecting where bot-data differs from normal-user behavior.
+
+\paragraph{Model}
+\quad
+
+\quad PCA is an unsupervised learning algorithm which finds the most varied projections of a given data set.
+This model is represented as a linear combination of the most uncorrelated features (aka principal components or singular values) where the first principal component has the maximum variation.
+Human behavior can be described in a small amount of dimensions (k-dimensions) which this study shows because five principal components were enough to describe 85\% of the data's variance.
+
+\quad Features that can be utilized in this approach can be classified as the following: temporal features consist of a histogram of a per-time-unit (e.g. per-day) basis, spatial features consisting of a histogram of a non-temporal feature such as categorizes of Facebook pages that were liked by a user, and spatio-temporal features which is the observation of a spatial feature over time.
+
+\quad Anomalies are determined based on the distance from the normal subspace.
+The normal subspace is the projection of the first five principal components (more generally k-components).
+The residual subspace is thus the projection of the last principal components (more generally k+1 through n-1 components).
+Therefore, the residual subspace detection is determined by the distance between a given point and the normal subspace.
+If the distance is above a certain threshold, then the user is classified as anomalous.
+
+\paragraph{Results}
+\quad
+
+\quad PCA was able to detect bot-users with a high accuracy and compromised legitimate users with greater than 50\% accuracy without a labeled data set because it was able to detect the most weighted features.
+However, classification varies on the choice of threshold, which may be a difficult hyperparameter to tune based on the specific problem at hand.
+Also, if the user data is too variable, a bot could potentially hide in the noise.
+
+\subsubsection{Detecting Lockstep Behavior}
+
+\paragraph{Approach}
+\quad
+
+\quad The main idea \cite{lockstep} is to leverage social graph data to identify the ``lockstep behavior pattern" (groups of followers typically following the same group of followees with little to no other activity).
+When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
+However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
+There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
+Instead, a subset of these followers show the non-overlap behavior for some followees while other subsets show the same non-overlap behavior for some other followees.
+
+\paragraph{Model}
+\quad
+
+\quad A fundamental part of this approach is the use of spectral-subspace plots.
+Given an adjacency matrix that is $NxN$, spectral-subspace plots project these points from $N$ dimensions into 2 dimensions spanned by two singular vectors.
+For a non-lockstep behavior spectral-subspace, points cluster around the origin.
+However, for the non-overlap lockstep ``block" behavior has a spectral-subspace plot that shows a ``ray" pattern from two of its singular vectors.
+In addition, the overlap lockstep ``staircase" behavior is projected onto two singular vectors exhibits spherical micro-clusters (referred to as a ``pearl" pattern) in its spectral-subspace plot.
+These patterns are utilized for discovering other bot-followers using ``lockstep" propagation, which has linear complexity.
+
+\paragraph{Results}
+\quad
+
+\quad While the lockstep method was able to detect bots that try to camouflage themselves by following legitimate users different from its bot group, it relies on the assumption that bots use most of their activity to follow a followee as a mass.
+
+\subsection{Semi-supervised Learning Approach}
+\subsubsection{Modified COMPA }
+
+\paragraph*{Approach}
+\quad
+
+\quad The authors suggest a modified version of the COMPA algorithm in order to detect compromised social media accounts.
+Often, online social networks contain automated bot accounts for malicious reasons.
+Currently, there are many algorithms for detecting anomalies but not many for detecting hijacked accounts.
+Hijacking accounts is becoming more popular for malicious users because a new bot account does not have to be created.
+Instead, the spammer will take control of a pre-existing account with a good reputation.
+The original COMPA system detects these types of accounts by clustering similar messages together.
+Although the original COMPA system can accurately detect large-scale spam campaigns, it is hard for it to detect individual hijacked accounts.
+The authors suggest that they can modify COMPA to detect individual hijacked accounts by removing the clustering part of the algorithm.
+
+\paragraph{Model}
+\quad
+
+\quad Previous models that were used before COMPA included the semi-supervised learning framework SybilBelief, the unsupervised approach of principal component analysis, and the support vector machine.
+However, these algorithms cannot pinpoint exactly when a particular account was hijacked.
+COMPA is a supervised learning classifier that classified based on each user account.
+If a new tweet is anomalous, then the account is considered to be hijacked.
+
+\quad For this modified version of COMPA, the features are a list of tuples containing the attribute value and the number of times the attribute occurs.
+To smooth out these features, the algorithm looks at the previous and next hour as well.
+From this information, the model is trained and anomaly scores are calculated from the new messages.
+The overall anomaly score is calculated from the weighted sum of the individual anomaly scores.
+To evaluate this model, the data is collected from a number of social media accounts where a subset of the messages are swapped with anomalous messages.
+This way, the authors have full control over when the hijackings of the account took place.
+
+\paragraph{Results}
+\quad
+
+\quad While the modified COMPA model is able to detect individual hijacked accounts, it has some limitations.
+There is a tradeoff between precision and recall.
+If the precision is too low, it cannot be used in real world situations.
+However, if the anomaly threshold is not set to a high value, there could be too many false positives.
+The model can also be unstable in that the detection behavior is dependent on the threshold.
+In the future, the authors suggest that the model could be improved by adding more features to the training data.
+
+\subsection{Graph-based Approach}
+\subsubsection{EdgeCentric: Anomaly Detection in Edge-Attributed Networks}
+
+\paragraph{Approach}
+\quad
+
+\quad Many real-world online interactions can be represented using graphs with attributed-edges.
+The attributed edges in graphs capture information about how the adjacent nodes interact with each other.
+For example, edges in e-commerce networks indicate how and when users rated products; edges in social networks contain the temporal information about when friendships were formed and when users communicated with each other.
+
+\quad EdgeCentric \cite{edgecentric} is an information theoretic approach for node anomaly detection in edge-attributed graphs.% because it uses the information on edges to identify suspicious nodes.
+It leverages minimum description length (MDL) to identify nodes with suspicious behavior on adjacent edges in an unsupervised fashion. 
+
+\paragraph{Model}
+\quad
+
+\quad There are multiple types of nodes, relations, and attributes.
+For example, in the e-commerce networks: nodes can be of type products, buyers or sellers; relations can be of type ``users rated products" or ``users rated sellers"; attributes can be the time-stamps or the actual value of ratings.
+Also, there can be multiple model distributions, forming clusters of typical node behavior.
+
+\quad The main idea of the paper is to devise an abnormality function, $\delta(v)$, corresponding to each node $v$ in the edge-attrbuted multi-graph.
+The higher the value of $\delta(v)$, the more likely the node is suspicious.
+Intuitively, $\delta(v)$ gives the expected number of extra bits required to encode the node $v$’s edge-attribute vectors with respect to a joint model over multiple relations, attributes and clusters.
+
+\paragraph{Results}
+\quad
+
+\quad EdgeCentric is able to account for multiple relationships between entities, has practical scalability, and has numerous real-world applications because it is a graph based approach.
+However, it makes a lot of independency assumptions.
+For example, multiple attributes are assumed to be independent while formulating the closed form expression of $\delta$. 
+
+
+\subsubsection{FocusCo: Focused Clustering and Outlier Detection in Large Attributed Graphs }
+
+\paragraph{Approach}
+\quad
+
+\quad Unlike EdgeCentric, FocusCo \cite{focusco} is based on node-attributed graphs, rather than edge-attributed graphs.
+The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
+They either use all attributes or perform unsupervised feature selection.
+Users cannot control the relevance of the attributes and therefore, have no control on the resultant clusters.
+In attributed graphs, focused clustering is often of particular interest, where users might be concerned with a few attributes. 
+As different subsets of attributes yield different clusters, the users should be able to steer the clusters accordingly.
+
+\paragraph{Model}
+\quad
+
+\quad Given a node-attributed graph $G(V,E,F)$ with $|V|=n$ nodes and $|E|=m$ edges, where each node has $|F| = d$ attributes, the user $u$ wants to extract only the clusters of interest.
+To do so, a small set $C_{ex}$ of exemplar nodes that is considered to be similar to the type of nodes the clusters of interest should contain is provided.
+The main idea of the paper is to infer the implicit weights $\beta_{u}$ of attributes that define the nodes in $C_{ex}$.
+Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few attributes, which are called the ``focus attributes".
+
+\quad Once the $\beta_u$ is inferred, the focused clusters $C$ are extracted. 
+The clusters are $(1)$ dense in graph structure and separated from rest of the graph $(2)$ coherent on focused attributes with large weights.
+The focused clusters can be overlapping, sharing several of their nodes.
+The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes.
+
+\paragraph{Results}
+\quad
+
+\quad FocusCo is a scalable algorithm which runs in time linear with the size of input graph.
+With appropriate initializations, it can very well run in sub-linear time in practice.
+This helps the users to obtain clusters and identify outliers according to the attributes of choice.
+
+\subsubsection{Discovering Opinion Spammer Groups by Network Footprints}
+
+\paragraph{Approach}
+\quad
+
+\quad This paper \cite{dosgnf} proposes an unsupervised and scalable approach for detecting opinion spammer groups based solely on network footprints.
+The idea is to quantify the statistical distortions caused by spamming activities in well-understood network characteristics.
+This graph-based measure is known as Network Footprint Score (NFS).
+The group spammers are identified by using a hierarchal clustering on the induced subnetwork of highly suspicious products and reviews, which outputs a set of spammers with their nested hierarchy.
+
+\paragraph{Model}
+\quad
+
+To design the NFS measure, the method uses two observations associated with real-world networks:
+
+\begin{enumerate}
+\item \emph{Neighbor diversity}: The neighbors of a node should consist of nodes with diverse behavior or importance.
+The importance of a node is expressed in terms of its degree centrality and page-rank centrality.
+Both centrality measures are binned logarithmically into buckets, and their discrete probability distributions and Shannon entropies are found.
+The lower the entropies, the more likely the product is a target of a spam campaign.
+\item \emph{Self-similarity}: This implies that the centrality distribution of reviewers for a particular product should be similar to the overall centrality distribution of the reviewers.
+For each centrality measure, the self-similarity is measured in terms of the KL divergence between distributions of the reviewers of the product with the global distributions.
+The larger these scores, the more likely the product is the target of a spam campaign.
+\end{enumerate}
+
+\quad From the above two observations, four suspiciousness scores are obtained.
+The NFS score unifies all these to produce a single measure of suspiciousness.
+Products with high NFS values are more likely to be targets of spam campaigns.
+
+\quad Once the NFS values are computed for the products, the next goal is to detect the spammer groups.
+First, a subnetwork is constructed.
+It consists of products with high NFS values, the reviewers of these products, and all the products that these reviewers have reviewed.
+This subnetwork is represented as an adjacency matrix where each column represents a reviewer.
+The objective is to chip off groups where columns in a group have strong similarity.
+
+\quad An agglomerative clustering approach is adopted where columns are iteratively merged to form larger groups.
+To make the clustering more efficient, the authors use Locality-Sensitive Hashing (LSH) for finding similar sets of clusters.
+LSH ensures that similar points are highly likely to get hashed to the same bucket and dissimilar points are rarely hashed to the same bucket, which speeds up the similarity search.
+
+\paragraph{Results}
+\quad
+
+\quad The paper reveals that language and behavior patterns are easier to be mimicked by the spammers compared to the network-wide patterns
+Thus, the method utilizes these patterns for detecting spam groups.
+Since the proposed algorithm extensively uses various probability distributions, it is not very effective when there are only a few reviewers because a small sample of data points cannot constitute a reliable distribution.
+
+\section{Conclusion}
+
+\begin{table}[h]
+\caption{Summary of anomaly detection methods}
+\begin{center}
+{\small
+\begin{tabular}{c c | c c c c c c | c c c c | c c c c }
+\multicolumn{2}{c}{} & \multicolumn{6}{c}{Input features} & \multicolumn{4}{c}{Anomalies detected} & \multicolumn{3}{c}{Others}\\
+\hline
+Algorithm & Year & CON & CAT & SE & SP & GR & IID & PA & CXA & COA & GA & SU & BC & SC\\
+\hline
+BIRDNEST & 2015 & \checkmark & - & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & - & - & \checkmark \\
+Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \checkmark & \checkmark & - & \checkmark & \checkmark \\
+PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
+SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
+RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
+EdgeCentric & 2015 & - & \checkmark & 0 & 0 & \checkmark & \checkmark & 0 & 0 & 0 & \checkmark & - & - & \checkmark \\
+FocusCo & 2014 & \checkmark & \checkmark & - & 0 & \checkmark & - & 0 & 0 & - & \checkmark & - & \checkmark & \checkmark\\
+DOSGNF & 2015 &  - & - & - & 0 & \checkmark & - & - & \checkmark & \checkmark & \checkmark & - & - & \checkmark \\
+
+\end{tabular}
+}
+\end{center}
+\end{table}
+{\scriptsize
+\textbf{Input features:} CON, continuous; CAT, categorical; SE, optimal for sequential features; SP, optimal for spatial features; GR, optimal for graph features; IID, assumes i.i.d. variables\\
+\textbf{Anomalies detected:} PA, point anomalies; CXA, context anomalies; COA, collective anomalies; GA, graph anomalies\\
+\textbf{Others:} SU, supervised (else assume unsupervised); BC, binary classification (else assume scores); SC, scalable
+}
+
+
+
+
+\section{Appendix}
+\paragraph*{RSC Algorithm}
+\quad
 
 \quad To estimate the parameters for RSC, an algorithm based on fitting the histogram of the observed data IAT is used.
 First, synthetic timestamps are generated using the RSC model.
@@ -301,40 +682,8 @@ If $p_{bot}$ is greater than a decision threshold $p_{thresh}$, then the user is
 The threshold $p_{thresh}$ is estimated by assigning a cost $c_{FN}$ to false negative errors and a cost $c_{FP}$ to false positive errors.
 A false positive is when a human is classified as a bot and a false negative is when a bot is classified as human.
 
-\subsubsection*{Results}
-
-\quad In conclusion, RSC was quite successful in differentiating between humans and bots.
-With only temporal activity, RSC was able to detect non-human users with 96.5\% precision on Reddit and 94.7\% precision on Twitter.
-
-\subsection*{BIRDNEST -- 2015}
-
-\subsubsection*{Approach}
-
-\quad Because IATs do not completely account for bot behavior, the authors proposed BIRDNEST \cite{birdnest} as a Bayesian-based method to approach the anomaly detection problem. 
-BIRDNEST expands on the pure temporal-based approach by using both IAT and rating distributions.
-
-\quad When determining the suspiciousness of a user, one may first ask what the rating distribution or IAT distribution is for a given user.
-For example, a user that rates all ones or all fives would have a single peaked rating distribution and a user that rates all fives for its own company's products and all ones for its competitors' products would have a bimodal rating distribution.
-BIRDNEST approaches user rating-fraud detection by solving these questions with Bayesian inference.
-The user's rating distribution is the prior distribution and the belief of the user's true long-term behavior trends is the posterior distribution.
-The goal is to detect a typical bot's behavior of a narrow posterior distribution towards one extreme of the rating range or the other since this behavior is vastly different from a typical normal distribution or even a newbie legitimate user.
-
-\subsubsection*{Model}
-
-\quad The BIRDNEST model has two phases: fitting the Bayesian model (BIRD) to a given data set and creating the metric of suspiciousness called the Normalized Expected Surprise Total (NEST).
-It expects as input data the following: a matrix of users' ratings (rating from 1 to n) where the user is indexed from 1 to m and the corresponding matrix of timestamp of the rating.
-The timestamp data is pre-processed to calculate the IATs of each user.
-
-\quad The BIRD generative model is a mixture model where there are $K$ clusters.
-Each of these clusters are trained by the user training data to represent various normal user prior distributions using the Dirichlet prior distribution.
-Once the mixture model converges, the posteriors are calculated based on the Dirichlet distribution property.
-
-\quad The NEST part of the algorithm uses the BIRD mixture model posterior distributions to calculate the suspiciousness of a user.
-The metric surprise is defined as the negative log likelihood the user's distribution would be generated by the global mixture model distribution.
-Because rating and time have different ranges, the surprise metric of rating and time are normalized and summed for the final NEST value.
-The smaller the NEST value, the less suspicious the user is and it is less likely that the user is a bot.
-
-\subsubsection*{Algorithm}
+\paragraph*{BIRDNEST Algorithm}
+\quad
 
 \quad The algorithm first maximizes the overall likelihood function to calculate the best posterior marginals.
 Then, the NEST metric is calculated to quantitatively determine how certain the model is of the user being fradulent.
@@ -345,86 +694,8 @@ Then, the NEST metric is calculated to quantitatively determine how certain the 
 	\item Calculate the surprise for rating and IAT distribution, normalize distributions by the standard deviation, and sum to create the NEST metric of suspiciousness. 
 \end{enumerate}
 
-\quad While BIRDNEST is able to compute the degree of suspiciousness of a user rather than simply classifying it as a human or a bot, it assumes that a user's rating events are independent of each other (i.i.d. fallacy).
-
-\subsection*{Group Latent Anomaly Detection (GLAD) -- 2014}
-
-\subsubsection*{Approach}
-
-\quad In this paper, the authors' goal is to determine group anomalies by proposing the GLAD (Group Latent Anomaly Detection) model, which uses a hierarchical Bayes model.
-Unlike previous models, GLAD takes in pair-wise and point-wise data as input and determines the groups and group anomalies simultaneously.
-Until now, people were only trying to detect individual anomalies; however, detecting group anomalies early and efficiently is also important in order for preventing group attacks.
-There are three main observations made towards group anomaly:
-\begin{enumerate}
-	\item Both point-wise data and pairwise data exist in social media
-	\item Group anomaly is harder to detect than individual anomaly
-	\item Individuals are dynamic which makes detecting group anomaly harder to find
-\end{enumerate}
-
-\quad The authors first look at previous models that were used to detect group anomaly such as Multinomial Genre Model (MGM), Latent Dirichlet Allocation (LDA), Flexible Genre Model (FGM), and support measure machine (SMM).
-Both MGM and LDA define a group as a mixture of Gaussian distributed topics and gives each group a certain mixture rate.
-In order to determine the role mixture rate for each individual, we infer their role identity and group membership.
-If this mixture rate is significantly different than a mixture rate of normal groups, then we can classify this group as an anomaly.
-All of these models first determine the groups and then discover anomalies in a two-step process, but GLAD attempts to do this process simultaneously.
-However, all of these models, including GLAD, are only able to handle static data, which means that there needs to be another model which can handle both dynamic and temporal data.
-
-\subsubsection*{Model}
-
-\quad In general, the GLAD model first identifies the normal mixture rates and then observes the likelihood of the observations given these normal mixture rates.
-A particular group is an anomaly if this likelihood value is low.
-
-\quad Each person can belong to a group given a membership distribution which is defined by the Dirichlet prior.
-The multinomial distribution calculates the likelihood of that individual belonging to a specific group.
-Two people can be linked based on their group identities.
-Each group has a role mixture rate and each person can have multiple roles and multiple memberships.
-A limitation of GLAD is that it can only determine group anomaly if the groups stay static.
-
-\quad A modified version of the GLAD model, d-GLAD, can handle both dynamic data and detect mixture rates with respect to time with these groups.
-This model uses a variational Bayesian method and a Monte Carlo sampling technique.
-Essentially, at a certain time, a GLAD model is applied and the mixture rates are stored.
-This is done with the multivariate Gaussian distributions.
-Each mixture rate at a certain time is determined from the Gaussian distribution of the previous time mixture rate.
-When there is a significant change to the mixture rates, then there is an anomaly.
-
-\quad Both GLAD and d-GLAD were tested on synthetic and real data.
-In a dataset of scientific publications, GLAD was able to detect anomalous papers; in a dataset containing US Senate Voting, d-GLAD was able to detect changes in party affiliation over time.
-However, there are certain limitations such as group anomaly is difficult to detect without labeled data and the d-GLAD model is computationally expensive and is not scalable to a large dataset.
-
-\subsection*{ND-SYNC -- 2015}
-
-\subsubsection*{Approach}
-
-\quad The authors first survey different forms of fraud-detection on Twitter, citing two common tactics that are explored in several other papers: simple feature-based detection and collective anomaly detection.
-ND-SYNC is the first to be textual content-agnostic, graph structure-agnostic, user attributes-agnostic, parameter-free, unsupervised, specifically designed for RTFraud problem, and a well-performing detector for synchronicity fraud.
-
-\subsubsection*{Model}
-
-\quad This paper investigates and proposes a method for detecting Twitter fraud as it pertains to fraudulent retweet activity (RTFraud).
-By analyzing numerous features captured over large retweet threads, they define and measure of the concept of synchronicity across multiple features.
-The authors tackle this by formulating RTFraud as a special case of the synchronicity fraud problem (SyncFraud).
-They extract features for each retweet thread and assign a suspiciousness score based on the similarities to other threads, assuming that organic behavior is the norm.
-
-\subsubsection*{Features}
-
-\quad The \textit{synchronicity} of a group is a measure of closeness between all of its members.
-The \textit{normality} of a group with respect to a superset is a measure of closeness between members of the group and members of the superset.
-Finally, they define the residual score as the difference between the synchronicity and mathematically-defined lower bound on synchronicity.
-According to the SyncFraud problem, suspicious groups are those that exhibit highly synchronized characteristics.
-
-\quad To tackle the RTFraud problem specifically, the authors experimented with a large number of features and determined the seven most significant features to be:
-\begin{itemize}
-	\item Number of retweets
-	\item Response time of first retweet
-	\item Lifespan, constrained to three weeks
-	\item RT-Q3, the time to garner the first three quarters of the retweets
-	\item RT-Q2, the time to garner the first half of the retweets
-	\item Arr-MAD, mean absolute deviation of IATs
-	\item Arr-IQR, inter-quartile range of IATs
-\end{itemize}
-
-\quad By projecting their data onto two of these seven features, the authors came up with visualizations of their data that helped them find intuitive patterns in the data, namely lifespan vs. Arr-MAD and retweets vs. response time.
-
-\subsubsection*{Algorithm}
+\paragraph*{ND-SYNC Algorithm}
+\quad
 
 \quad One of the major components in determining suspiciousness across all features is to do a sweep over all feature subspaces.
 Given p features, there are $2^p$ subspaces to examine, and the original p-dimensional entities must be projected onto each of them.
@@ -446,42 +717,7 @@ Given a set of high-dimensional data, this method applies an SVD, yielding the p
 The strongest $k$ features are kept, and a k-subspace is computed.
 The algorithm calculates the orthogonal distance of each observation to its projection in this subspace, and the distance of a given observation from a bulk of the observations; if they are past a certain threshold, the point is considered an outlier.
 
-\subsubsection*{Results}
-
-\quad The researchers report between 95\% and 97\% accuracy based on a dataset collected of the span of six months.
-They found accounts that had a large number of retweet threads with a large number of retweets in each, arriving at 298 users (270 honest, 28 fraudulent).
-Honesty was determined by manually inspecting each account, based on spammy links and clear fabrication of identity.
-Over the course of six months, this yielded 134,022 retweet threads, with almost 12 million retweets total.
-After applying the algorithm, among the fraud accounts that are caught, a majority were near-idealized cases of bots, mostly for promotion or advertisement.
-The remaining accounts were more subtle, often belonging to cyborgs rather than true bots.
-The false positives detected by ND-Sync belonged to politicians and media accounts, who tend to have less organic behaviors.
-
-\quad ND-SYNC is able to detect fraud with high accuracy and was able to yield intuitive explanations by plotting features against each other.
-However, it was unable to differentiate between cyborgs from bots and fails with certain humans (i.e. politicians and people who advertise); it also assumed that synchronized data is always fraudulent, which is not always true.
-Also, the dataset used had a limited number of fraud-labeled users, which may have skewed the accuracy upward.
-
-\subsection*{DARPA Twitterbot Challenge Top 3 SVM Approach -- 2015}
-
-\subsubsection*{Purpose}
-
-\quad The problem of the DARPA Twitterbot Challenge was: given logs of users that posted in vaccination-related threads, determine which were ``influence bots"---bots that are designed to generate conversation about a given topic.
-The proposed problem was not constrained to be completely automated and assumed there were bots present (although the exact number was not made known).
-
-\subsubsection*{Features}
-
-\quad In order to gain insight into which approaches would potentially work, the teams propose a variety of different features to examine and compare.
-
-Syntax features: similarity to known NLP generators, number of hashtags, user mentions, links, or special characters, number of retweets by user, geo-enabled, whether tweet ends with punctuation, hashtag, or link
-
-Semantic features: number of user posts related to vaccination, user's average sentiment score on tweets with the word ``vaccination", contradiction rank, overall positive sentiment strength, most frequent topics tweeted about, number of languages tweeted in, sentiment inconsistency (Latent Dirichlet Application for topic discovery, AVA and OASYS for sentiment)
-
-Temporal behaviors: flipping sentiment over time, entropy of inter-arrival times, duration of longest session by a user, number of dropped followers over time
-
-User profile features: number of posts, number of followers and followings, similarity to known bots (Jaccard similarity, cosine similarity)
-
-Network features: deviation of sentiment from followers, number of bots followed by user
-
-\subsubsection*{Algorithm}
+\paragraph{Top Three SVM Algorithm}
 
 \quad In order to detect bots, the top two teams first narrowed down the data to detect a handful of bots.
 For this, they applied various data visualizations to determine outlying data, leading them to select fairly obvious bots.
@@ -494,71 +730,8 @@ Once a certain number of humans and bots are found using the previous algorithms
 \quad Indiana's team attempted to use a multi-armed bandit approach, assigning a ``bot score" to each test point, and adjusting the weights such that the accurate arms gained weight and inaccurate ones lost weight.
 This approach is an online approach, so it could dynamically learn based on each additional input.
 
-\subsubsection*{Results}
-
-\quad All of the participating teams were able to correctly identify the bots.
-However, the one challenge that many teams faced was to determine when to stop guessing, as they were not informed beforehand how many bots there are.
-Only one team was able to detect the bots exactly.
-
-\quad While the algorithms presented were able to achieve up to 100\% accuracy and they took almost all types of features into account, there were some major downsides as well.
-Most importantly, they assumed that bots were present and because the problem was very specific, many of the approaches would only achieve high performance for this exact problem.
-Furthermore, some components of the algorithms used human judgment to augment the bot identification process; a semi-automated pipeline would be less efficient for real-world use cases.
-
-\subsection*{PCA -- 2014}
-
-\subsubsection*{Approach}
-
-\quad \cite{pca} uses an unsupervised learning algorithm called Principal Component Analysis (PCA).
-The purpose of PCA is to find the best projections of a dataset that show the most variation given a set of features.
-For anomaly detection, PCA is utilized by projecting where bot-data differs from normal-user behavior.
-
-\subsubsection*{Features}
-
-\quad Features for this model can consist any of the following: temporal features consist of a histogram of a per-time-unit (e.g. per-day) basis, spatial features consisting of a histogram of a non-temporal feature such as categorizes of Facebook pages that were liked by a user, and spatio-temporal features which is the observation of a spatial feature over time.
-
-\quad For temporal features, each time-bucket is a different dimension, allowing PCA to model IATs, weekday patterns, weekend patterns, rate of change of activity, etc. as a linear combination.
-Spatial features are histogram buckets of observing an attribute where each bucket is a different dimension.
-Spatio-temporal features is a histogram where each bucket is a spatial distribution at that time.
-To summarize the distribution within a bucket, entropy can be used where the probability of bucket $i$ is represented as $p_i (- \sum_i (p_i) * log_2 p_i)$.
-
-\subsubsection*{Model}
-
-\quad PCA is an unsupervised learning algorithm which finds the most varied projects of a given data set.
-This model is represented as a linear combination of the most uncorrelated features (aka principal components or singular values) where the first principal component has the maximum variation.
-Human behavior can be described in a small amount of dimensions (k-dimensions) which this study shows because five principal components were enough to describe 85\% of the data's variance.
-
-\quad Anomalies are determined based on the distance from the normal subspace.
-The normal subspace is the projection of the first five principal components (more generally k-components).
-The residual subspace is thus the projection of the last principal components (more generally k+1 through n-1 components).
-Therefore, the residual subspace detection is determined by the distance between a given point and the normal subspace.
-If the distance is above a certain threshold, then the user is classified as anomalous.
-
-\subsubsection*{Results}
-
-\quad PCA was able to detect bot-users with a high accuracy and compromised legitimate users with greater than 50\% accuracy without a labeled data set because it was able to detect the most weighted features.
-However, classification varies on the choice of threshold, which may be a difficult hyperparameter to tune based on the specific problem at hand.
-Also, if the user data is too variable, a bot could potentially hide in the noise.
-
-\subsection*{Detecting Lockstep Behavior -- 2014}
-
-\subsubsection*{Approach}
-
-\quad The main idea \cite{lockstep} is to leverage social graph data to identify the ``lockstep behavior pattern" (groups of followers typically following the same group of followees with little to no other activity).
-When there is no lockstep behavior, the adjacency matrix does not have large, dense sections of the matrix; this means there are no followees with an abnormal amount of followers who steadily follow only the same subset of followees.
-However, if a small group of followees have a large amount of similar followers that only follow those groups, this behavior is known as non-overlapping lockstep behavior.
-There is the potential for some overlap lockstepping behavior where a group of followers follow a large amount of the same followees but each follower does not have the exact same set of followees as the non-overlap lockstep behavior pattern.
-Instead, a subset of these followers show the non-overlap behavior for some followees while other subsets show the same non-overlap behavior for some other followees.
-
-\subsubsection*{Model}
-
-\quad A fundamental part of this approach is the use of spectral-subspace plots.
-Given an adjacency matrix that is $NxN$, spectral-subspace plots project these points from $N$ dimensions into 2 dimensions spanned by two singular vectors.
-For a non-lockstep behavior spectral-subspace, points cluster around the origin.
-However, for the non-overlap lockstep ``block" behavior has a spectral-subspace plot that shows a ``ray" pattern from two of its singular vectors.
-In addition, the overlap lockstep ``staircase" behavior is projected onto two singular vectors exhibits spherical micro-clusters (referred to as a ``pearl" pattern) in its spectral-subspace plot.
-These patterns are utilized for discovering other bot-followers using ``lockstep" propagation, which has linear complexity.
-
-\subsubsection*{Algorithm}
+\paragraph{Lockstep Algorithm}
+\quad
 
 \textbf{Input:} Who-knows-who adjacency matrix $A$\\
 \textbf{Output:} Set of ``lockstep" followers\\
@@ -586,76 +759,8 @@ These patterns are utilized for discovering other bot-followers using ``lockstep
 	\end{enumerate}
 \end{enumerate}
 
-\subsubsection*{Results}
-
-\quad While the lockstep method was able to detect bots that try to camouflage themselves by following legitimate users different from its bot group, it relies on the assumption that bots use most of their activity to follow a followee as a mass.
-
-\subsection*{Modified COMPA -- 2015}
-
-\subsubsection*{Approach}
-
-\quad The authors suggest a modified version of the COMPA algorithm in order to detect compromised social media accounts.
-Often, online social networks contain automated bot accounts for malicious reasons.
-Currently, there are many algorithms for detecting anomalies but not many for detecting hijacked accounts.
-Hijacking accounts is becoming more popular for malicious users because a new bot account does not have to be created.
-Instead, the spammer will take control of a pre-existing account with a good reputation.
-The original COMPA system detects these types of accounts by clustering similar messages together.
-Although the original COMPA system can accurately detect large-scale spam campaigns, it is hard for it to detect individual hijacked accounts.
-The authors suggest that they can modify COMPA to detect individual hijacked accounts by removing the clustering part of the algorithm.
-
-\subsubsection*{Model}
-
-\quad Previous models that were used before COMPA included the semi-supervised learning framework SybilBelief, the unsupervised approach of principal component analysis, and the support vector machine.
-However, these algorithms cannot pinpoint exactly when a particular account was hijacked.
-COMPA is a supervised learning classifier that classified based on each user account.
-If a new tweet is anomalous, then the account is considered to be hijacked.
-
-\quad For this modified version of COMPA, the features are a list of tuples containing the attribute value and the number of times the attribute occurs.
-To smooth out these features, the algorithm looks at the previous and next hour as well.
-From this information, the model is trained and anomaly scores are calculated from the new messages.
-The overall anomaly score is calculated from the weighted sum of the individual anomaly scores.
-To evaluate this model, the data is collected from a number of social media accounts where a subset of the messages are swapped with anomalous messages.
-This way, the authors have full control over when the hijackings of the account took place.
-
-\subsubsection*{Results}
-
-\quad While the modified COMPA model is able to detect individual hijacked accounts, it has some limitations.
-There is a tradeoff between precision and recall.
-If the precision is too low, it cannot be used in real world situations.
-However, if the anomaly threshold is not set to a high value, there could be too many false positives.
-The model can also be unstable in that the detection behavior is dependent on the threshold.
-In the future, the authors suggest that the model could be improved by adding more features to the training data.
-
-\subsection*{EdgeCentric: Anomaly Detection in Edge-Attributed Networks -- 2015}
-
-\subsubsection*{Approach}
-
-\quad Many real-world online interactions can be represented using graphs with attributed-edges.
-The attributed edges in graphs capture information about how the adjacent nodes interact with each other.
-For example, edges in e-commerce networks indicate how and when users rated products; edges in social networks contain the temporal information about when friendships were formed and when users communicated with each other.
-
-\quad EdgeCentric \cite{edgecentric} is an information theoretic approach for node anomaly detection in edge-attributed graphs.% because it uses the information on edges to identify suspicious nodes.
-It leverages minimum description length (MDL) to identify nodes with suspicious behavior on adjacent edges in an unsupervised fashion. 
-
-\subsubsection*{Model}
-
-\quad There are multiple types of nodes, relations, and attributes.
-For example, in the e-commerce networks: nodes can be of type products, buyers or sellers; relations can be of type ``users rated products" or ``users rated sellers"; attributes can be the time-stamps or the actual value of ratings.
-Also, there can be multiple model distributions, forming clusters of typical node behavior.
-
-\quad The main idea of the paper is to devise an abnormality function, $\delta(v)$, corresponding to each node $v$ in the edge-attrbuted multi-graph.
-The higher the value of $\delta(v)$, the more likely the node is suspicious.
-$\delta(v)$ is formulated as:
-
-\begin{equation*}
-\delta(v) = \sum_{r\in R} \left( \sum_{w \in \Omega(r)} \left(|f_{v,r}|\sum_{g=1}^{h_w} \left( \rho_{b,r,w,g}. KL(\hat{v}_w || C_{b,r,w,g})\right) \right)\right)
-\end{equation*}
-
-where $|f_{v,r}|$ is the cardinality of the edge-attribute value vector $f_{v,r}$ generated from $v$'s adjacent edges of type $r$, $\hat{v}_w$ is the probability mass function corresponding to $v$ over attribute $w$, $C_{b,r,w,g}$ and $\rho_{b,r,w,g}$ give the $g^{th}$ model distribution and proportion of the $g^{th}$ cluster on the $r^{th}$ relation type, respectively.
-$KL(. || .)$ is the KL divergence in bits defined on two data models.
-Intuitively, $\delta(v)$ gives the expected number of extra bits required to encode the node $v$’s edge-attribute vectors with respect to a joint model over multiple relations, attributes and clusters.
-
-\subsubsection*{Algorithm}
+\paragraph{Edge Centric Algorithm}
+\quad
 
 \quad The algorithm is split into five steps:
 \begin{enumerate}
@@ -669,37 +774,8 @@ Normalize to construct probability mass functions.
 \item \emph{Ranking}: Sort the nodes in descending order of the resulting abnormality scores and return the nodes with high scores.
 \end{enumerate}
 
-\subsubsection*{Results}
-
-\quad EdgeCentric is able to account for multiple relationships between entities, has practical scalability, and has numerous real-world applications because it is a graph based approach.
-However, it makes a lot of independency assumptions.
-For example, multiple attributes are assumed to be independent while formulating the closed form expression of $\delta$. 
-
-
-\subsection*{FocusCo: Focused Clustering and Outlier Detection in Large Attributed Graphs -- 2014}
-
-\subsubsection*{Approach}
-
-\quad Unlike EdgeCentric, FocusCo \cite{focusco} is based on node-attributed graphs, rather than edge-attributed graphs.
-The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
-They either use all attributes or perform unsupervised feature selection.
-Users cannot control the relevance of the attributes and therefore, have no control on the resultant clusters.
-In attributed graphs, focused clustering is often of particular interest, where users might be concerned with a few attributes. 
-As different subsets of attributes yield different clusters, the users should be able to steer the clusters accordingly.
-
-\subsubsection*{Model}
-
-\quad Given a node-attributed graph $G(V,E,F)$ with $|V|=n$ nodes and $|E|=m$ edges, where each node has $|F| = d$ attributes, the user $u$ wants to extract only the clusters of interest.
-To do so, a small set $C_{ex}$ of exemplar nodes that is considered to be similar to the type of nodes the clusters of interest should contain is provided.
-The main idea of the paper is to infer the implicit weights $\beta_{u}$ of attributes that define the nodes in $C_{ex}$.
-Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few attributes, which are called the ``focus attributes".
-
-\quad Once the $\beta_u$ is inferred, the focused clusters $C$ are extracted. 
-The clusters are $(1)$ dense in graph structure and separated from rest of the graph $(2)$ coherent on focused attributes with large weights.
-The focused clusters can be overlapping, sharing several of their nodes.
-The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes.
-
-\subsubsection*{Algorithm}
+\paragraph{FocusCo Algorithm}
+\quad
 
 \quad The three main components of FocusCo are:
 \begin{enumerate}
@@ -732,98 +808,6 @@ The idea is to identify the structural nodes that are best in terms of unweighte
 The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
 \end{enumerate}
 
-\subsubsection*{Results}
-
-\quad FocusCo is a scalable algorithm which runs in time linear with the size of input graph.
-With appropriate initializations, it can very well run in sub-linear time in practice.
-This helps the users to obtain clusters and identify outliers according to the attributes of choice.
-
-\subsection*{Discovering Opinion Spammer Groups by Network Footprints -- 2015}
-
-\subsubsection*{Approach}
-
-\quad This paper \cite{dosgnf} proposes an unsupervised and scalable approach for detecting opinion spammer groups based solely on network footprints.
-The idea is to quantify the statistical distortions caused by spamming activities in well-understood network characteristics.
-This graph-based measure is known as Network Footprint Score (NFS).
-The group spammers are identified by using a hierarchal clustering on the induced subnetwork of highly suspicious products and reviews, which outputs a set of spammers with their nested hierarchy.
-
-\subsubsection*{Model}
-
-To design the NFS measure, the method uses two observations associated with real-world networks:
-
-\begin{enumerate}
-\item \emph{Neighbor diversity}: The neighbors of a node should consist of nodes with diverse behavior or importance.
-The importance of a node is expressed in terms of its degree centrality and page-rank centrality.
-Both centrality measures are binned logarithmically into buckets, and their discrete probability distributions and Shannon entropies are found.
-The lower the entropies, the more likely the product is a target of a spam campaign.
-\item \emph{Self-similarity}: This implies that the centrality distribution of reviewers for a particular product should be similar to the overall centrality distribution of the reviewers.
-For each centrality measure, the self-similarity is measured in terms of the KL divergence between distributions of the reviewers of the product with the global distributions.
-The larger these scores, the more likely the product is the target of a spam campaign.
-\end{enumerate}
-
-\quad From the above two observations, four suspiciousness scores are obtained.
-The NFS score unifies all these to produce a single measure of suspiciousness.
-Products with high NFS values are more likely to be targets of spam campaigns.
-
-\quad Once the NFS values are computed for the products, the next goal is to detect the spammer groups.
-First, a subnetwork is constructed.
-It consists of products with high NFS values, the reviewers of these products, and all the products that these reviewers have reviewed.
-This subnetwork is represented as an adjacency matrix where each column represents a reviewer.
-The objective is to chip off groups where columns in a group have strong similarity.
-
-\quad An agglomerative clustering approach is adopted where columns are iteratively merged to form larger groups.
-To make the clustering more efficient, the authors use Locality-Sensitive Hashing (LSH) for finding similar sets of clusters.
-LSH ensures that similar points are highly likely to get hashed to the same bucket and dissimilar points are rarely hashed to the same bucket, which speeds up the similarity search.
-
-\subsubsection*{Results}
-
-\quad The paper reveals that language and behavior patterns are easier to be mimicked by the spammers compared to the network-wide patterns
-Thus, the method utilizes these patterns for detecting spam groups.
-Since the proposed algorithm extensively uses various probability distributions, it is not very effective when there are only a few reviewers because a small sample of data points cannot constitute a reliable distribution.
-
-\begin{table}[h]
-\caption{Summary of anomaly detection methods}
-\begin{center}
-{\small
-\begin{tabular}{c c | c c c c c c | c c c c | c c c c }
-\multicolumn{2}{c}{} & \multicolumn{6}{c}{Input features} & \multicolumn{4}{c}{Anomalies detected} & \multicolumn{3}{c}{Others}\\
-\hline
-Algorithm & Year & CON & CAT & SE & SP & GR & IID & PA & CXA & COA & GA & SU & BC & SC\\
-\hline
-BIRDNEST & 2015 & \checkmark & - & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & - & - & \checkmark \\
-Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \checkmark & \checkmark & - & \checkmark & \checkmark \\
-PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
-SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
-RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
-EdgeCentric & 2015 & - & \checkmark & 0 & 0 & \checkmark & \checkmark & 0 & 0 & 0 & \checkmark & - & - & \checkmark \\
-FocusCo & 2014 & \checkmark & \checkmark & - & 0 & \checkmark & - & 0 & 0 & - & \checkmark & - & \checkmark & \checkmark\\
-DOSGNF & 2015 &  - & - & - & 0 & \checkmark & - & - & \checkmark & \checkmark & \checkmark & - & - & \checkmark \\
-
-\end{tabular}
-}
-\end{center}
-\end{table}
-{\scriptsize
-\textbf{Input features:} CON, continuous; CAT, categorical; SE, optimal for sequential features; SP, optimal for spatial features; GR, optimal for graph features; IID, assumes i.i.d. variables\\
-\textbf{Anomalies detected:} PA, point anomalies; CXA, context anomalies; COA, collective anomalies; GA, graph anomalies\\
-\textbf{Others:} SU, supervised (else assume unsupervised); BC, binary classification (else assume scores); SC, scalable
-}
-
-\section*{Conclusion}
-
-aaa
-
-\subsection*{Temporal Approach}
-
-aaa
-
-\subsection*{Bayesian Approach}
-
-aaa
-
-\subsection*{Group Approach}
-
-aaa
 
 \begin{thebibliography}{123}
 
@@ -847,8 +831,6 @@ aaa
 
 
 \end{thebibliography}
-
-
 
 
 
