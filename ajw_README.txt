@@ -3,9 +3,12 @@
 # ajw_process_data.py
 This file contains the functions I use to get some features from the data files.
 
-Some functions have a :force: input parameter. If this is true, the function will go through the entire computation. Otherwise, it will try to load try to load data from each variable's corresponding pickle file.
+Some functions have a :force: input parameter. If this is true, the function
+will go through the entire computation. Otherwise, it will try to load try to
+load data from each variable's corresponding pickle file.
 
-To run, set DATAHOME to be the path to the directory containing train_seq_bidder_id_time.csv.
+To run, set DATAHOME to be the path to the directory containing
+train_seq_bidder_id_time.csv.
 
 To generate features with ajw_process_data.py:
 	load_users()
@@ -28,7 +31,8 @@ To generate features with ajw_process_data.py:
 		userBidCountsPerAuction
 
 	six_features()
-		six_features: [meanIats, meanRts, bids, bidsPerAuction, numDevices, numIps]
+        six_features: [meanIats, meanRts, bids, bidsPerAuction, numDevices,
+                       numIps]
 
 	generate_num_devices()
 

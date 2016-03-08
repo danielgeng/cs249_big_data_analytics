@@ -219,6 +219,45 @@ def load_users(force=False):
     :param force:
     :return:
     """
+    if (not force) and os.path.isfile(DATAHOME+'userList.p') and os.path.isfile(DATAHOME+'botList.p'):
+        print "userList file located. Loading..."
+        userList = pickle.load(open(DATAHOME+'userList.p', "rb"))
+        print "botList file located. Locating..."
+        botList = pickle.load(open(DATAHOME+'botList.p',"rb"))
+    else:
+        print "bidTuples file not found. Generating."
+        print "Adding user nums to tuples..."
+        userList = []
+        userNum = -1
+        prevUser = ""
+        botList = []
+        csvfile = open(DATAHOME+'train_seq_bidder_id_time.csv', 'rb')
+        train_tbl = csv.reader(csvfile, delimiter=',', escapechar='\\', quotechar=None)
+        # The csvfile should be sorted by username
+        for toks in train_tbl:
+            if not toks[0] == prevUser:
+                userList.append(toks[USERID])
+                userNum += 1
+            if float(toks[3]) == 1:
+                botList.append(userNum)
+            prevUser = toks[0]
+
+        print "Saving userList to file..."
+        pickle.dump(userList, open(DATAHOME+'userList.p', "wb"))
+        print "Saving botList to file..."
+        pickle.dump(botList, open(DATAHOME+'botList.p', "wb"))
+
+    botList = list(set(botList))
+    return userList, botList
+
+
+def load_data(force=False):
+    """
+    Stores the csv data in a list of tuples and replaces userId with a userNum, as per the generated userList
+    Also returns a list of bots
+    :param force:
+    :return:
+    """
     if (not force) and os.path.isfile(DATAHOME+'bidTuples.p') and os.path.isfile(DATAHOME+'userList.p') and os.path.isfile(DATAHOME+'botList.p'):
         print "bidTuples file located. Loading..."
         bidTuples = pickle.load(open(DATAHOME+'bidTuples.p', "rb"))
@@ -368,12 +407,13 @@ def stack_features(featureList, nameList=None, outfile=None):
 
 
 def six_features():
-    bidTuples, userList, botList = load_users(force=False)
-
+    userList, botList = load_users(force=False)
+    # bitTuples, userList, botList = load_data(force=False)
     if os.path.isfile(DATAHOME+"six_features.p"):
         six_features = pickle.load(open(DATAHOME+"six_features.p", "rb"))
         return six_features, sparse_botlist(botList, userList)
     else:
+        bidTuples, userList, botList = load_data(force=False)
         meanIats = generate_mean_iats(bidTuples, userList, force=False)
         meanRts = generate_mean_rts(bidTuples, userList, force=False)
         bids, bidsPerAuction = generate_bid_counts(bidTuples, userList, force=False)
