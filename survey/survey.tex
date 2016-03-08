@@ -631,11 +631,11 @@ In the future, the authors suggest that the model could be improved by adding mo
 \subsubsection*{Approach}
 
 \quad Many real-world online interactions can be represented using graphs with attributed-edges.
-The attributed edges in graphs capture information about how the adjacent nodes interact with other entities in the graph.
-For example, edges in e-commerce networks indicate how and when users rated products; edges in unipartite social networks contain information about when friendships were formed and when users communicated with each other.
+The attributed edges in graphs capture information about how the adjacent nodes interact with each other.
+For example, edges in e-commerce networks indicate how and when users rated products; edges in social networks contain the temporal information about when friendships were formed and when users communicated with each other.
 
-\quad EdgeCentric is an information theoretic approach for node anomaly detection in edge-attributed graphs because it uses the information on edges to identify suspicious nodes.
-It leverages minimum description length (MDL) to identify nodes with atypical behavior on adjacent edges in an unsupervised fashion. 
+\quad EdgeCentric \cite{edgecentric} is an information theoretic approach for node anomaly detection in edge-attributed graphs.% because it uses the information on edges to identify suspicious nodes.
+It leverages minimum description length (MDL) to identify nodes with suspicious behavior on adjacent edges in an unsupervised fashion. 
 
 \subsubsection*{Model}
 
@@ -651,22 +651,22 @@ $\delta(v)$ is formulated as:
 \delta(v) = \sum_{r\in R} \left( \sum_{w \in \Omega(r)} \left(|f_{v,r}|\sum_{g=1}^{h_w} \left( \rho_{b,r,w,g}. KL(\hat{v}_w || C_{b,r,w,g})\right) \right)\right)
 \end{equation*}
 
-where $|f_{v,r}|$ is the cardinality of the edge-attribute value vector $f_{v,r}$ generated from $v$'s neighboring edges of type $r$, $\hat{v}_w$ is the discrete probability distribution corresponding to $v$ over attribute $w$, $C_{b,r,w,g}$ and $\rho_{b,r,w,g}$ give the $g^{th}$ model distribution and proportion of the $g^{th}$ cluster on the $r^{th}$ relation type, respectively.
-$KL(\dot || \dot)$ is the KL divergence in bits defined on two data models.
+where $|f_{v,r}|$ is the cardinality of the edge-attribute value vector $f_{v,r}$ generated from $v$'s adjacent edges of type $r$, $\hat{v}_w$ is the probability mass function corresponding to $v$ over attribute $w$, $C_{b,r,w,g}$ and $\rho_{b,r,w,g}$ give the $g^{th}$ model distribution and proportion of the $g^{th}$ cluster on the $r^{th}$ relation type, respectively.
+$KL(. || .)$ is the KL divergence in bits defined on two data models.
 Intuitively, $\delta(v)$ gives the expected number of extra bits required to encode the node $v$’s edge-attribute vectors with respect to a joint model over multiple relations, attributes and clusters.
 
 \subsubsection*{Algorithm}
 
 \quad The algorithm is split into five steps:
 \begin{enumerate}
-\item Aggregation: For each node-type, aggregate attribute values over the outgoing edges from each node for each associated relation-type.
+\item \emph{Aggregation}: For each node-type, aggregate attribute values over the outgoing edges from each node for each associated relation-type.
 For each node, there will be a vector of attribute values for each relation-type.
-\item Discretization: Based on attribute type and range of values, discretize the space linearly or logarithmically for numerical attributes.
+\item \emph{Discretization}: Based on attribute type and range of values, discretize the space linearly or logarithmically for numerical attributes.
 Categorical attributes are already discretized.
 Normalize to construct probability mass functions.
-\item Clustering: For each node-type and attribute, cluster the vectors describing the per-attribute probability mass functions associated with each relation.
-\item Scoring: For each node-type, compute the abnormality function $\delta$ for all nodes over associated relations and attribute clusters.
-\item Ranking: For each node-type, sort in descending order the resulting abnormality scores and return with node with scores.
+\item \emph{Clustering}: For each node-type and attribute, cluster the vectors that describe the probability mass functions of each attribute associated with each relation.
+\item \emph{Scoring}: For each node-type, compute the abnormality function $\delta$ for all nodes over associated relations and attribute clusters.
+\item \emph{Ranking}: Sort the nodes in descending order of the resulting abnormality scores and return the nodes with high scores.
 \end{enumerate}
 
 \subsubsection*{Results}
@@ -680,7 +680,7 @@ For example, multiple attributes are assumed to be independent while formulating
 
 \subsubsection*{Approach}
 
-\quad Unlike EdgeCentric, FocusCo is based on node-attributed graphs, rather than edge-attributed graphs.
+\quad Unlike EdgeCentric, FocusCo \cite{focusco} is based on node-attributed graphs, rather than edge-attributed graphs.
 The existing techniques of clustering and outlier detection in node-attributed graphs do not incorporate user preference.
 They either use all attributes or perform unsupervised feature selection.
 Users cannot control the relevance of the attributes and therefore, have no control on the resultant clusters.
@@ -691,7 +691,7 @@ As different subsets of attributes yield different clusters, the users should be
 
 \quad Given a node-attributed graph $G(V,E,F)$ with $|V|=n$ nodes and $|E|=m$ edges, where each node has $|F| = d$ attributes, the user $u$ wants to extract only the clusters of interest.
 To do so, a small set $C_{ex}$ of exemplar nodes that is considered to be similar to the type of nodes the clusters of interest should contain is provided.
-The main idea of the paper is to infer the implicit weights $\beta_{u}$ (i.e., relevance) of attributes that define the nodes in $C_{ex}$.
+The main idea of the paper is to infer the implicit weights $\beta_{u}$ of attributes that define the nodes in $C_{ex}$.
 Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few attributes, which are called the ``focus attributes".
 
 \quad Once the $\beta_u$ is inferred, the focused clusters $C$ are extracted. 
@@ -705,11 +705,11 @@ The other objective is to detect outliers $O$, which are defined to be the nodes
 \begin{enumerate}
 \item \emph{Inferring attribute weights}: 
 The user initiates the focused clustering by providing $C_{ex}$.
-The goal is to identify the relevance weights that make nodes in $C_{ex}$ similar to each other (i.e. they have small Mahalanobis distance to each other).
+The goal is to identify the relevance weights that make nodes in $C_{ex}$ similar to each other. Nodes are considered similar if they have small Mahalanobis distance to each other.
 Mahanalobis distance between two feature vectors $f_i$ and $f_j$ is defined as $(f_i - f_j)^T\beta_u(f_i-f_j)$. For this, the following optimization problem is solved:
 
 \begin{equation*}
-\min_{A} \sum_{(i,j) \in P_S}(f_i - f_j)^T\beta_u(f_i-f_j) - \gamma \left( \sum_{(i,j) \in P_D} \sqrt{((f_i - f_j)^T\beta_u(f_i-f_j))} \right)
+\min_{\beta_u} \sum_{(i,j) \in P_S}(f_i - f_j)^T\beta_u(f_i-f_j) - \gamma \left( \sum_{(i,j) \in P_D} \sqrt{((f_i - f_j)^T\beta_u(f_i-f_j))} \right)
 \end{equation*}  
 
 \item \emph{Focused Cluster Extraction}: 
@@ -720,10 +720,10 @@ Next, new nodes that increase the quality of clusters are chosen to be included 
 The quality of the a cluster $C \subset V$ is measured as its weighted conductance defined as:
 
 \begin{equation*}
-\phi^{(w)}_{C, G} = \frac{W_{cut}(C)}{W_{Vol}(C)} = \frac {\sum\limits_{(i,j)\in E, i\in C, j\in V\setminus C}w(i,j)} 
-														  {\sum\limits_{i\in C} \sum\limits_{j:(i,j)\in E}w(i,j)}
+\phi^{(w)}_{C, G} = \frac {\sum\limits_{(i,j)\in E, i\in C, j\in V\setminus C}w(i,j)} 
+														  {\sum\limits_{i\in C} \sum\limits_{j:(i,j)\in E}w(i,j)} %\frac{W_{cut}(C)}{W_{Vol}(C)} = 
 \end{equation*}
-
+where $w(i,j)$ is the weight of edge $(i, j)$.
 The lower the conductance of a cluster, the better its quality.
 
 \item \emph{Focused Outlier Detection}:
@@ -742,7 +742,7 @@ This helps the users to obtain clusters and identify outliers according to the a
 
 \subsubsection*{Approach}
 
-\quad This paper proposes an unsupervised and scalable approach for detecting opinion spammer groups based solely on network footprints.
+\quad This paper \cite{dosgnf} proposes an unsupervised and scalable approach for detecting opinion spammer groups based solely on network footprints.
 The idea is to quantify the statistical distortions caused by spamming activities in well-understood network characteristics.
 This graph-based measure is known as Network Footprint Score (NFS).
 The group spammers are identified by using a hierarchal clustering on the induced subnetwork of highly suspicious products and reviews, which outputs a set of spammers with their nested hierarchy.
@@ -794,7 +794,11 @@ BIRDNEST & 2015 & \checkmark & - & - & \checkmark & - & \checkmark & - & \checkm
 Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \checkmark & \checkmark & - & \checkmark & \checkmark \\
 PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
 SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
-RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark
+RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
+EdgeCentric & 2015 & - & \checkmark & 0 & 0 & \checkmark & \checkmark & 0 & 0 & 0 & \checkmark & - & - & \checkmark \\
+FocusCo & 2014 & \checkmark & \checkmark & - & 0 & \checkmark & - & 0 & 0 & - & \checkmark & - & \checkmark & \checkmark\\
+DOSGNF & 2015 &  - & - & - & 0 & \checkmark & - & - & \checkmark & \checkmark & \checkmark & - & - & \checkmark \\
+
 \end{tabular}
 }
 \end{center}
@@ -823,16 +827,23 @@ aaa
 
 \begin{thebibliography}{123}
 
-\bibitem{rsc} Costa, Alceu Ferraz, Y. Yamaguchi, A. J. M. Traina, C. Traina, Jr., and C. Faloutsos. "RSC: Mining and Modeling Temporal Activity in Social Media." ACM. KDD 2015, 10 Aug. 2015. Web. 12 Feb. 2016.
+\bibitem{rsc} A. F. Costa, Y. Yamaguchi, A. J. M. Traina, C. Traina, Jr., and C. Faloutsos. ``RSC: Mining and Modeling Temporal Activity in Social Media." \emph{Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2015, pp. 269--278
 
-\bibitem{powerlaw} Barabasi, Albert-Laszlo. "The origin of bursts and heavy tails in human dynamics." Nature, 435(7039):207–211, 2005. 
+\bibitem{powerlaw} A.-L. Barabasi, ``The origin of bursts and heavy tails in human dynamics." \emph{Nature}, vol. 435, no. 7039, pp. 207--211, 2005. 
 
-\bibitem{sfp} Vaz de Melo, Pedro O. S., C. Faloutsos, R. Assuncao, A. A. F. Loureiro. "The Self-Feeding Process: A Unifying Model for Communication Dynamics in the Web." In WWW, pages 1319–1330, 2013. 
-\bibitem{pca} Viswanath, Bimal, K. Gummadi, M. A. Bishir, B. Krishmamurthy, M. Crovella, S. Guha, and A. Mislove. "Toward Detecting Anomalous User Behavior in Online Social Networks." Proceedings of the 23rd Usenix Security Symposium (USENIX Security), San Diego, CA, August 2014.
+\bibitem{sfp} P. O. S. Vaz de Melo, C. Faloutsos, R. Assuncao, A. A. F. Loureiro. ``The Self-Feeding Process: A Unifying Model for Communication Dynamics in the Web." \emph{Proceedings of the 22nd International Conference on World Wide Web}, 2013, pp. 1319--1330 
 
-\bibitem{lockstep} Jiang, Meng. P. Cui, A. Beutel, C. Faloutsos, and S. Yang. "Inferring Strange Behavior from Connectivity Pattern in Social Networks." PAKDD 2014, Part I, LNAI 8443, pp. 126–138, 2014. 
+\bibitem{pca} B. Viswanath, K. Gummadi, M. A. Bishir, B. Krishmamurthy, M. Crovella, S. Guha, and A. Mislove. ``Toward Detecting Anomalous User Behavior in Online Social Networks." \emph{Proceedings of the 23rd Usenix Security Symposium (USENIX Security)}, 2014, pp. 223--238
 
-\bibitem{birdnest} Hooi, Bryan, N. Shah, A. Beutel, S. Gunneman, L. Akoglu, M. Kumar, D. Makhija, and C. Faloutsos. "BIRDNEST: Bayesian Inference for Ratings-Fraud Detection." CoRR, vol abs/1511.06030, 2015. arXiv:1511.06030.
+\bibitem{lockstep} M. Jiang, P. Cui, A. Beutel, C. Faloutsos, and S. Yang. ``Inferring Strange Behavior from Connectivity Pattern in Social Networks." \emph{PAKDD 2014, Part I, LNAI 8443}, 2014, pp. 126--138.
+
+\bibitem{birdnest} B. Hooi, N. Shah, A. Beutel, S. Gunneman, L. Akoglu, M. Kumar, D. Makhija, and C. Faloutsos. ``BIRDNEST: Bayesian Inference for Ratings-Fraud Detection." \emph{CoRR, vol. abs/1511.06030, 2015. arXiv:1511.06030}
+
+\bibitem{edgecentric} N. Shah, A. Beutel, B. Hooi, L. Akoglu, S. Gunnemann, D. Makhija, M. Kumar, and C. Faloutsos, ``EdgeCentric: Anomaly Detection in Edge-Attributed Networks." \emph{CoRR, vol. abs/1510.05544, 2015. arXiv:1510.05544}
+
+\bibitem{focusco} B. Perozzi, L. Akoglu, P. I. Sánchez, and E. Müller, ``Focused clustering and outlier detection in large attributed graphs." \emph{Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data mining}, 2014, pp. 1346--1355
+
+\bibitem{dosgnf} J. Ye , L. Akoglu, ``Discovering Opinion Spammer Groups by Network Footprints." \emph{Machine Learning and Knowledge Discovery in Databases: European Conference, ECML PKDD}, 2015, pp. 267-282
 
 
 \end{thebibliography}
