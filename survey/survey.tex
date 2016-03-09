@@ -7,7 +7,7 @@
 \usepackage{amssymb}
 \setlength{\headsep}{5pt}
 \usepackage{mathtools}
-\pagenumbering{gobble}
+\pagenumbering{arabic}
 
 \usepackage{titlesec}
 \titlespacing{\section}{0pt}{2\parskip}{-0.5\parskip}
@@ -123,7 +123,7 @@ where e is the Euler constant.
 
 \quad This algorithm models the heavy tail of human behavior and does not assume independent and identically distributed (i.i.d.) however it does not model human's daily activity behavior. It is also good to note here that like the power law and CNPP, this method is used to model human online behavior and not perform anomaly detection on its own. However, it can be used by an algorithm like RSC \cite{rsc} to generate synthetic data for anomaly detection. RSC is explained later on in this paper.
 
-\subsection*{Pearson's $\chi^2$ -- 2011}
+\subsection*{Pearson's $\chi^2$}
 
 \quad This paper \cite{pearson} creates a model to determine whether a Twitter account uses automation to publish tweets for spamming purposes. 
 The authors come to the result that 16\% of active accounts show automated behavior.
@@ -263,7 +263,7 @@ The smaller the NEST value, the less suspicious the user is and it is less likel
 
 \subsection{Group-based Approach}
 
-\subsubsection{Group Latent Anomaly Detection (GLAD) -- 2014}
+\subsubsection{Group Latent Anomaly Detection (GLAD)}
 
 \paragraph{Approach}
 \quad
@@ -365,7 +365,7 @@ a limited number of fraud-labeled users, which may have skewed the accuracy
 upward.
 
 \subsection{Supervised Learning Approach}
-\subsubsection{DARPA Twitterbot Challenge Top 3 Support Vector Machine Approach -- 2015}
+\subsubsection{DARPA Twitterbot Challenge Top 3 Support Vector Machine Approach}
 
 \paragraph{Approach}
 \quad
