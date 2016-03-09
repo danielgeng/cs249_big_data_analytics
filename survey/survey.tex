@@ -552,7 +552,8 @@ Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few at
 \quad Once the $\beta_u$ is inferred, the focused clusters $C$ are extracted. 
 The clusters are $(1)$ dense in graph structure and separated from rest of the graph $(2)$ coherent on focused attributes with large weights.
 The focused clusters can be overlapping, sharing several of their nodes.
-The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes. A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
+
+\quad The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes. A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
 The idea is to identify the structural nodes that are best in terms of unweighted conductance during the expansion of clusters.
 The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
 
