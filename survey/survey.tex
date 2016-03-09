@@ -1,6 +1,6 @@
 \documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
 \usepackage[margin={1in}]{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
-\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
 \usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
 \usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
 								% TeX will automatically convert eps --> pdf in pdflatex		
@@ -47,7 +47,7 @@ This is a lose-lose situation for both businesses and consumers; businesses must
 Therefore, in this survey, we will discuss methods that can be used to differentiate between real users and non-human users.
 
 \quad At the general level, this is a problem of \textit{anomaly detection}---finding unexpected user behavior.
-Historically, there have been many approaches to anomaly detection, such as CNPP, SFP, and Pearson's $\chi^2$.
+Historically, there have been many approaches to anomaly detection, such as CNPP \cite{cnpp}, SFP \cite{sfp}, and Pearson's $\chi^2$ \cite{pearson}.
 In Section \ref{found_models}, we will analyze the advantages and disadvantages of these existing methods.
 In Section \ref{cur_models}, we will introduce state-of-the-art models that attempt to address some of the shortcomings of these more mature models and highlight their relative improvements. 
 
@@ -102,7 +102,7 @@ Thus, tasks wait an uneven amount of time before execution.
 
 \subsection*{Cascading Non-homogeneous Poisson Process (CNPP) }
 
-\quad Another model of human behavior is the Cascading Non-homogeneous Poisson Process (CNPP). CNPP is a variation of the double chain hidden Markov model and is used for understanding the behavior of individuals and detecting outliers.
+\quad Another model of human behavior is the Cascading Non-homogeneous Poisson Process (CNPP) \cite{cnpp}. CNPP is a variation of the double chain hidden Markov model and is used for understanding the behavior of individuals and detecting outliers.
 Specifically, this model is used to detect variability among individuals by using data from email communication.
 First, an inference algorithm is used to estimate model parameters. 
 This model is then applied to the email data.
@@ -125,7 +125,7 @@ where e is the Euler constant.
 
 \subsection*{Pearson's $\chi^2$ -- 2011}
 
-\quad This paper creates a model to determine whether a Twitter account uses automation to publish tweets for spamming purposes. 
+\quad This paper \cite{pearson} creates a model to determine whether a Twitter account uses automation to publish tweets for spamming purposes. 
 The authors come to the result that 16\% of active accounts show automated behavior.
 A bot is defined as a computer program that automatically publishes a significant portion of their tweets.
 They believe that automated accounts have a specific timing pattern that differs from real users.
@@ -143,7 +143,7 @@ Another drawback of this test is that an automated account can pass this test if
 
 \subsubsection*{Approach}
 
-\quad The paper is an attempt to tackle the problem of determining whether a
+\quad The paper \cite{cyborg} is an attempt to tackle the problem of determining whether a
 given Twitter user is a human, bot, or cyborg, defined as follows.  A human user
 is a Twitter account whose tweets are completely posted by a human.  A bot is an
 account whose posts are completely automated.  A cyborg is an account that may
@@ -224,6 +224,7 @@ After the sleep state ends, the user will always transition into the rest state.
 
 \quad In conclusion, RSC showed improvement in differentiating between humans and bots compared with SFP and CNPP models.
 With only temporal activity, RSC was able to detect non-human users with 96.5\% precision on Reddit and 94.7\% precision on Twitter.
+
 \subsection{Bayesian-based Approach}
 \subsubsection*{BIRDNEST }
 
@@ -267,7 +268,7 @@ The smaller the NEST value, the less suspicious the user is and it is less likel
 \paragraph{Approach}
 \quad
 
-\quad In this paper, the authors' goal is to determine group anomalies by proposing the GLAD (Group Latent Anomaly Detection) model, which uses a hierarchical Bayes model.
+\quad In this paper, the authors' goal is to determine group anomalies by proposing the GLAD \cite{glad} (Group Latent Anomaly Detection) model, which uses a hierarchical Bayes model.
 Unlike previous models, GLAD takes in pair-wise and point-wise data as input and determines the groups and group anomalies simultaneously.
 Until now, people were only trying to detect individual anomalies; however, detecting group anomalies early and efficiently is also important in order for preventing group attacks.
 There are three main observations made towards group anomaly:
@@ -317,7 +318,7 @@ However, there are certain limitations such as group anomaly is difficult to det
 
 \quad The authors first survey different forms of fraud-detection on Twitter,
 citing two common tactics that are explored in several other papers: simple
-feature-based detection and collective anomaly detection.  ND-SYNC is the first
+feature-based detection and collective anomaly detection.  ND-SYNC \cite{ndsync} is the first
 to be textual content-agnostic, graph structure-agnostic, user
 attributes-agnostic, parameter-free, unsupervised, specifically designed for
 RTFraud problem, and a well-performing detector for synchronicity fraud.  
@@ -369,7 +370,7 @@ upward.
 \paragraph{Approach}
 \quad
 
-\quad The problem of the DARPA Twitterbot Challenge was: given logs of users that posted in vaccination-related threads, determine which were ``influence bots"---bots that are designed to generate conversation about a given topic.
+\quad The problem of the DARPA Twitterbot Challenge was \cite{darpa}: given logs of users that posted in vaccination-related threads, determine which were ``influence bots"---bots that are designed to generate conversation about a given topic.
 The proposed problem was not constrained to be completely automated and assumed there were bots present (although the exact number was not made known).
 
 \paragraph{Model}
@@ -462,7 +463,7 @@ These patterns are utilized for discovering other bot-followers using ``lockstep
 \paragraph*{Approach}
 \quad
 
-\quad The authors suggest a modified version of the COMPA algorithm in order to detect compromised social media accounts.
+\quad The authors \cite{compa} suggest a modified version of the COMPA algorithm in order to detect compromised social media accounts.
 Often, online social networks contain automated bot accounts for malicious reasons.
 Currently, there are many algorithms for detecting anomalies but not many for detecting hijacked accounts.
 Hijacking accounts is becoming more popular for malicious users because a new bot account does not have to be created.
@@ -551,7 +552,10 @@ Thus, $\beta_u$ tends to be a sparse vector with large weights for only a few at
 \quad Once the $\beta_u$ is inferred, the focused clusters $C$ are extracted. 
 The clusters are $(1)$ dense in graph structure and separated from rest of the graph $(2)$ coherent on focused attributes with large weights.
 The focused clusters can be overlapping, sharing several of their nodes.
-The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes.
+The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes. A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
+The idea is to identify the structural nodes that are best in terms of unweighted conductance during the expansion of clusters.
+The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
+
 
 \paragraph{Results}
 \quad
@@ -622,9 +626,9 @@ Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \ch
 PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
 SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
 RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
-EdgeCentric & 2015 & - & \checkmark & 0 & 0 & \checkmark & \checkmark & 0 & 0 & 0 & \checkmark & - & - & \checkmark \\
-FocusCo & 2014 & \checkmark & \checkmark & - & 0 & \checkmark & - & 0 & 0 & - & \checkmark & - & \checkmark & \checkmark\\
-DOSGNF & 2015 &  - & - & - & 0 & \checkmark & - & - & \checkmark & \checkmark & \checkmark & - & - & \checkmark \\
+EdgeCentric & 2015 & - & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & - & - & \checkmark & - & - & \checkmark \\
+FocusCo & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & \checkmark & - & \checkmark & \checkmark\\
+DOSGNF & 2015 &  - & - & - & \checkmark & \checkmark & - & - & - & \checkmark & \checkmark & - & - & \checkmark \\
 
 \end{tabular}
 }
@@ -643,7 +647,7 @@ DOSGNF & 2015 &  - & - & - & 0 & \checkmark & - & - & \checkmark & \checkmark & 
 \paragraph*{RSC Algorithm}
 \quad
 
-\quad To estimate the parameters for RSC, an algorithm based on fitting the histogram of the observed data IAT is used.
+\quad To estimate the parameters for RSC \cite{rsc}, an algorithm based on fitting the histogram of the observed data IAT is used.
 First, synthetic timestamps are generated using the RSC model.
 Next, a log-binned histogram of IAT is computed for real and synthetic data.
 The width $w_i$ of the i-th bin is wider than the previous bin by a fixed factor $k$, meaning that $w_i=w_{i-1}*k$.
@@ -666,7 +670,7 @@ A false positive is when a human is classified as a bot and a false negative is 
 \paragraph*{BIRDNEST Algorithm}
 \quad
 
-\quad The algorithm first maximizes the overall likelihood function to calculate the best posterior marginals.
+\quad The algorithm \cite{birdnest} first maximizes the overall likelihood function to calculate the best posterior marginals.
 Then, the NEST metric is calculated to quantitatively determine how certain the model is of the user being fradulent.
 \begin{enumerate}
 	\item Determine the number of clusters, $K$, by the Bayesian Information Criterion (BIC).
@@ -679,13 +683,13 @@ Then, the NEST metric is calculated to quantitatively determine how certain the 
 \quad
 
 \quad One of the major components in determining suspiciousness across all features is to do a sweep over all feature subspaces.
-Given p features, there are $2^p$ subspaces to examine, and the original p-dimensional entities must be projected onto each of them.
-The researchers show that even 3-D and 2-D subspaces are effective in building an intuition of the relationship between features.
+Given $p$ features, there are $2^p$ subspaces to examine, and the original $p$-dimensional entities must be projected onto each of them.
+The researchers show that even 3-$D$ and 2-$D$ subspaces are effective in building an intuition of the relationship between features.
 
 \quad The suspiciousness of a group with respect to a feature subspace is determined as the residual score of the projection of that group on that subspace.
 Intuitively, if the group is very synchronized in a given subspace, the group has a high suspiciousness score for that subspace.
 This is calculated for each group, for each of the $2^p$ subspaces.
-Unlike other algorithms, which usually detect outlying groups based on low inter-synchronicity, ND-Sync looks for high intra-synchronicity, which the researchers argue is a better indicator, as they find that that normal users are approximately at around the same level of inter-synchronicity.
+Unlike other algorithms, which usually detect outlying groups based on low inter-synchronicity, ND-Sync \cite{ndsync} looks for high intra-synchronicity, which the researchers argue is a better indicator, as they find that that normal users are approximately at around the same level of inter-synchronicity.
 Essentially, real data has no ``norm" for the data to fit, so detecting outliers proves fruitless.
 Instead, this approach looks for structure.
 
@@ -743,7 +747,7 @@ This approach is an online approach, so it could dynamically learn based on each
 \paragraph{Edge Centric Algorithm}
 \quad
 
-\quad The algorithm is split into five steps:
+\quad The algorithm \cite{edgecentric} is split into five steps:
 \begin{enumerate}
 \item \emph{Aggregation}: For each node-type, aggregate attribute values over the outgoing edges from each node for each associated relation-type.
 For each node, there will be a vector of attribute values for each relation-type.
@@ -758,7 +762,7 @@ Normalize to construct probability mass functions.
 \paragraph{FocusCo Algorithm}
 \quad
 
-\quad The three main components of FocusCo are:
+\quad The three main components of FocusCo \cite{focusco} are:
 \begin{enumerate}
 \item \emph{Inferring attribute weights}: 
 The user initiates the focused clustering by providing $C_{ex}$.
@@ -783,10 +787,10 @@ The quality of the a cluster $C \subset V$ is measured as its weighted conductan
 where $w(i,j)$ is the weight of edge $(i, j)$.
 The lower the conductance of a cluster, the better its quality.
 
-\item \emph{Focused Outlier Detection}:
-A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
-The idea is to identify the structural nodes that are best in terms of unweighted conductance during the expansion of clusters.
-The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
+%\item \emph{Focused Outlier Detection}:
+%A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
+%The idea is to identify the structural nodes that are best in terms of unweighted conductance during the expansion of clusters.
+%The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
 \end{enumerate}
 
 
@@ -794,17 +798,31 @@ The best nodes which were not included in the resulting focused cluster are then
 
 \bibitem{rsc} A. F. Costa, Y. Yamaguchi, A. J. M. Traina, C. Traina, Jr., and C. Faloutsos. ``RSC: Mining and Modeling Temporal Activity in Social Media." \emph{Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2015, pp. 269--278
 
-\bibitem{powerlaw} A.-L. Barabasi, ``The origin of bursts and heavy tails in human dynamics." \emph{Nature}, vol. 435, no. 7039, pp. 207--211, 2005. 
+\bibitem{cnpp} R. D. Malmgren, D. B. Stouffer, A. E. Motter, and L. A. N. Amaral, ``A Poissonian explanation for heavy tails in e-mail communication." \emph{Proceedings of the National Academy of Sciences of the United States of America}, vol 105, no. 47, pp. 18153--18158, 2008
+
+\bibitem{powerlaw} A.-L. Barabasi, ``The origin of bursts and heavy tails in human dynamics." \emph{Nature}, vol. 435, no. 7039, pp. 207--211, 2005
 
 \bibitem{sfp} P. O. S. Vaz de Melo, C. Faloutsos, R. Assuncao, A. A. F. Loureiro. ``The Self-Feeding Process: A Unifying Model for Communication Dynamics in the Web." \emph{Proceedings of the 22nd International Conference on World Wide Web}, 2013, pp. 1319--1330 
+
+\bibitem{pearson} C. M. Zhang, and V. Paxson, ``Detecting and Analyzing Automated Activity on Twitter." \emph{Proceedings of the 12th International Conference on Passive and Active Measurement (PAM)}, 2011, pp. 102--111 
+
+\bibitem{cyborg} Z. Chu, S. Gianvecchio, H. Wang, and S. Jajodia, ``Who is Tweeting on Twitter: Human, Bot, or Cyborg?", \emph{Proceedings of the 26th Annual Computer Security Applications Conference (ACSAC)}, 2010, pp. 21--30  
+
+\bibitem{birdnest} B. Hooi, N. Shah, A. Beutel, S. Gunneman, L. Akoglu, M. Kumar, D. Makhija, and C. Faloutsos. ``BIRDNEST: Bayesian Inference for Ratings-Fraud Detection." \emph{CoRR, vol. abs/1511.06030, arXiv:1511.06030}, 2015
+
+\bibitem{glad} R. Yu, X. He, and Y. Liu, ``GLAD: Group Anomaly Detection in Social Media Analysis." \emph{Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2014, pp. 372--381
+
+\bibitem{ndsync} M. Giatsoglou, D. Chatzakou, N. Shah, A. Beutel, C. Faloutsos, and A. Vakali ``ND-Sync: Detecting Synchronized Fraud Activities." \emph{Advances in Knowledge Discovery and Data Mining, 19th Pacific-Asia Conference, PAKDD}, 2015, pp. 201--214
+
+\bibitem{darpa} V.S. Subrahmanian, et. al, ``The DARPA Twitter Bot Challenge", \emph{CoRR, vol. abs/1601.05140, arXiv:1601.05140} 2016
 
 \bibitem{pca} B. Viswanath, K. Gummadi, M. A. Bishir, B. Krishmamurthy, M. Crovella, S. Guha, and A. Mislove. ``Toward Detecting Anomalous User Behavior in Online Social Networks." \emph{Proceedings of the 23rd Usenix Security Symposium (USENIX Security)}, 2014, pp. 223--238
 
 \bibitem{lockstep} M. Jiang, P. Cui, A. Beutel, C. Faloutsos, and S. Yang. ``Inferring Strange Behavior from Connectivity Pattern in Social Networks." \emph{PAKDD 2014, Part I, LNAI 8443}, 2014, pp. 126--138.
 
-\bibitem{birdnest} B. Hooi, N. Shah, A. Beutel, S. Gunneman, L. Akoglu, M. Kumar, D. Makhija, and C. Faloutsos. ``BIRDNEST: Bayesian Inference for Ratings-Fraud Detection." \emph{CoRR, vol. abs/1511.06030, 2015. arXiv:1511.06030}
+\bibitem{compa} D. Trang, F. Johansson and M. Rosell, ``Evaluating Algorithms for Detection of Compromised Social Media User Accounts," \emph{Network Intelligence Conference (ENIC), 2015 Second European}, 2015, pp. 75-82
 
-\bibitem{edgecentric} N. Shah, A. Beutel, B. Hooi, L. Akoglu, S. Gunnemann, D. Makhija, M. Kumar, and C. Faloutsos, ``EdgeCentric: Anomaly Detection in Edge-Attributed Networks." \emph{CoRR, vol. abs/1510.05544, 2015. arXiv:1510.05544}
+\bibitem{edgecentric} N. Shah, A. Beutel, B. Hooi, L. Akoglu, S. Gunnemann, D. Makhija, M. Kumar, and C. Faloutsos, ``EdgeCentric: Anomaly Detection in Edge-Attributed Networks." \emph{CoRR, vol. abs/1510.05544, arXiv:1510.05544}, 2015
 
 \bibitem{focusco} B. Perozzi, L. Akoglu, P. I. Sánchez, and E. Müller, ``Focused clustering and outlier detection in large attributed graphs." \emph{Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data mining}, 2014, pp. 1346--1355
 
