@@ -58,7 +58,8 @@ In this section, we will provide an overview of the types of anomalies, types of
 \quad There are a different types of user behavior anomalies that can be classified as the following.
 An individual is considered to be a \textbf{point anomaly} if it is anomalous with respect to the rest of the data.
 If an individual is anomalous in a specific context, but not otherwise, it is defined as a \textbf{contextual anomaly} or \textbf{conditional anomaly}.
-A \textbf{collective anomaly} or \textbf{group anomaly} is an anomalous collection of individuals that may not be considered to be anomalies independently, but the occurrence of them together is considered to be an anomaly [ref]. A \textbf{graph anomaly} is ******************[ref].
+A \textbf{collective anomaly} or \textbf{group anomaly} is an anomalous collection of individuals that may not be considered to be anomalies independently, but the occurrence of them together is considered to be an anomaly. \cite{survey1} \cite{survey2}
+A \textbf{graph anomaly} consists of the nodes, edges, and/or subgraphs of a graph that deviate significantly from patterns that are observed in the graph. \cite{survey3}
 
 \subsection{Types of Features}
 \quad The optimal type of anomaly detection algorithm to use is dependent on the input features that are available.
@@ -627,7 +628,8 @@ RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - &
 EdgeCentric & 2015 & - & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & - & - & \checkmark & - & - & \checkmark \\
 FocusCo & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & \checkmark & - & \checkmark & \checkmark\\
 DOSGNF & 2015 &  - & - & - & \checkmark & \checkmark & - & - & - & \checkmark & \checkmark & - & - & \checkmark \\
-
+GLAD & 2014 & -  & \checkmark & \checkmark  & - & - & \checkmark  & - & - & \checkmark & - & - & \checkmark & - \\
+Mod. COMPA & 2015 & \checkmark & \checkmark & - & \checkmark & - & \checkmark & \checkmark  & - & \checkmark & - & \checkmark & - & - \\
 \end{tabular}
 }
 \end{center}
@@ -849,6 +851,12 @@ The lower the conductance of a cluster, the better its quality.
 \bibitem{focusco} B. Perozzi, L. Akoglu, P. I. Sánchez, and E. Müller, ``Focused clustering and outlier detection in large attributed graphs." \emph{Proceedings of the 20th ACM SIGKDD International Conference on Knowledge Discovery and Data mining}, 2014, pp. 1346--1355
 
 \bibitem{dosgnf} J. Ye , L. Akoglu, ``Discovering Opinion Spammer Groups by Network Footprints." \emph{Machine Learning and Knowledge Discovery in Databases: European Conference, ECML PKDD}, 2015, pp. 267-282
+
+\bibitem{survey1} V. Chandola, A. Banerjee, V. Kumar. ``Anomaly Detection: A Survey". ACM Comput. Surv. 41, 33, Article 15 (July 2009)
+
+\bibitem{survey2} SONG, X., WU, M., JERMAINE, C., AND RANKA, S. 2007. Conditional anomaly detection. IEEE Trans. Knowl. Data Eng. 19, 5, 631?645.
+
+\bibitem{survey3} Graph based Anomaly Detection and Description: A Survey http://www3.cs.stonybrook.edu/~leman/pubs/14-dami-graphanomalysurvey.pdf.
 
 
 \end{thebibliography}
