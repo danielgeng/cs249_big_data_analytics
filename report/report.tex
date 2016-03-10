@@ -161,7 +161,40 @@ As a result, the AUC score tends to average at 0.94167.
 
 \subsection{Classic Machine Learning Approaches}
 
-filler
+All machine learning models were implemented for binary classification, rather than a suspiciousness score.
+Initially, support vector machines (SVMs) and logistic regression were implemented.
+SVMs were tested with linear, polynomial, and radial kernels and logistic regression was tested using both primal and dual optimization functions.
+
+However, because these models alone were not very effective, a myriad of boosting and ensemble methods were used in an attempt to improve performance.
+The following methods were tested:
+
+\begin{itemize}
+\item Adaboost -- weights each classifier based on performance
+\item Gradient boosting -- fits trees based on negative gradient of loss function
+\item Random forests
+\item Bagging -- trains on subsets of data and uses them to vote
+\item Extra trees -- trains on subsets of data and averages them
+\end{itemize}
+
+All of these models fit numerous classifiers---typically decision trees---to make up for the shortcomings of the earlier classifiers.
+
+\subsubsection{Features}
+
+The given data was pre-processed in various ways.
+A combination of the following features were tested in each model to varying degrees of performance.
+
+\begin{itemize}
+\item Log-bucketed IAT (base 2 and base 5) -- each bucket is a feature
+\item Log-bucketed response time (base 2 and base 5) -- each bucket is a feature
+\item Mean IAT
+\item Mean response time
+\item Total number of bids
+\item Mean bids per auction
+\item Number of devices
+\item Number of IPs
+\item Entropy of devices
+\item Entropy of IPs
+\end{itemize}
 
 \subsection{BIRDNEST}
 
