@@ -44,6 +44,15 @@ def heatmap(data1, data2, botList):
     return
 
 
+def plot_feature_importance():
+    return
+
+def plot_AUC_over_n():
+    return
+
+def plot_best_ROC():
+    return
+
 
 def main():
     bidTuples, userList, botList = load_users()
