@@ -26,7 +26,7 @@
   \and
   Andrew Wong (104036702)
 }
-\date{Winter 2016}							% Activate to display a given date or no date
+\date{Winter 2016}
 
 \begin{document}
 \maketitle
@@ -34,8 +34,11 @@
 \section*{Abstract}
 The ubiquity of social media makes it easy for people to communicate with each other and stay informed about global events.
 Many platforms rely on crowdsourced information for promoting a business' services and/or products.
-However, this provides a vulnerability that commercial entities can easily exploit for their own interests. This is a lose-lose situation for both businesses and consumers; businesses must constantly defend themselves from the onslaught of negative feedback while consumers will lose trust in information from social media.
-Therefore, in this survey, we will discuss various methods that can be used to differentiate between real users and non-human users.
+However, this provides a vulnerability that commercial entities can easily exploit for their own interests.
+This is a lose-lose situation for both businesses and consumers; businesses must constantly defend themselves from the onslaught of negative feedback while consumers will lose trust in information from social media.
+Therefore, in this survey, we will introduce and discuss various anomaly detection paradigms that can be used to differentiate between real users and non-human users.
+The different types of anomalies that can be detected will be introduced, along with potential challenges found in real-world data sets.
+While each anomaly detection approach has its strengths, there is currently no state-of-the-art model with optimal scalability and performance for all scenarios.
 
 \section{Introduction} \label{background}
 
@@ -553,8 +556,7 @@ The focused clusters can be overlapping, sharing several of their nodes.
 
 \quad The other objective is to detect outliers $O$, which are defined to be the nodes that structurally belong to a focused cluster, but deviate from its members in some focus attributes. A focused cluster outlier is a node that has many edges to the members of the cluster, but deviates from the members significantly in some focus attributes.
 The idea is to identify the structural nodes that are best in terms of unweighted conductance during the expansion of clusters.
-The best nodes which were not included in the resulting focused cluster are then taken as the outliers. (Algorithm in Appendix)
-
+The best nodes that were not included in the resulting focused cluster are then determined to be outliers. (Algorithm in Appendix)
 
 \paragraph{Results}
 \quad
@@ -620,18 +622,18 @@ Since the proposed algorithm extensively uses various probability distributions,
 \hline
 Algorithm & Year & CON & CAT & SE & SP & GR & IID & PA & CXA & COA & GA & SU & BC & SC\\
 \hline
+DARPA Winners & 2016 & - & \checkmark & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & \checkmark & \checkmark & \checkmark \\
 BIRDNEST & 2015 & \checkmark & - & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & - & - & \checkmark \\
-Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \checkmark & \checkmark & - & \checkmark & \checkmark \\
-PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
-SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
+Mod. COMPA & 2015 & \checkmark & \checkmark & - & \checkmark & - & \checkmark & \checkmark  & - & \checkmark & - & \checkmark & - & - \\
+ND-SYNC & 2015 & \checkmark & \checkmark & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - \\
+DOSGNF & 2015 &  - & - & - & \checkmark & \checkmark & - & - & - & \checkmark & \checkmark & - & - & \checkmark \\
 RSC & 2015 & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
 EdgeCentric & 2015 & - & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & - & - & \checkmark & - & - & \checkmark \\
+Lockstep & 2014 & - & \checkmark & - & - & \checkmark & \checkmark & - & - & \checkmark & \checkmark & - & \checkmark & \checkmark \\
+PCA & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & - & - & - & \checkmark & \checkmark \\
 FocusCo & 2014 & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & - & \checkmark & \checkmark & - & \checkmark & - & \checkmark & \checkmark\\
-DOSGNF & 2015 &  - & - & - & \checkmark & \checkmark & - & - & - & \checkmark & \checkmark & - & - & \checkmark \\
 GLAD & 2014 & -  & \checkmark & \checkmark  & - & - & \checkmark  & - & - & \checkmark & - & - & \checkmark & - \\
-Mod. COMPA & 2015 & \checkmark & \checkmark & - & \checkmark & - & \checkmark & \checkmark  & - & \checkmark & - & \checkmark & - & - \\
-ND-SYNC & 2015 & \checkmark & \checkmark & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & - & \checkmark & -\\
-DARPA Winners & 2016 & - & \checkmark & - & \checkmark & - & \checkmark & - & \checkmark & \checkmark & - & \checkmark & \checkmark & \checkmark
+SFP & 2013 & \checkmark & - & \checkmark & - & - & - & \checkmark & - & - & - & - & \checkmark & \checkmark \\
 \end{tabular}
 }
 \end{center}
@@ -819,7 +821,6 @@ The lower the conductance of a cluster, the better its quality.
 %The best nodes which were not included in the resulting focused cluster are then taken as the outliers.
 \end{enumerate}
 
-
 \begin{thebibliography}{123}
 
 \bibitem{rsc} A. F. Costa, Y. Yamaguchi, A. J. M. Traina, C. Traina, Jr., and C. Faloutsos. ``RSC: Mining and Modeling Temporal Activity in Social Media." \emph{Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2015, pp. 269--278
@@ -860,9 +861,6 @@ The lower the conductance of a cluster, the better its quality.
 
 \bibitem{survey3} Graph based Anomaly Detection and Description: A Survey http://www3.cs.stonybrook.edu/~leman/pubs/14-dami-graphanomalysurvey.pdf.
 
-
 \end{thebibliography}
-
-
 
 \end{document}
