@@ -8,6 +8,7 @@ import sklearn
 from sklearn.cluster import KMeans
 from scipy.special import gammaln, psi
 
+#BIRDNEST source code from author (adjusted for project purposes)
 # runs bayesian fraud detection; returns vector of suspiciousness
 # (in same order as iat_arr)
 

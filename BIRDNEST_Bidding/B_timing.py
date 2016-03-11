@@ -1,4 +1,4 @@
-import time 
+import time
 import numpy as np
 import random
 import matplotlib.pyplot as plt
@@ -6,6 +6,7 @@ import cPickle as pickle
 from B_process_data import *
 from B_detect_bot import *
 
+#Adjusted from BIRDNEST source code for purposes of project
 #Used to figure out the average runtime - Test scalability with data set (Adjusted from BIRDNEST author's source code)
 
 dataname = 'FacebookBids'
