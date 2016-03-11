@@ -34,7 +34,7 @@ BT_CATEGORY = 3
 BT_DEVICE = 4
 BT_IP = 5
 
-TIME_LOG_BASE = 5
+TIME_LOG_BASE = 2
 DATAHOME = "../Data/"
 
 def generate_mean_iats(bidTuples, userList, force=False):
@@ -52,7 +52,7 @@ def generate_binned_rts(bidTuples, userList, force=False):
         rts_buckets = pickle.load(open(DATAHOME+'rts_buckets.p',"rb"))
     else:
         rts, auctionList, maxResponseTime = generate_rts(bidTuples, userList)
-        rts_buckets = bucketize(rts, 5, outfile="../Data/rt_buckets.txt", maxVal=maxResponseTime)
+        rts_buckets = bucketize(rts, TIME_LOG_BASE, outfile=DATAHOME+"rt_buckets.txt", maxVal=maxResponseTime)
     return rts_buckets
 
 def generate_binned_iats(bidTuples, userList, force=False):
@@ -60,7 +60,7 @@ def generate_binned_iats(bidTuples, userList, force=False):
         print "iats_buckets file located. Loading..."
     else:
         iats, maxIat = generate_iats(bidTuples, userList)
-        iats_buckets = bucketize(iats, 5, outfile="../Data/iat_buckets.txt", maxVal=maxIat)
+        iats_buckets = bucketize(iats, TIME_LOG_BASE, outfile=DATAHOME+"iat_buckets.txt", maxVal=maxIat)
     return iats_buckets
 
 
@@ -223,6 +223,14 @@ def generate_num_ips(bidTuples, userList, force=False):
     return [len(g) for g in group_unique_userdata(bidTuples,userList,BT_IP, force=force)]
 
 
+def generate_device_entropy(bidTuples, userList, force=False):
+    return group_entropy(bidTuples, userList, BT_DEVICE, force=force)
+
+
+def generate_IP_entropy(bidTuples, userList, force=False):
+    return group_entropy(bidTuples, userList, BT_IP, force=force)
+
+
 #########################
 #                       #
 #     H E L P E R S     #
@@ -342,6 +350,29 @@ def group_unique_userdata(bidTuples, userList, columnNum, force=False):
     return uniqueData
 
 
+def group_entropy(bidTuples, userList, columnNum, force=False):
+    userData = [[] for user in userList]
+    userEntropies = [0 for user in userList]
+    bidTuples = sorted(bidTuples, key=operator.itemgetter(columnNum))
+    for toks in bidTuples:
+        userNum = toks[0]
+        userData[userNum].append(toks[columnNum])
+    for userNum, user in enumerate(userData):
+        # Should already be sorted by columnum from above...
+        binCounts = []
+        user = sorted(user, key=operator.itemgetter(columnNum))
+        prevVal = None
+        for col in user:
+            if not col == prevVal:
+                binCounts.append(0)
+            binCounts[-1] += 1
+            prevVal = col
+        totalCounts = sum(binCounts)
+        entropies = [np.log(float(count)/totalCounts)*float(count)/totalCounts for count in binCounts]
+        userEntropies[userNum] = -sum(entropies)
+    return userEntropies
+
+
 def bucketize(data, log_base, outfile=None, maxVal=None):
     """
     Take in data and bucketize them by log_base
@@ -389,6 +420,9 @@ def mean_by_user(data):
     return [np.mean(user) if len(user) > 0 else 0 for user in data]
 
 
+def median_by_user(data):
+    return [np.median(user) if len(user) > 0 else 0 for user in data]
+
 def sparse_botlist(botList, userList):
     """
     Takes in a list of userNums of bots and returns a binary representation of the labels
@@ -402,6 +436,12 @@ def sparse_botlist(botList, userList):
         sparseList[botNum] = 1
     return np.array(sparseList)
 
+
+##################################
+#                                #
+#        F E A T U R E S         #
+#                                #
+##################################
 
 def stack_features(featureList, nameList=None, outfile=None):
     """
@@ -426,7 +466,7 @@ def stack_features(featureList, nameList=None, outfile=None):
 
 def six_features(force=False):
     userList, botList = load_users(force=False)
-    # bitTuples, userList, botList = load_data(force=False)
+    # bidTuples, userList, botList = load_data(force=False)
     if (not force) and os.path.isfile(DATAHOME+"six_features.p"):
         six_features = pickle.load(open(DATAHOME+"six_features.p", "rb"))
         return six_features, sparse_botlist(botList, userList)
@@ -440,6 +480,55 @@ def six_features(force=False):
         six_features = stack_features([meanIats, meanRts, bids, bidsPerAuction, numDevices, numIps], outfile=DATAHOME+"six_features.csv")
         pickle.dump(six_features, open(DATAHOME+"six_features.p","wb"))
         return six_features, sparse_botlist(botList, userList)
+
+
+def five_features(force=False):
+    userList, botList = load_users(force=False)
+    if (not force) and os.path.isfile(DATAHOME+"five_features.p"):
+        five_features = pickle.load(open(DATAHOME+"five_features.p", "rb"))
+        return five_features, sparse_botlist(botList, userList)
+    else:
+        bidTuples, userList, botList = load_data(force=False)
+        meanIats = generate_mean_iats(bidTuples, userList, force=False)
+        meanRts = generate_mean_rts(bidTuples, userList, force=False)
+        bids, bidsPerAuction = generate_bid_counts(bidTuples, userList, force=False)
+        numDevices = generate_num_devices(bidTuples, userList, force=False)
+        five_features = stack_features([meanIats, meanRts, bids, bidsPerAuction, numDevices], outfile=DATAHOME+"five_features.csv")
+        pickle.dump(five_features, open(DATAHOME+"five_features.p","wb"))
+        return five_features, sparse_botlist(botList, userList)
+
+
+def five_and_rts(force=False):
+    userList, botList = load_users(force=False)
+    if (not force) and os.path.isfile(DATAHOME+"five_and_rts.p"):
+        five_and_rts = pickle.load(open(DATAHOME+"five_and_rts.p",'rb'))
+    else:
+        bidTuples, userList, botList = load_data(force=False)
+        five_feat = five_features(force=False)[0]
+        rts = generate_binned_rts(bidTuples, userList, force=False)
+        five_and_rts = np.concatenate((five_feat, rts), axis=1)
+        pickle.dump(five_and_rts, open(DATAHOME+"five_and_rts.p", "wb"))
+    # six_feats[1] is the sparse botList
+    return five_and_rts, sparse_botlist(botList, userList)
+
+
+def new_features(force=False):
+    userList, botList = load_users(force=False)
+    # bidTuples, userList, botList = load_data(force=False)
+    if (not force) and os.path.isfile(DATAHOME+"new_features.p"):
+        new_features = pickle.load(open(DATAHOME+"new_features.p", "rb"))
+        return new_features, sparse_botlist(botList, userList)
+    else:
+        bidTuples, userList, botList = load_data(force=False)
+        meanIats = generate_mean_iats(bidTuples, userList, force=False)
+        bids, bidsPerAuction = generate_bid_counts(bidTuples, userList, force=False)
+        numDevices = generate_num_devices(bidTuples, userList, force=False)
+        deviceEntropy = generate_device_entropy(bidTuples, userList, force=False)
+        ipEntropy = generate_IP_entropy(bidTuples, userList, force=False)
+        new_features = stack_features([meanIats, bids, bidsPerAuction, numDevices, deviceEntropy, ipEntropy], outfile=DATAHOME+"new_features.csv")
+        pickle.dump(new_features, open(DATAHOME+"new_features.p","wb"))
+        return new_features, sparse_botlist(botList, userList)
+
 
 def binned_time_features(force=False):
     if (not force) and os.path.isfile(DATAHOME+"binned_time_features.p"):
@@ -471,6 +560,7 @@ def main():
     # bucketize(rts, 5, outfile=DATAHOME+"rt_buckets.txt", maxVal=maxResponseTime)
     # iats, maxIat = generate_iats(bidTuples, userList)
     # bucketize(iats, 5, outfile=DATAHOME+"iat_buckets.txt", maxVal=maxIat)
+    # print six_and_time_features()[0].shape
     return
 
 if __name__ == '__main__':

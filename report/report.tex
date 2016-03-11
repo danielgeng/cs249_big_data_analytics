@@ -40,7 +40,8 @@ stuff
 \section{Motivation}
 
 Facebook is a popular online social media platform connecting users from all around the world.
-With this efficient form of communication, businesses are able to reach out to their existing customers as well as advertise to new customers by specifying which group of users they would like to advertise to.
+Because of its high traffic, Facebook is an ideal form of commercial advertisement.
+Businesses are able to reach out to their existing customers as well as advertise to new customers by specifying which group of users they would like to advertise to.
 Although Facebook can provide space on both their website and mobile site, there is limited webpage ``real estate".
 Therefore, Facebook sets up auctions for businesses to bid on designated spaces for advertisement purposes.
 
@@ -51,8 +52,8 @@ Automated bids from bots are unfairly able to submit bids almost instantaneously
 According to a paper released by eBay, 65\% of sessions each day are initiated by bots. \cite{ebay}
 
 ``Facebook Recruiting IV: Human or Robot?" was a past Kaggle Competition that ended in June 2015.
-The competition tackles the problem of bot detection in online auction sites.
-Our goal is to detect bot-user anomalies in an e-commerce environment using binary classification. 
+The competition tackles the problem of bot detection in Facebook Ads bidding.
+Our goal is to detect bot-user anomalies in this e-commerce environment using various anomaly detection methods.
 
 \section{Background}
 
@@ -127,9 +128,8 @@ MATLAB was also used, as a large number of existing state-of-the-art methods hav
 
 \subsection{Kaggle Winner: ``Small Yellow Duck"}
 
-The second place winner of this Kaggle Competition goes by the name Small Yellow Duck.
-Her classification model takes the average of the probabilities predicted by five instances of the Random Forest Classifier.
-Random Forests are an ensemble learning method that constructs multiple decision trees in order to create a stronger classification model.
+The second place winner of this Kaggle Competition goes by the name ``Small Yellow Duck".
+Her classification model takes the average of the probabilities predicted by five instances of the Random Forest Classifier, which is an ensemble learning method that constructs multiple decision trees to create a stronger classification model.
 
 Small Yellow Duck first makes a couple of observations before implementing feature extraction.
 First, human bidding activity tends to peak daily as seen in the figure below.
@@ -161,7 +161,40 @@ As a result, the AUC score tends to average at 0.94167.
 
 \subsection{Classic Machine Learning Approaches}
 
-filler
+All machine learning models were implemented for binary classification, rather than a suspiciousness score.
+Initially, support vector machines (SVMs) and logistic regression were implemented.
+SVMs were tested with linear, polynomial, and radial kernels and logistic regression was tested using both primal and dual optimization functions.
+
+However, because these models alone were not very effective, a myriad of boosting and ensemble methods were used in an attempt to improve performance.
+The following methods were tested:
+
+\begin{itemize}
+\item Adaboost -- weights each classifier based on performance
+\item Gradient boosting -- fits trees based on negative gradient of loss function
+\item Random forests
+\item Bagging -- trains on subsets of data and uses them to vote
+\item Extra trees -- trains on subsets of data and averages them
+\end{itemize}
+
+All of these models fit numerous classifiers---typically decision trees---to make up for the shortcomings of the earlier classifiers.
+
+\subsubsection{Features}
+
+The given data was pre-processed in various ways.
+A combination of the following features were tested in each model to varying degrees of performance.
+
+\begin{itemize}
+\item Log-bucketed IAT (base 2 and base 5) -- each bucket is a feature
+\item Log-bucketed response time (base 2 and base 5) -- each bucket is a feature
+\item Mean IAT
+\item Mean response time
+\item Total number of bids
+\item Mean bids per auction
+\item Number of devices
+\item Number of IPs
+\item Entropy of devices
+\item Entropy of IPs
+\end{itemize}
 
 \subsection{BIRDNEST}
 
