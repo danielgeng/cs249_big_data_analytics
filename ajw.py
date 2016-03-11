@@ -6,12 +6,14 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import roc_curve
 from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import normalize
 from sklearn.metrics import roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import BaggingClassifier
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 import matplotlib.pyplot as plt
 import sys
@@ -32,6 +34,55 @@ def run_clf(clf, string=""):
     return mean, tpr, fpr
 
 
+def run_clfList(clfList, stringList=""):
+    data, labels = new_features()
+    data = normalize_data(data)
+
+    imp = Imputer(missing_values=np.NaN, strategy="mean")
+    data = imp.fit_transform(data)
+    means = kfoldcvList(data, labels, clfList, 100)
+    if stringList == "":
+        stringList = ["" for i in range(len(labels))]
+
+    for i, mean in enumerate(means):
+        print stringList[i]+": "+str(mean)
+
+    for mean in means:
+        sys.stdout.write(str(mean) + " & ")
+    sys.stdout.write("\n")
+    return means
+
+
+def select_bestList_higher(clf, string="--"):
+    n_range = ([100, 200, 300, 400])
+    clfList = [clf(n_estimators=n) for n in n_range]
+    stringList = [string+" ("+str(n)+")" for n in n_range]
+    AUCs = run_clfList(clfList, stringList)
+    plt.title(string+ " AUC vs Number of Estimators")
+    plt.xlabel("Number of Estimators")
+    plt.ylabel("AUC")
+    plt.scatter(n_range, AUCs)
+    plt.show()
+    plt.savefig("AUCvN_highN_"+string+".png")
+    plt.close()
+
+def select_bestList(clf, string="--"):
+    # n_range = (range(2,11)+[15,30,50,100,150,200])
+    n_range = [3,5,7,9,15,30]
+    clfList = [clf(n_estimators=n, base_estimator=SVC(kernel="linear", C=50, probability=True)) for n in n_range]
+    clfList += [clf(n_estimators=n) for n in n_range]
+    stringList = [string+" ("+str(n)+")" for n in n_range]
+    stringList += [string+" ("+str(n)+")" for n in n_range]
+    AUCs = run_clfList(clfList, stringList)
+    plt.title(string+ " AUC vs Number of Estimators")
+    plt.xlabel("Number of Estimators")
+    plt.ylabel("AUC")
+    plt.scatter(n_range, AUCs)
+    plt.show()
+    plt.savefig("AUCvN_"+string+".png")
+    plt.close()
+
+
 def select_best(clf, string="--"):
     n_range = (range(2,11)+[15,30,50,100,150,200])
     AUCs = []
@@ -49,39 +100,40 @@ def select_best(clf, string="--"):
     return n_range[AUCs.index(max(AUCs))]
 
 
+def select_best_combined(n):
+    Ks = [1,3,5,7,9]
+    combs = []
+    for k in Ks:
+        comblist = [RandomForestClassifier() for i in range(k)]
+        for i in range(k):
+            comblist[i] = AdaBoostClassifier(n_estimators=n, random_state=i)
+        combs.append(CombinedClassifier(comblist))
+    run_clfList(combs, ["1", "3", "5", "7", "9"])
+
+
 def run_combined():
     # ada = AdaBoostClassifier(n_estimators=9)
     # grad = GradientBoostingClassifier(n_estimators=50)
     # rforest = RandomForestClassifier(n_estimators=100)
     # bag = BaggingClassifier(n_estimators=200)
     # extra = ExtraTreesClassifier(n_estimators=150)
-    grad1 = GradientBoostingClassifier(n_estimators=50)
+    grad1 = AdaBoostClassifier(n_estimators=9)
     grad2 = GradientBoostingClassifier(n_estimators=50)
-    grad3 = GradientBoostingClassifier(n_estimators=50)
-    grad4 = GradientBoostingClassifier(n_estimators=50)
-    grad5 = GradientBoostingClassifier(n_estimators=50)
+    grad3 = RandomForestClassifier(n_estimators=150)
+    grad4 = BaggingClassifier(n_estimators=200)
+    grad5 = ExtraTreesClassifier(n_estimators=100)
     comb = CombinedClassifier([grad1, grad2, grad3,grad4,grad5])
-    run_clf(comb, "Combined")
+    grad1 = AdaBoostClassifier(n_estimators=9)
+    grad2 = GradientBoostingClassifier(n_estimators=50)
+    grad3 = RandomForestClassifier(n_estimators=150)
+    grad4 = BaggingClassifier(n_estimators=200)
+    grad5 = ExtraTreesClassifier(n_estimators=100)
+    run_clfList([comb, grad1, grad2, grad3, grad4, grad5], "Combined")
 
 
-def run_adaboost():
-    run_clf(AdaBoostClassifier(base_estimator=None, n_estimators=9, learning_rate=1, algorithm="SAMME.R", random_state=None),"Adaboost")
-    # run_clf(GradientBoostingClassifier(n_estimators=9), "Gradient Boost")
-    # run_clf(RandomForestClassifier(n_estimators=20), "Random Forest")
-    # run_clf(BaggingClassifier(n_estimators=20), "Bagging")
-    # run_clf(ExtraTreesClassifier(n_estimators=20), "Extra Trees")
-    # fpr, tpr, thresholds = roc_curve(labels, estimate_scores[:,1], pos_label=1)
-    # print roc_auc_score(labels, estimate_scores[:,1])
-    # plt.plot(fpr, tpr)
-    # plt.xlabel("False Positive Rate")
-    # plt.ylabel("True Positive Rate")
-    # plt.title("Average ROC")
-    # plt.show()
-    return
-
-def run_rforest():
-    data, labels = six_features()
-    rf = RandomForestClassifier
+def normalize_data(data):
+    # normalize will normalize a row. We want column
+    return normalize(data.T, norm="max").T
 
 
 def run_importance(clf, feature_labels, string=""):
@@ -160,6 +212,18 @@ def kfoldcv(data, labels, clf, k):
 
     return np.mean(np.array(AUCs)), np.array(AUCs), ROC_tpr, ROC_fpr, ROC_thresh
 
+
+def kfoldcvList(data, labels, clfList, k):
+    AUCs = [[] for i in range(k)]
+    for i in range(k):
+        AUCs[i] = cvList(data, labels, clfList)
+        sys.stdout.write('|')
+    sys.stdout.write("\n")
+
+    # AUCs is k x num_models
+    return np.mean(np.array(AUCs), axis=0)
+
+
 def cv(data, labels, clf):
     """
     Splits the data 80/20 and tests with AUC score and ROC curve
@@ -185,8 +249,69 @@ def cv(data, labels, clf):
     return roc_auc_score(test_labels, estimate_scores[:,1]), fpr, tpr, thresholds
 
 
+
+def cvList(data, labels, clfList):
+    while True:
+        shuffled = range(len(labels))
+        random.shuffle(shuffled)
+        twentyMark = len(labels)/5
+        test_data = data[shuffled[:twentyMark],:]
+        test_labels = labels[shuffled[:twentyMark]]
+        train_data = data[shuffled[twentyMark:],:]
+        train_labels = labels[shuffled[twentyMark:]]
+        if sum(train_labels) > 20:
+            break
+
+    aucList = [0]*len(clfList)
+    for i,clf in enumerate(clfList):
+        clf.fit(train_data, train_labels)
+        estimate_scores = clf.predict_proba(test_data)
+        aucList[i] = roc_auc_score(test_labels,estimate_scores[:,1])
+    return aucList
+
+
+def sweep_svm():
+    Cs = [0.1, 0.5, 1, 5, 20, 50, 100, 150, 200, 300]
+    kernels = ['linear', 'poly', 'rbf']
+    polys = [2,3,4]
+
+    stringList = []
+    svmList = []
+    for kern in kernels:
+        for C in Cs:
+            if kern == 'poly':
+                for deg in polys:
+                    svmList.append(SVC(C=C, kernel=kern, degree=deg, probability=True))
+                    stringList.append(kern + " deg"+str(deg)+ " C(" + str(C)+")")
+            else:
+                svmList.append(SVC(C=C, kernel=kern, probability=True))
+                stringList.append(kern + " C(" + str(C)+")")
+    run_clfList(svmList, stringList)
+
+
+def sweep_logreg():
+    """
+    Sweeps over a range of values for C, printing cross-validated AUCs
+    :return:
+    """
+    Cs = [0.1, 0.5, 1, 5, 20, 50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1500, 2000, 3000, 4500, 7500, 10000, 15000, 20000]
+    logregList = []
+    stringList = []
+    for C in Cs:
+        logregList.append(LogisticRegression(dual=False, C=C))
+        stringList.append(str(C) + " primal")
+        # logregList.append(LogisticRegression(dual=True, C=C))
+        # stringList.append(str(C) + " dual")
+    run_clfList(logregList, stringList)
+    return
+
+
+
 class CombinedClassifier:
     def __init__(self, clfList):
+        print "New combined classifier:"
+        for clf in clfList:
+            print id(clf)
         self.clfList = clfList
 
     def fit(self, data, labels):
@@ -224,12 +349,18 @@ def main():
     # plt.title("Gradient Boosting Classifier ROC Curve")
     # plt.show()
 
-    run_combined()
-    # select_best(AdaBoostClassifier,"Adaboost")
-    # select_best(GradientBoostingClassifier, "Gradient Boost")
-    # select_best(RandomForestClassifier, "Random Forest")
-    # select_best(BaggingClassifier, "Bagging")
-    # select_best(ExtraTreesClassifier, "Extra Trees")
+    # sweep_svm()
+    # sweep_logreg()
+
+    select_bestList(AdaBoostClassifier, "Adaboost")
+    # select_bestList(GradientBoostingClassifier, "Gradient Boosting")
+    # select_bestList(RandomForestClassifier, "Random Forest")
+    # select_bestList(BaggingClassifier, "Bagging Classifier")
+    # select_bestList(ExtraTreesClassifier,"Extra Trees")
+    # select_best_combined(AdaBoostClassifier,10)
+    # run_combined()
+    # run_clf(RandomForestClassifier(n_estimators=300),"RF")
+    # select_best_combined(200)
     return
 
 
