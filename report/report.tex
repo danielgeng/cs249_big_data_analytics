@@ -6,6 +6,7 @@
 \usepackage{wrapfig}
 \usepackage{caption}
 \usepackage{subfig}
+\usepackage{adjustbox}
 
 \captionsetup{
   font=footnotesize,
@@ -151,6 +152,10 @@ Additionally, Python has APIs for Apache Spark and Hadoop, which may prove usefu
 
 \subsection{Classic Machine Learning Approaches}
 
+A variety of machine learning classification models were implemented.
+
+\subsubsection{Implementation}
+
 All machine learning models were implemented for binary classification, rather than a suspiciousness score.
 Initially, support vector machines (SVMs) and logistic regression were implemented.
 SVMs were tested with linear, polynomial, and radial kernels and logistic regression was tested using both primal and dual optimization functions.
@@ -168,7 +173,7 @@ The following methods were tested:
 
 All of these models fit numerous classifiers---typically decision trees---to make up for the shortcomings of the earlier classifiers.
 
-\subsubsection{Features}
+\textbf{Features}
 
 The given data was pre-processed in various ways.
 A combination of the following features were tested in each model to varying degrees of performance.
@@ -186,11 +191,182 @@ A combination of the following features were tested in each model to varying deg
 \item Entropy of IPs
 \end{itemize}
 
+Initially, we only used the time distributions; we consistently got a greatest AUC of around 0.87, but we wanted to see how much better we could make it.
+
+Therefore, we derived a number of features from the given data.
+First, we looked at the mean IAT and response times.
+Another important feature turned out to be the number of bids and the number of bids per auction.
+The total number of unique devices was also fairly important, and we also examined number of unique IPs.
+These additional features, in conjunction with the log-bins, was getting us around a 0.9 AUC.
+
+The last features we explored were the entropies of the devices and IPs.
+Our reasoning and the intuition behind this is was that the entropy values measure how distributed a user's IPs or devices are.
+If the user posts from a single device only, there is little entropy.
+However, if the user posts from a large number of devices with uniform frequency, the entropy is greater.
+
+We tried this with numerous models that have the option to measure the Gini importance, and across the board, the new features we generated listed were higher than the binned distributions.
+As we went along, we pruned them based on these importances, and we verified with performance to ensure that taking features out either improved or did not affect our model.
+
+The following figures show the Gini importance of features for the gradient boosting classifier for all features and for the final set of features used.
+
+\begin{figure}[h]
+    \centering
+    \subfloat[All features]{{\includegraphics[width=6.56cm]{img/grad_gini_all.jpg} }}
+    \qquad
+    \subfloat[Final set of features]{{\includegraphics[width=6.5cm]{img/grad_gini.jpg} }}
+\end{figure}
+
+To find the optimal classifier for our features, we tried to sweep through different parameters for the original classification methods.
+We tried to optimize $C$, the inverse regularization term, for each method.
+A larger $C$ has less regularization and is more prone to overfitting.
+
+For the ensemble methods, we also did a parameter sweep, varying the number of estimators in the ensemble, or the number of boosting stages for certain models.
+Additionally, different loss functions were tested.
+The models were cross-validated with an 80/20 partition of training/test users.
+
+To ensure that our metrics stayed consistent, each model was trained on the same partitions and the AUC scores were compared.
+
+\subsubsection{Evaluation}
+
+To evaluate overall performance, we used the AUC scores under the ROC curve.
+The table below shows the AUC scores for the non-ensemble methods with various values of $C$.
+
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}{c|ccccccccccc}
+Classifier & C=0.1 & 0.5 & 1 & 5 & 20 & 50 & 100 & 150 & 200 & 300\\
+\hline
+SVM (Linear) & 0.6829 & 0.7393 & 0.7566 & 0.7821 & 0.7964 & \textbf{0.8011} & 0.7932 & 0.7964 & 0.7891 & 0.7922\\
+SVM (Poly) deg2 & 0.5455 & 0.5692 & 0.5972 & 0.6532 & 0.7077 & 0.7273 & 0.7286 & 0.7444 & 0.7277 & \textbf{0.7462}\\
+SVM (Poly) deg3 & \textbf{0.6166} & 0.5402 & 0.5343 & 0.5841 & 0.5644 & 0.4730 & 0.5166 & 0.5305 & 0.5334 & 0.5596\\
+SVM (Poly) deg4 & 0.5942 & \textbf{0.6124} & 0.6004 & 0.5542 & 0.5548 & 0.4949 & 0.4865 & 0.4894 & 0.4978 & 0.4779\\
+SVM (Rbf) & 0.6340 & 0.6991 & 0.7179 & 0.7645 & \textbf{0.7996} & 0.7850 & 0.7847 & 0.7843 & 0.7813 & 0.7782\\
+Log. Reg. (Primal) & 0.7360 & 0.7296 & 0.7333 & 0.7465 & 0.7677 & 0.7845 & 0.7968 & 0.8040 & 0.8086 & \textbf{0.8150}\\
+Log. Reg. (Dual) & 0.7360 & 0.7296 & 0.7333 & 0.7466 & 0.7677 & 0.7846 & 0.7971 & 0.8047 & 0.8089 & \textbf{0.8164}\\
+\end{tabular}
+\end{adjustbox}
+
+Logistic regression had the best performance, but it was dependent on a high value for $C$.
+Out of the different SVM kernels, the linear kernel had the best results, followed by the radial basis function (RBF).
+The tables below shows the AUC values of logistic regression for larger values of $C$.
+
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}{cccccccccc}
+C=200 & 300 & 400 & 500 & 600 & 700 & 800 & 900 & 1000 \\
+\hline
+0.8021 & 0.8085 & 0.8126 & 0.8159 & 0.8183 & 0.8203 & 0.8218 & 0.8234 & 0.8246
+\end{tabular}
+\end{adjustbox}
+
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}{cccccccccc}
+C=1200 & 1500 & 2000 & 3000 & 4500 & 7500 & 10000 & 15000 & 20000\\
+\hline
+ 0.8267 & 0.8293 & 0.8324 & 0.8363 & 0.8392 & 0.8412 & 0.8423 & 0.8431 & 0.8441
+\end{tabular}
+\end{adjustbox}
+
+In the ensemble methods, we found that as expected, additional estimators did not necessitate higher AUC scores.
+Entropy improved the top performance across the board for all ensemble methods.
+
+The table below shows the parameter sweep of the number of estimators using all features.
+
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}{c | c c c c c c c c c c c c c c c}
+\# Estimators & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 15 & 30 & 50 & 100 & 150 & 200\\
+\hline
+Adaboost & 0.8647 & 0.8658 & 0.8758 & 0.8817 & 0.8832 & 0.8822 & 0.8844 & 0.8874 & 0.8796 & \textbf{0.8881} & 0.8858 & 0.8763 & 0.8625 & 0.8586 & 0.8588\\
+Gradient Boost & 0.8730 & 0.8780 & 0.8853 & 0.8855 & 0.8879 & 0.9008 & 0.8922 & 0.9065 & 0.8964 & 0.9035 & \textbf{0.9115} & \textbf{0.9115} & 0.8973 & 0.9016 & 0.8919\\
+Random Forest & 0.7007 & 0.7464 & 0.7658 & 0.7771 & 0.7960 & 0.8078 & 0.8245 & 0.8276 & 0.8317 & 0.8420 & 0.8669 & 0.8867 & 0.8885 & \textbf{0.8900} & 0.8863\\
+Bagging & 0.7092 & 0.7266 & 0.7614 & 0.7748 & 0.8018 & 0.7929 & 0.8087 & 0.8200 & 0.8216 & 0.8399 & 0.8528 & 0.8703 & 0.8718 & 0.8786 & \textbf{0.8813}\\
+Extra Trees & 0.7008 & 0.7478 & 0.7683 & 0.7829 & 0.7985 & 0.8139 & 0.8175 & 0.8324 & 0.8364 & 0.8486 & 0.8770 & 0.8840 & 0.8904 & \textbf{0.8929} & 0.8921
+\end{tabular}
+\end{adjustbox}
+
+The table below shows the parameter sweep of the number of estimators using 5 features, which were: mean IAT, mean response time, number of bids, number of bids per auction, and number of devices.
+
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}{c | c c c c c c c c c c c c c c c}
+\# Estimators & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 15 & 30 & 50 & 100 & 150 & 200\\
+\hline
+Adaboost & 0.8670 & 0.8801 & 0.8888 & 0.8888 & 0.8884 & \textbf{0.8911} & 0.8867 & 0.8875 & 0.8910 & 0.8823 & 0.8675 & 0.8644 & 0.8509 & 0.8523 & 0.8402\\
+Gradient Boost & 0.8657 & 0.8805 & 0.8760 & 0.8963 & 0.8914 & 0.8939 & 0.8954 & 0.8915 & 0.8971 & \textbf{0.9031} & 0.9021 & 0.8991 & 0.8893 & 0.8849 & 0.8790\\
+Random Forest & 0.6769 & 0.7176 & 0.7520 & 0.7559 & 0.7817 & 0.7798 & 0.8114 & 0.8051 & 0.8205 & 0.8523 & 0.8772 & 0.8758 & 0.8827 & \textbf{0.8906} & 0.8784\\
+Bagging & 0.6980 & 0.7351 & 0.7582 & 0.7796 & 0.7944 & 0.7961 & 0.8107 & 0.8208 & 0.8165 & 0.8419 & 0.8603 & 0.8815 & 0.8755 & \textbf{0.8854} & 0.8842\\
+Extra Trees & 0.6552 & 0.7065 & 0.7292 & 0.7612 & 0.7779 & 0.7953 & 0.7965 & 0.8057 & 0.8163 & 0.8343 & 0.8545 & 0.8721 & 0.8683 & 0.8742 & \textbf{0.8743}
+\end{tabular}
+\end{adjustbox}
+
+The figure below shows the greatest AUC score for each set of features.
+
+\begin{tabular}{c|ccc}
+Classifier & Five Features & All Features & Final Model\\
+\hline
+Adaboost & 0.8881 & 0.8911 & \textbf{0.9050}\\
+Gradient Boost & 0.9115 & 0.9031 & \textbf{0.9169}\\
+Random Forests & 0.8900 & 0.8906 & \textbf{0.9112}\\
+Bagging & 0.8813 & 0.8854 & \textbf{0.8983}\\
+Extra Trees & 0.8929 & 0.8743 & \textbf{0.9114}
+\end{tabular}
+
+The final set of features did not use all of the features, but included the following:
+
+\begin{itemize}
+\item Mean IAT
+\item Number of bids
+\item Number of bids per auction
+\item Number of devices
+\item Entropy of devices
+\item Entropy of IPs
+\end{itemize}
+
+Using this set of features, we achieved the greatest average AUC score of 0.9134, using gradient boosting.
+
+\clearpage
+
+\begin{figure}[h]
+\centering
+{\caption{Gradient Boosting ROC curve} \includegraphics[scale=0.4]{img/grad_roc.jpg}}
+\end{figure}
+
+The table below shows the AUC scores of the final set of features used with various number of estimators.
+
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}{c | c c c c c c c c c c c c c c c}
+\# Estimators & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 15 & 30 & 50 & 100 & 150 & 200\\
+Adaboost & 0.8790 & 0.8892 & 0.8976 & 0.8996 & 0.9024 & 0.9022 & \textbf{0.9050} & 0.9036 & 0.9004 & 0.9024 & 0.8967 & 0.8871 & 0.8773 & 0.8723 & 0.8684\\
+\hline
+Gradient Boost & 0.8918 & 0.8962 & 0.8990 & 0.9012 & 0.9029 & 0.9045 & 0.9059 & 0.9071 & 0.9083 & 0.9129 & \textbf{0.9169} & 0.916 & 0.9090 & 0.8960 & 0.8864\\
+Random Forests & 0.7081 & 0.7438 & 0.7767 & 0.7995 & 0.8152 & 0.8338 & 0.8325 & 0.8481 & 0.8517 & 0.8756 & 0.8923 & 0.9024 & 0.9086 & 0.9105 & \textbf{0.9112}\\
+Bagging & 0.7032 & 0.7482 & 0.7680 & 0.7882 & 0.8087 & 0.8128 & 0.8226 & 0.8293 & 0.8384 & 0.8527 & 0.8764 & 0.8863 & 0.8949 & 0.8979 & \textbf{0.8983}\\
+Extra Trees & 0.7050 & 0.7437 & 0.7710 & 0.7966 & 0.8130 & 0.8222 & 0.8288 & 0.8414 & 0.8494 & 0.8667 & 0.8944 & 0.9009 & 0.9073 & 0.9098 & \textbf{0.9114}
+\end{tabular}
+\end{adjustbox}
+
+The following figures visualize the curve of AUC score vs. the number of estimators for the random forest and gradient boosting classifiers.
+
+\begin{figure}[h]
+    \centering
+    \subfloat[Random forest]{{\includegraphics[width=6.5cm]{img/forest_auc_est.jpg} }}
+    \qquad
+    \subfloat[Gradient boosting]{{\includegraphics[width=6.5cm]{img/grad_auc_est.jpg} }}
+\end{figure}
+
+We still wanted to see whether we could improve the model.
+With inspiration from the Bagging classifier, which trains multiple trees based on subsets of the data and then votes, we tried to combine our models in a similar way by training multiple trees based on the entire dataset and then voting.
+The hope here was that there was a good enough mix in the correctness to make this a viable method.
+
+However, when we made multiple of the same estimator, it did not achieve good performance.
+It ended up being inconsistent and it was hit-or-miss whether it would beat the gradient boosting classifier.
+After numerous cross-validation sets, we felt that this was not sufficient evidence to prove its performance, even though it outperformed all of the ensemble methods other than gradient boosting.
+
+Another method we tried was using estimators other than decision trees as the base estimators in the ensemble functions, like SVMs instead of decision trees.
+However, not only did the training time increase significantly, but the results also suffered.
+
 \subsection{BIRDNEST}
 
-\quad BIRDNEST [\cite{birdnest}]is a Bayesian-based approach to anomaly behavior detection. This algorithm identifies anomalous users by implementing two phases. First the algorithm models user behavior distributions as a mixture model (BIRD model) to produce the posterior distributions of user?s behavior. It then uses the global distribution of the mixture model to calculate a user?s score by taking the negative log likelihood the user?s posterior distribution would be generated by the mixture model (NEST metric).
+BIRDNEST \cite{birdnest} is a Bayesian-based approach to anomaly behavior detection. This algorithm identifies anomalous users by implementing two phases. First the algorithm models user behavior distributions as a mixture model (BIRD model) to produce the posterior distributions of user?s behavior. It then uses the global distribution of the mixture model to calculate a user?s score by taking the negative log likelihood the user?s posterior distribution would be generated by the mixture model (NEST metric).
 
-\quad Originally, the algorithm was built to identify rating-fraud by observing two features: rating behavior and inter-arrival times between user activity. In the context of auction bidding, the rating behavior was not used, however the temporal feature aspect of the algorithm seemed similar to the given situation. Therefore, this algorithm was chosen and adjusted to be a temporal-based approach.
+Originally, the algorithm was built to identify rating-fraud by observing two features: rating behavior and inter-arrival times between user activity. In the context of auction bidding, the rating behavior was not used, however the temporal feature aspect of the algorithm seemed similar to the given situation. Therefore, this algorithm was chosen and adjusted to be a temporal-based approach.
 	
 \subsubsection{Implementation}
 
