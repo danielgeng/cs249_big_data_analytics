@@ -230,7 +230,7 @@ As mentioned previously, these multi-party users in the data set that exhibit bo
 
 \subsection{Classic Machine Learning Approaches}
 
-A variety of machine learning classification models were implemented.
+We implemented a variety of machine learning classification models and used various features to analyze which algorithm would result in the best performance.
 
 \subsubsection{Implementation}
 
@@ -269,12 +269,12 @@ A combination of the following features were tested in each model to varying deg
 \item Entropy of IPs
 \end{itemize}
 
-Initially, we only used the time distributions; we consistently got a greatest AUC of around 0.87, but we wanted to see how much better we could make it.
+Initially, the consistently highest AUC was using only the IAT distributions which resulted in 0.87, however we wanted to see how much better we could make it.
 
 Therefore, we derived a number of features from the given data.
 First, we looked at the mean IAT and response times.
 Another important feature turned out to be the number of bids and the number of bids per auction.
-The total number of unique devices was also fairly important, and we also examined number of unique IPs.
+The total number of unique devices was also fairly important, and we also examined the number of unique IPs.
 These additional features, in conjunction with the log-bins, was getting us around a 0.9 AUC.
 
 The last features we explored were the entropies of the devices and IPs.
@@ -282,7 +282,7 @@ Our reasoning and the intuition behind this is was that the entropy values measu
 If the user posts from a single device only, there is little entropy.
 However, if the user posts from a large number of devices with uniform frequency, the entropy is greater.
 
-We tried this with numerous models that have the option to measure the Gini importance, and across the board, the new features we generated listed were higher than the binned distributions.
+We tried this with numerous models that have the option to measure the Gini importance, and across the board, the new features we generated from the list above were higher than the binned distributions.
 As we went along, we pruned them based on these importances, and we verified with performance to ensure that taking features out either improved or did not affect our model.
 
 The following figures show the Gini importance of features for the gradient boosting classifier for all features and for the final set of features used.
@@ -356,7 +356,7 @@ perform the best. We performed this sweep using different sets of features, some
 of which are shown in the tables below. We were guided by intuition gained from the Gini
 importances to prune our features to select only those that mattered, and found
 that not all features were beneficial to the model. The table below shows the
-parameter sweep of the number of estimators usering
+parameter sweep of the number of estimators using
 all of the features we generated.
 
 \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
@@ -375,7 +375,7 @@ Extra Trees & 0.7008 & 0.7478 & 0.7683 & 0.7829 & 0.7985 & 0.8139 & 0.8175 & 0.8
 The table below shows the parameter sweep of the number of estimators using only five
 of the new features we generated: mean IAT, mean response time, number of bids,
 number of bids per auction, and number of devices. In some cases, the models
-outperforms their counterparts with a all of the features. Although not strictly
+outperforms their counterparts with all of the features. Although not strictly
 better, this was still enough to give us a baseline for how good these new features are.
 
 \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
@@ -419,7 +419,7 @@ Extra Trees & 0.7050 & 0.7437 & 0.7710 & 0.7966 & 0.8130 & 0.8222 & 0.8288 & 0.8
 
 The optimal values for the number of estimators appeared to be fairly consistent
 among each ensemble. The top performances for the mentioned feature sets are
-shown below. Note the final model outperforms the others over all of types of
+shown below. Note the final model outperforms the others over all other types of
 ensembles.
 
 \begin{tabular}{c|ccc}
@@ -442,7 +442,7 @@ Extra Trees & 0.8929 & 0.8743 & \textbf{0.9114}
 The following figures visualize the curve of AUC score against the number of
 estimators for the random forest and gradient boosting classifiers. The random
 forests classifiers appeared to increase as the number of estimators increased.
-However, similar to the SVMs, this increased tapered off and the improvement
+However, similar to the SVMs, this increase tapered off and the improvement
 slowed as the number of estimators went up.
 
 \begin{figure}[h]
@@ -542,13 +542,13 @@ From this project, we gained a few takeaways and future directions. First of all
 
 Daniel: Report
 
-Meghana: Presentation, Kaggle winner code/writeup, Report
+Meghana: Presentation, Wrote up Kaggle winner code portion, Report
 
-Sara: BIRDNEST, Presentation, Report
+Sara: Implemented BIRDNEST, Presentation, Report
 
-Sonu: Presentation
+Sonu: Presentation, Attempted EdgeCentric 
 
-Andrew: Machine learning code, Presentation, Report
+Andrew: Implemented Machine learning code, Presentation, Report, Attempted ND-SYNC
 
 \begin{thebibliography}{123}
 
