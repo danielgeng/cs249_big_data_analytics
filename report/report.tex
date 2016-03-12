@@ -512,7 +512,8 @@ Decision Tree & 0.8759 & 0.8861 & 0.8910 & 0.8938 & 0.8978 & 0.8913
 
 \subsection{Kaggle Winner: ``Small Yellow Duck"}
 
-We wanted to end our project by comparing ourselves to a professional data scientist who won second place in the Kaggle Competition \cite{SYD}. This data scientist goes by the name ``Small Yellow Duck".
+To evaluate the success of our project, we compared ourselves to a professional data scientist who won second place in the Kaggle Competition \cite{SYD}.
+This data scientist goes by the name ``Small Yellow Duck".
 She chose a classification model that takes the average of the probabilities predicted by five instances of the Random Forest Classifier, which is an ensemble learning method that constructs multiple decision trees to create a stronger classification model.
 
 Small Yellow Duck first makes a couple of observations before implementing feature extraction.
@@ -537,14 +538,17 @@ For some reason, between days 11 and 14, human bidding commences while bots tend
 \captionbox{Time Duration of Auction}{\includegraphics[scale=0.26]{img/yellowduck2.png}}
 \end{figure}
 
-During feature extraction, Small Yellow Duck was able to extract temporal features such as the median time between user's bid and user's previous bid and min and median times between a user's bid and previous bid by another user in the same auction. She was also able to extract spatial features such as the mean number of bids a user made per auction, entropy for how many bids a user placed on each day of the week, max number of bids in a 20 min span, total number of bids placed by user, average number of bids a user placed per URL, and number of bids placed by the user on each of three weekdays in the data.
+During feature extraction, Small Yellow Duck was able to extract temporal features such as the median time between user's bid and user's previous bid and min and median times between a user's bid and previous bid by another user in the same auction.
+She was also able to extract spatial features such as the mean number of bids a user made per auction, entropy for how many bids a user placed on each day of the week, max number of bids in a 20 min span, total number of bids placed by user, average number of bids a user placed per URL, and number of bids placed by the user on each of three weekdays in the data.
 
 In order to evaluate her results, Small Yellow Duck does cross validation with 100 different training and validation splits where 80\% was training data and 20\% was validation data.
-In terms of runtime, training and predicting takes around 3 minutes while 100-fold cross validation takes around 20 minutes on a Mac OSX with a 2.7 GHz Intel Core i5 processor and 8GB of RAM.
+In terms of runtime, training and predicting takes around 3 minutes while 100-fold cross-validation takes around 20 minutes on Mac OSX with a 2.7 GHz Intel Core i5 processor and 8GB of RAM.
 As a result, the AUC score tends to average at 0.94167. 
 
 \section{Discussion}
-In conclusion, we started this project trying to compare and contrast different algorithms and features to see which one would perform better.
+
+In conclusion, we started this project by comparing and contrasting different algorithms.
+Additionally, we pre-preprocessed and tested various combinations of the provided features.
 In the end, we were pleased to produce results comparable to the Kaggle winner's approach and high enough to be in the top 15\% of the leaderboard.
 The optimal algorithms turned out to be gradient boosting and other boosting machine learning approaches.
 
@@ -552,7 +556,7 @@ From this project, we gained a few takeaways and future directions.
 First of all, manipulating a lot of data can be difficult, but using the right tools, finding the right features, organizing/sorting it beforehand, or storing them as binaries make a huge difference.
 Secondly, temporal features are not nearly as powerful as we originally thought.
 Once we added entropy terms and different metrics for the number of resources each user was using to bid, we did see dramatic improvement.
-Although our results are comparable, we could improve these scores by extracting more interesting features that would lead to an improvement of accuracies/
+Although our results are comparable, there are potentially better features that could be processed.
 
 Furthermore, as state-of-the-art as certain algorithms are, we should never underestimate the power of numbers.
 Combining multiple estimators through different boosting methods allows an estimator to fill in the gaps where another estimator might fail, making for a more powerful classification algorithm.
