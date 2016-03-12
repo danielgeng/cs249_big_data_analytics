@@ -27,13 +27,13 @@ Meghana Ginjpalli \\
 804588573 \\
 Department of Computer Science \\
 University of California, Los Angeles\\
-\texttt{mginjpalli@ucla.edu} \\
+\texttt{mginjpalli@cs.ucla.edu} \\
 \AND
 Sara Melvin \\
 004590481 \\
 Department of Computer Science \\
 University of California, Los Angeles\\
-\texttt{sara.melvin@gmail.edu} \\
+\texttt{sara.melvin@cs.ucla.edu} \\
 \And
 Sonu Mishra \\
 604590548 \\
@@ -64,10 +64,8 @@ To take advantage of this, Facebook places its web ``real estate" on sale to bus
 Many of the bidders are bots, making it nearly impossible for human users to win any auctions.
 The problem statement from the Kaggle competition ``Facebook Recruiting IV: Human or Robot?" was to identify as many bots as possible.
 In this project, we implement various anomaly detection approaches, including classic machine learning models and a Bayesian-based model, BIRDNEST.
-Our approaches are then compared and contrasted with the Kaggle competition winner.
 Various pre-processing methods of the input features are analyzed and tested to discover the best indicators that classify a user as a bot.
-For evaluation, the ROC AUC score was used.
-With BIRDNEST, we achieved a 0.8456 AUC score and with machine learning models, we achieved a 0.9169 AUC score using gradient boosting.
+BIRDNEST achieved a 0.8456 area under the ROC curve (AUC) score while machine learning models achieved a higher AUC score of 0.9169 using gradient boosting.
 
 \end{abstract}
 
@@ -127,7 +125,7 @@ The approach to this project is to compare and contrast various algorithms with 
 Because the dataset from Kaggle (\url{https://www.kaggle.com/c/ facebook-recruiting-iv-human-or-bot/data}) provides labeled data, we decided to focus on these supervised algorithms for detection.
 We used k-fold cross validation and tuned our hyperparameters evaluation metrics. 
 
-To evaluate the efficacy model, we applied he trained model to our testing data and compared the classifying algorithms based on performance.
+To evaluate the efficacy model, we applied the trained model to our testing data and compared the classifying algorithms based on performance.
 The metrics we will use to evaluate the performance of our algorithms is the area under the ROC curve (AUC). 
 
 \section{Data}
@@ -156,7 +154,7 @@ Matplotlib facilitates data visualization, which will yield insights into how ou
 \section{Results}
 \subsection{BIRDNEST}
 
-BIRDNEST \cite{birdnest} is a Bayesian-based approach to anomaly behavior detection. This algorithm identifies anomalous users by implementing two phases. First the algorithm models user behavior distributions as a mixture model (BIRD model) to produce the posterior distributions of user behavior. It calculates a user's score by determining the negative log likelihood of the user's posterior distribution given the global distribution of the BIRD Model (NEST metric).
+BIRDNEST \cite{birdnest} is a Bayesian-based approach to anomaly behavior detection. This algorithm identifies anomalous users by implementing two phases. First the algorithm models user behavior distributions as a mixture model (BIRD model) to produce the posterior distributions of user behavior. Fitting the BIRD model consisted of iteratively adjusting Dirichlet hyperparameters and cluster assignments of user priors until model convergence. A user's suspiciousness score is then determined by a likelihood based metric (NEST metric). This metric is determined by surprise which is the negative log likelihood that the mixture model will generate a user's posterior distribution.
 
 Originally, the algorithm was built to identify rating-fraud by observing two features: rating behavior and inter-arrival times between user activity. In the context of auction bidding, the rating behavior was not used, however the temporal feature aspect of the algorithm seemed similar to the given situation. Therefore, this algorithm was adjusted to be a purely temporal-based approach.
 	
