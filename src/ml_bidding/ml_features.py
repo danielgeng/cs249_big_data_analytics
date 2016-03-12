@@ -70,12 +70,15 @@ def generate_iats(bidTuples, userList, force=False):
         print "userData file located. Loading..."
         userData = pickle.load(open(DATAHOME+'userData.p',"rb"))
     else:
+        # Generate userData, a list of times for each user
         userData = [[] for user in userList]
         for toks in bidTuples:
             userNum, auction, time = [toks[0], toks[1], toks[2]]
             userData[userNum].append(time)
     iats = [[] for user in userList]
     maxVal = 0
+
+    # sort each list of times and generate iats from them
     if (not force) and os.path.isfile(DATAHOME+'iats.p'):
         print "iats file located. Loading..."
         iats = pickle.load(open(DATAHOME+'iats.p',"rb"))
@@ -156,6 +159,8 @@ def generate_rts(bidTuples, userList, force=False):
     print "Calculating response times for auctions..."
     maxVal = 0
 
+    # Go through each auction and sort by time
+    # user[i] respondend in time[i]-time[i-1]
     if (not force) and os.path.isfile(DATAHOME+"rts.p"):
         print "rts file located. Loading..."
         rts = pickle.load(open(DATAHOME+'rts.p', "rb"))
