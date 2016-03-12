@@ -32,10 +32,10 @@ def load_bidder_data():
         if bidder not in iat:
             iat[bidder] = []
         iat[bidder].append((auction, time))
-    return iat, otherdata
+    return iat, otherdata, usermap
 
 
-def process_data(iat, otherdata, dataname):
+def process_data(iat, otherdata, usermap, dataname):
 #Method based on BIRDNEST source code
     iat_arr = []
     ids = []
@@ -47,20 +47,18 @@ def process_data(iat, otherdata, dataname):
             max_time_diff = max(max_time_diff, time_diff)
 
     S = int(1 + math.floor(math.log(1 + max_time_diff, TIME_LOG_BASE)))
-    ctr = 0
-    for user in iat:
-        if len(iat[user]) <= 1:
-            otherdata.remove(otherdata[ctr])
+    for i in range(0, len(iat)):
+        if len(iat[i]) <= 1:
+            otherdata.remove(otherdata[usermap.index(otherdata[i])])
             continue
         iat_counts = [0] * S
-        cur_iat = sorted(iat[user], key=operator.itemgetter(1))
+        cur_iat = sorted(iat[i], key=operator.itemgetter(1))
         for i in range(1, len(cur_iat)):
             time_diff = cur_iat[i][1] - cur_iat[i-1][1]
             iat_bucket = int(math.floor(math.log(1 + time_diff, TIME_LOG_BASE)))
             iat_counts[iat_bucket] += 1
         iat_arr.append(iat_counts)
-        ids.append(user)
-        ctr += 1
+       # ids.append(iat[i])
 
     with open('data/%s_iat_bucketed.csv' % (dataname), 'w') as iat_file:
         for row in iat_arr:
@@ -74,8 +72,8 @@ def process_data(iat, otherdata, dataname):
     return (iat_arr, ids)
 
 def main():
-    iat, otherdata = load_bidder_data()
-    process_data(iat, otherdata, 'train')
+    iat, otherdata, usermap = load_bidder_data()
+    process_data(iat, otherdata, usermap, 'train')
 
 if __name__=='__main__':
     main()
