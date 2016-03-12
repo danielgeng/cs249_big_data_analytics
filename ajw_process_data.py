@@ -6,6 +6,7 @@ import math
 import operator
 import cPickle as pickle
 import os
+from sklearn.preprocessing import normalize
 
 """
 INDICES IN THE ORIGINAL DATAFILE
@@ -351,6 +352,14 @@ def group_unique_userdata(bidTuples, userList, columnNum, force=False):
 
 
 def group_entropy(bidTuples, userList, columnNum, force=False):
+    """
+    Given a column number in bidTuples, calculate the average entropy for that column for each user
+    :param bidTuples:
+    :param userList:
+    :param columnNum:
+    :param force:
+    :return:
+    """
     userData = [[] for user in userList]
     userEntropies = [0 for user in userList]
     bidTuples = sorted(bidTuples, key=operator.itemgetter(columnNum))
@@ -436,6 +445,15 @@ def sparse_botlist(botList, userList):
         sparseList[botNum] = 1
     return np.array(sparseList)
 
+def normalize_data(data):
+    """
+    Normalizes each column of data so the max is 1
+    Note: this should be done before running SVC or logistic regression
+    :param data:
+    :return:
+    """
+    # normalize will normalize a row. We want column
+    return normalize(data.T, norm="max").T
 
 ##################################
 #                                #
@@ -551,16 +569,11 @@ def six_and_time_features(force=False):
         binned_time_feat = binned_time_features(force=False)
         six_and_time_feat = np.concatenate((six_feat, binned_time_feat), axis=1)
         pickle.dump(six_and_time_feat, open(DATAHOME+"six_and_time_features.p", "wb"))
-    # six_feats[1] is the sparse botList
+    # six_feat[1] is the sparse botList
     return six_and_time_feat, sparse_botlist(botList, userList)
 
 
 def main():
-    # rts, auctionList, maxResponseTime = generate_rts(bidTuples, userList)
-    # bucketize(rts, 5, outfile=DATAHOME+"rt_buckets.txt", maxVal=maxResponseTime)
-    # iats, maxIat = generate_iats(bidTuples, userList)
-    # bucketize(iats, 5, outfile=DATAHOME+"iat_buckets.txt", maxVal=maxIat)
-    # print six_and_time_features()[0].shape
     return
 
 if __name__ == '__main__':

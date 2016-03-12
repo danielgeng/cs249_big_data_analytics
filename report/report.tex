@@ -298,11 +298,11 @@ To find the optimal classifier for our features, we tried to sweep through diffe
 We tried to optimize $C$, the inverse regularization term, for each method.
 A larger $C$ has less regularization and is more prone to overfitting.
 
-For the ensemble methods, we also did a parameter sweep, varying the number of estimators in the ensemble, or the number of boosting stages for certain models.
-Additionally, different loss functions were tested.
-The models were cross-validated with an 80/20 partition of training/test users.
-
-To ensure that our metrics stayed consistent, each model was trained on the same partitions and the AUC scores were compared.
+For the ensemble methods, we also did a parameter sweep, varying the number of
+estimators in the ensemble, or the number of boosting stages for certain models.
+The models were cross-validated with an 80-20 partition of training and test
+users. To ensure that our metrics stayed consistent, each model was trained on
+the same partitions and the AUC scores were compared.
 
 \subsubsection{Evaluation}
 
@@ -323,9 +323,15 @@ Log. Reg. (Dual) & 0.7360 & 0.7296 & 0.7333 & 0.7466 & 0.7677 & 0.7846 & 0.7971 
 \end{tabular}
 \end{adjustbox}
 
-Logistic regression had the best performance, but it was dependent on a high value for $C$.
-Out of the different SVM kernels, the linear kernel had the best results, followed by the radial basis function (RBF).
-The tables below shows the AUC values of logistic regression for larger values of $C$.
+Somewhat surprisingly, SVMs were outperformed by logistic regression, and among
+the SVMs tested, the best performance came with a linear kernel. Logistic
+regression did have the best performance, but this was contingent on a high
+value for $C$. The tables below show the AUC values for larger values of $C$ for
+logistic regression with primal optimization. We noted that, as the value of $C$
+was increased, the improvement gradually diminished. This behavior was expected,
+as the value of $C$ is directly related to how overfit the model is, and if the
+data is not separable, the performance for a single decision boundary is
+limited.
 
 \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
 \begin{tabular}{cccccccccc}
@@ -343,10 +349,15 @@ C=1200 & 1500 & 2000 & 3000 & 4500 & 7500 & 10000 & 15000 & 20000\\
 \end{tabular}
 \end{adjustbox}
 
-In the ensemble methods, we found that as expected, additional estimators did not necessitate higher AUC scores.
-Entropy improved the top performance across the board for all ensemble methods.
-
-The table below shows the parameter sweep of the number of estimators using all features.
+In the ensemble methods, we found that, as expected, additional estimators did
+not necessitate higher AUC scores. After performing a sweep over the number of
+estimators, we concluded that, given our features, gradient boosting classifiers
+perform the best. We performed this sweep using different sets of features, some
+of which are shown in the tables below. We were guided by intuition gained from the Gini
+importances to prune our features to select only those that mattered, and found
+that not all features were beneficial to the model. The table below shows the
+parameter sweep of the number of estimators usering
+all of the features we generated.
 
 \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
 \begin{tabular}{c | c c c c c c c c c c c c c c c}
@@ -360,7 +371,12 @@ Extra Trees & 0.7008 & 0.7478 & 0.7683 & 0.7829 & 0.7985 & 0.8139 & 0.8175 & 0.8
 \end{tabular}
 \end{adjustbox}
 
-The table below shows the parameter sweep of the number of estimators using 5 features, which were: mean IAT, mean response time, number of bids, number of bids per auction, and number of devices.
+
+The table below shows the parameter sweep of the number of estimators using only five
+of the new features we generated: mean IAT, mean response time, number of bids,
+number of bids per auction, and number of devices. In some cases, the models
+outperforms their counterparts with a all of the features. Although not strictly
+better, this was still enough to give us a baseline for how good these new features are.
 
 \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
 \begin{tabular}{c | c c c c c c c c c c c c c c c}
@@ -374,19 +390,8 @@ Extra Trees & 0.6552 & 0.7065 & 0.7292 & 0.7612 & 0.7779 & 0.7953 & 0.7965 & 0.8
 \end{tabular}
 \end{adjustbox}
 
-The figure below shows the greatest AUC score for each set of features.
 
-\begin{tabular}{c|ccc}
-Classifier & Five Features & All Features & Final Model\\
-\hline
-Adaboost & 0.8881 & 0.8911 & \textbf{0.9050}\\
-Gradient Boost & 0.9115 & 0.9031 & \textbf{0.9169}\\
-Random Forests & 0.8900 & 0.8906 & \textbf{0.9112}\\
-Bagging & 0.8813 & 0.8854 & \textbf{0.8983}\\
-Extra Trees & 0.8929 & 0.8743 & \textbf{0.9114}
-\end{tabular}
-
-The final set of features did not use all of the features, but included the following:
+The final set of features included were the following:
 
 \begin{itemize}
 \item Mean IAT
@@ -397,16 +402,8 @@ The final set of features did not use all of the features, but included the foll
 \item Entropy of IPs
 \end{itemize}
 
-Using this set of features, we achieved the greatest average AUC score of 0.9134, using gradient boosting.
-
-\clearpage
-
-\begin{figure}[h]
-\centering
-{\caption{Gradient Boosting ROC curve} \includegraphics[scale=0.4]{img/grad_roc.jpg}}
-\end{figure}
-
-The table below shows the AUC scores of the final set of features used with various number of estimators.
+Using this set of features, we achieved the greatest average AUC score of
+0.9169 using a gradient boosting classifier. The table below shows the AUC scores of the final set of features used with various number of estimators.
 
 \begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
 \begin{tabular}{c | c c c c c c c c c c c c c c c}
@@ -420,7 +417,33 @@ Extra Trees & 0.7050 & 0.7437 & 0.7710 & 0.7966 & 0.8130 & 0.8222 & 0.8288 & 0.8
 \end{tabular}
 \end{adjustbox}
 
-The following figures visualize the curve of AUC score vs. the number of estimators for the random forest and gradient boosting classifiers.
+The optimal values for the number of estimators appeared to be fairly consistent
+among each ensemble. The top performances for the mentioned feature sets are
+shown below. Note the final model outperforms the others over all of types of
+ensembles.
+
+\begin{tabular}{c|ccc}
+Classifier & Five Features & All Features & Final Model\\
+\hline
+Adaboost & 0.8881 & 0.8911 & \textbf{0.9050}\\
+Gradient Boost & 0.9115 & 0.9031 & \textbf{0.9169}\\
+Random Forests & 0.8900 & 0.8906 & \textbf{0.9112}\\
+Bagging & 0.8813 & 0.8854 & \textbf{0.8983}\\
+Extra Trees & 0.8929 & 0.8743 & \textbf{0.9114}
+\end{tabular}
+
+\clearpage
+
+\begin{figure}[h]
+\centering
+{\caption{Gradient Boosting ROC curve} \includegraphics[scale=0.4]{img/grad_roc.jpg}}
+\end{figure}
+
+The following figures visualize the curve of AUC score against the number of
+estimators for the random forest and gradient boosting classifiers. The random
+forests classifiers appeared to increase as the number of estimators increased.
+However, similar to the SVMs, this increased tapered off and the improvement
+slowed as the number of estimators went up.
 
 \begin{figure}[h]
     \centering
@@ -430,15 +453,52 @@ The following figures visualize the curve of AUC score vs. the number of estimat
 \end{figure}
 
 We still wanted to see whether we could improve the model.
-With inspiration from the Bagging classifier, which trains multiple trees based on subsets of the data and then votes, we tried to combine our models in a similar way by training multiple trees based on the entire dataset and then voting.
-The hope here was that there was a good enough mix in the correctness to make this a viable method.
+With inspiration from the Bagging classifier, which trains multiple trees based
+on subsets of the data and then votes, we tried to combine our models in a
+similar way by training multiple trees based on the entire dataset and then
+voting.  The hope here was that there was a good enough mix in the correctness
+to make this a viable method.  However, when we made multiple of the same
+estimator, it did not achieve good performance.  It ended up being inconsistent
+and it was hit-or-miss whether it would beat the gradient boosting classifier.
+The AUCs achieved over multiple runs of multiple Adaboost instances, as well as
+those achieved with a combination of ensembles are shown below.
 
-However, when we made multiple of the same estimator, it did not achieve good performance.
-It ended up being inconsistent and it was hit-or-miss whether it would beat the gradient boosting classifier.
-After numerous cross-validation sets, we felt that this was not sufficient evidence to prove its performance, even though it outperformed all of the ensemble methods other than gradient boosting.
+\begin{tabular}{c|ccccc}
+\# Adaboost Instances & 1 & 3 & 5 & 7 & 9\\
+\hline
+Run 1 & \textbf{0.9094} & 0.9093 & 0.9093 & 0.9093 & 0.9094\\
+Run 2 & 0.9110 & 0.9110 & 0.9111 & \textbf{0.9112} & 0.9111\\
+Run 3 & \textbf{0.9109} & 0.9108 & 0.9109 & 0.9108 & 0.9108
+\end{tabular}
 
-Another method we tried was using estimators other than decision trees as the base estimators in the ensemble functions, like SVMs instead of decision trees.
-However, not only did the training time increase significantly, but the results also suffered.
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+\begin{tabular}
+{c|cccccc}
+Estimator & All 5 & Adaboost & Gradient Boosting & Random Forest & Bagging & Extra Trees\\
+\hline
+Run 1 & \textbf{0.9106} & 0.8953 & 0.9097 & 0.9051 & 0.8896 & 0.9028\\
+Run 2 & 0.9114 & 0.8925 & \textbf{0.9132} & 0.9047 & 0.8937 & 0.9036\\
+Run 3 & 0.9118 & 0.8921 & \textbf{0.9118} & 0.9065 & 0.8943 & 0.9049\\
+Run 4 & 0.9137 & 0.8959 & \textbf{0.9149} & 0.9067 & 0.8932 & 0.9069
+\end{tabular}
+\end{adjustbox}
+
+Given the inconsistency of our own boosting method, we felt that we did not have
+sufficient evidence to prove its performance, even though it occassionally did
+outperform our individual ensembles.
+
+Another method we tried was using estimators other than decision trees as the
+base estimators in the ensemble functions, like SVMs instead of decision trees.
+However, not only did the training time increase significantly, but the results
+also suffered. These are displayed in the figure below.
+
+\begin{tabular}
+{c|cccccc}
+Estimator & N=3 & 5 & 7 & 9 & 15 & 30\\
+\hline
+SVM & 0.7986 & 0.7646 & 0.7526 & 0.7494 & 0.7469 & 0.7462\\
+Decision Tree & 0.8759 & 0.8861 & 0.8910 & 0.8938 & 0.8978 & 0.8913
+\end{tabular}
 
 \subsection{Kaggle Winner: ``Small Yellow Duck"}
 
