@@ -29,7 +29,11 @@ def plot_ROCList(clfList, data, labels, stringList=""):
         stringList = ["" for i in range(len(labels))]
     imp = Imputer(missing_values=np.NaN, strategy="mean")
     data = imp.fit_transform(data)
+
+    # Cross-validate on the data once using each model to get a ROC curve
     AUCs, fprs, tprs, threshs = cvList(data, labels, clfList)
+
+    # Plote a ROC for each clf in clfList
     for i in range(len(clfList)):
         fpr = fprs[i]
         tpr = tprs[i]
@@ -61,10 +65,13 @@ def run_clfList(clfList, stringList="", normalize=False):
 
     imp = Imputer(missing_values=np.NaN, strategy="mean")
     data = imp.fit_transform(data)
+
+    # Cross-validate all clfs 100 times
     means = kfoldcvList(data, labels, clfList, 100)
     if stringList == "":
         stringList = ["" for i in range(len(labels))]
 
+    # Print out the mean AUCs
     for i, mean in enumerate(means):
         print stringList[i]+": "+str(mean)
 
@@ -81,10 +88,12 @@ def select_bestList_higher(clf, string="--"):
     :param string:
     :return:
     """
+    # Train clf over a larger range of classifiers
     n_range = ([2, 10, 50, 100, 200, 300, 400, 500])
     clfList = [clf(n_estimators=n) for n in n_range]
     stringList = [string+" ("+str(n)+")" for n in n_range]
     AUCs = run_clfList(clfList, stringList)
+
     plt.title(string+ " AUC vs Number of Estimators")
     plt.xlabel("Number of Estimators")
     plt.ylabel("AUC")
@@ -126,6 +135,8 @@ def select_bestListList(clfList, stringList=""):
     n_range = (range(2,11)+[15,30,50,100,150,200])
     clfListList = []
     stringListList = []
+
+    # Merge the list of classifier classes into actual classifiers ranging over n and then train
     for clf, string in zip(clfList, stringList):
         clfListList += [clf(n_estimators=n) for n in n_range]
         stringListList += [string+" ("+str(n)+")" for n in n_range]
@@ -143,7 +154,10 @@ def select_best_combined(n):
     Ks = [1,3,5,7,9]
     combs = []
     for k in Ks:
+        # Set up default classifiers
         comblist = [AdaBoostClassifier() for i in range(k)]
+
+        # Create k copies of each clf and combine
         for i in range(k):
             comblist[i] = AdaBoostClassifier(n_estimators=n, random_state=i)
         combs.append(CombinedClassifier(comblist))
@@ -178,17 +192,13 @@ def run_importance(clf, data, labels, feature_labels=[""], string=""):
     :param string: classifier name
     :return: (void) plot Gini importance vs feature
     """
-    # data, labels = six_and_time_features()
-    # data = binned_time_features()
-    # data, labels = five_and_rts()
     num_features = data.shape[1]
-    print data.shape
     importances = [0]*num_features
-    # dtree = DecisionTreeClassifier()
-    # dtree = clf(n_estimators=30)
+
     imp = Imputer(missing_values=np.NaN, strategy="mean")
     data = imp.fit_transform(data)
 
+    # run the classifier 100 times and average the importance found after each fit
     for r in range(100):
         clf.fit(data, labels)
         importances = [importances[i]+clf.feature_importances_[i] for i in range(num_features)]
@@ -241,6 +251,7 @@ def cvList(data, labels, clfList):
     :param clfList: list of classifiers to train/test on
     :return: AUC scores for each classifier in clfList
     """
+    # Keep shuffling the data until we arrive at a partition that has at least 20 bots in each training/test set
     while True:
         shuffled = range(len(labels))
         random.shuffle(shuffled)
@@ -252,6 +263,7 @@ def cvList(data, labels, clfList):
         if sum(train_labels) > 20:
             break
 
+    # Get the fpr, tpr, thresh for each and the AUCs for each
     aucList = [0]*len(clfList)
     tprList = [[] for i in range(len(clfList))]
     fprList = [[] for i in range(len(clfList))]
